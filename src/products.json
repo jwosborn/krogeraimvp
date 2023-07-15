@@ -1,0 +1,34 @@
+{
+  "products": [
+    {
+      "pkg_size": "12 rolls",
+      "name": "Kroger® Ultra Strong Mega Roll Bath Tissue",
+      "brand": "Kroger",
+      "benefits": "advanced Thru Air-Drying technology, unique Fiber Strong® formula, durability",
+      "consumer_segment": "Value",
+      "portfolio_tier": "Good",
+      "description": "",
+      "bullets": []
+    },
+    {
+      "pkg_size": "18 rolls",
+      "name": "Kroger® Ultra-Soft Mega Bath Tissue",
+      "brand": "Kroger",
+      "benefits": "advanced Thru Air-Drying technology, unique Fiber Soft® formula",
+      "consumer_segment": "Value",
+      "portfolio_tier": "Good",
+      "description": "",
+      "bullets": []
+    },
+    {
+      "pkg_size": "18 rolls",
+      "name": "Kroger® Ultra-Strong Mega Bath Tissue",
+      "brand": "Kroger",
+      "benefits": "unique Fiber Strong® formula",
+      "consumer_segment": "Value",
+      "portfolio_tier": "Good",
+      "description": "",
+      "bullets": []
+    }
+  ]
+}
