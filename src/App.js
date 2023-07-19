@@ -160,6 +160,13 @@ function App() {
                 return 'looks for a deal, a savvy shopper';
             case 'practical':
                 return 'wants reliability and prefers function over form';
+            case 'performance':
+                return 'chooses form over function and likes to be trendy'
+            case 'premium':
+            case 'prestige':
+                return 'wants to be noticed and likes the best'
+            case 'experiential':
+                return 'is willing to try new things and is adventurous'
             default:
                 break;
         }
@@ -168,19 +175,13 @@ function App() {
 
     const generateAPIPrompt = (description, product) => {
         if (product) {
-            const { consumer_segment, Product_Title } = product;
+            const { consumer_segment, category, Product_Title } = product;
             let prompt = 'You are a world class marketing copywriter. Write';
                 // main romance description
                 description && (prompt += ' a product description');
-                // feature bullets
-                // !description && (prompt += (
-                // ' three feature bullet points prepended with - and ended with /end'
-                // ));
-                // product info
-                description && (prompt += ` for ${Product_Title}. It is a Toilet Paper Product. Follow the guidelines in this list: ${guidelines.descriptionGuidelines}`);
+                description && (prompt += ` for ${Product_Title}. It is a ${category} product. Follow the guidelines in this list: ${guidelines.descriptionGuidelines}`);
                 // feature bullets
                 !description && (prompt += ` a bulleted list using just these words: ${product['Feature Bullets']}. End each bullet point with "/end"`);
-                // description && (prompt += ' The tone should be welcoming, encouraging, with a touch of playfulness. Be creative.');
                 prompt += ` The target consumer is one that ${consumerSegmentInfo(consumer_segment)}. Do not use hashtags(#) or emojis. `;
             return prompt
         }
