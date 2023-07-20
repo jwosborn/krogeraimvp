@@ -41,6 +41,7 @@ function App() {
     }
 
 
+
     const setSheetInState = (xlsx, ws) => {
         const data = xlsx.utils.sheet_to_json(ws, { header: 1 });
 
@@ -239,7 +240,15 @@ function App() {
 
     const exportExcel = () => {
         import('xlsx').then(xlsx => {
-            const worksheet = xlsx.utils.json_to_sheet(products);
+            // bullets needs to be one string, comma separated
+            let formattedProductsForXL = [...products];
+            formattedProductsForXL = formattedProductsForXL.map(prod => ({
+                ...prod,
+                bullets: prod.bullets.join(', ')
+            }));
+            console.log({ formattedProductsForXL });
+            const worksheet = xlsx.utils.json_to_sheet(formattedProductsForXL);
+            console.log({ worksheet });
             const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
             const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
             saveAsExcelFile(excelBuffer, 'products');
