@@ -246,9 +246,7 @@ function App() {
                 ...prod,
                 bullets: prod.bullets.join(', ')
             }));
-            console.log({ formattedProductsForXL });
             const worksheet = xlsx.utils.json_to_sheet(formattedProductsForXL);
-            console.log({ worksheet });
             const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
             const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
             saveAsExcelFile(excelBuffer, 'products');
