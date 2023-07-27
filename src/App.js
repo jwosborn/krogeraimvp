@@ -156,22 +156,7 @@ function App() {
     }
 
     const consumerSegmentInfo = (segment) => {
-        switch (segment?.toLowerCase()) {
-            case 'value':
-                return 'looks for a deal, a savvy shopper';
-            case 'practical':
-                return 'wants reliability and prefers function over form';
-            case 'performance':
-                return 'chooses form over function and likes to be trendy'
-            case 'premium':
-            case 'prestige':
-                return 'wants to be noticed and likes the best'
-            case 'experiential':
-                return 'is willing to try new things and is adventurous'
-            default:
-                break;
-        }
-
+        return guidelines.consumerSegmentGuidelines[segment?.toLowerCase()] || []
     }
 
     const generateAPIPrompt = (description, product) => {
@@ -180,10 +165,10 @@ function App() {
             let prompt = 'You are a world class marketing copywriter. Write';
                 // main romance description
                 description && (prompt += ' a product description');
-                description && (prompt += ` for ${Product_Title}. It is a ${category} product. Follow the guidelines in this list: ${guidelines.descriptionGuidelines}`);
+                description && (prompt += ` for ${Product_Title}. It is a ${category} product. Follow the guidelines in this list: ${guidelines.descriptionGuidelines.map(gl => gl)}`);
+                description && (prompt += ` The target consumer is one that ${consumerSegmentInfo(consumer_segment)}. Do not use hashtags(#) or emojis. `);
                 // feature bullets
-                !description && (prompt += ` a bulleted list using just these words: ${product['Feature Bullets']}. End each bullet point with "/end"`);
-                prompt += ` The target consumer is one that ${consumerSegmentInfo(consumer_segment)}. Do not use hashtags(#) or emojis. `;
+                !description && (prompt += ` a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. End each bullet point with "/end"`);
             return prompt
         }
     }
