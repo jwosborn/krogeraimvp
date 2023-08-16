@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/krogeraimvp/static/css/main.fd836447.css",
-    "main.js": "/krogeraimvp/static/js/main.c4eade46.js",
+    "main.js": "/krogeraimvp/static/js/main.7236fe7a.js",
     "static/js/45.a1f2cf20.chunk.js": "/krogeraimvp/static/js/45.a1f2cf20.chunk.js",
     "static/js/802.1dbf9cfe.chunk.js": "/krogeraimvp/static/js/802.1dbf9cfe.chunk.js",
     "static/js/787.a01c75e3.chunk.js": "/krogeraimvp/static/js/787.a01c75e3.chunk.js",
@@ -13,13 +13,13 @@
     "static/media/color.png": "/krogeraimvp/static/media/color.6441e63a57ccc5105bad.png",
     "index.html": "/krogeraimvp/index.html",
     "main.fd836447.css.map": "/krogeraimvp/static/css/main.fd836447.css.map",
-    "main.c4eade46.js.map": "/krogeraimvp/static/js/main.c4eade46.js.map",
+    "main.7236fe7a.js.map": "/krogeraimvp/static/js/main.7236fe7a.js.map",
     "45.a1f2cf20.chunk.js.map": "/krogeraimvp/static/js/45.a1f2cf20.chunk.js.map",
     "802.1dbf9cfe.chunk.js.map": "/krogeraimvp/static/js/802.1dbf9cfe.chunk.js.map",
     "787.a01c75e3.chunk.js.map": "/krogeraimvp/static/js/787.a01c75e3.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.fd836447.css",
-    "static/js/main.c4eade46.js"
+    "static/js/main.7236fe7a.js"
   ]
 }
