@@ -12,8 +12,28 @@
     " Use active, rather than passive, verbs.",
     " Copy should be only about the product and not about the brand or manufacturer. Do not include any of the following brand/manufacturer information: E-mail address, Website URL, Mailing address or phone numbers, Company-specific information, Details about another product that is offered on Kroger’s banner websites",
     " Do not use promotional language such as 'sale' or 'free shipping'.",
-    " Use “and” instead of “&”"
+    " Use 'and' instead of '&'",
+    "  do not use the word 'reliable'.",
+    " Strictly, no hashtags(#) or emojis or emoticons."
   ],
+  "categoryGuidelines": {
+    "frozenPizza": [
+      " Include Pizza, Frozen, Crust, Toppings, and Sauce in ALL frozen pizza product details.",
+      " Does NOT have to include the same forma%ng in each one, as long as keywords (pizza, crust, toppings, frozen, sauce) are included in the product details.",
+      " Creatively give details unique to each product and give all details of ingredients in the product.",
+      " Most have a list of highlights either before or after product details that include size, topping ingredients, dietary restrictions, and type of crust.",
+      " Any frozen pizza that is Gluten Free, Vegetarian, Cauliflower Crust, or Dairy Free must include that fact in the description"
+    ],
+    "soda": [
+      " Include Pop, Soda, Beverage, Refreshment in ALL soda product details.",
+      " Does NOT have to include the same formatting in each one as long as keywords (pop, soda, beverage, refreshment) are included in the product details.",
+      " Creatively give details unique to each product and all details of ingredients in the product.",
+      " Most have a list of highlights either before or after product details that include fluid ounces, number of cans, or amount of liters.",
+      " Most details include the word “carbonated” or “caffeinated” somewhere in the description.",
+      " Some highlights include the number of calories in the item.",
+      " Any soda that is Zero Sugar, Caffiene Free, Zero Calorie, Diet, or Organic must include that fact in the description"
+    ]
+  },
   "consumerSegmentGuidelines": {
     "value": [
       " Looks for a deal.",
@@ -28,7 +48,7 @@
     "practical": [
       " Looks for products that simply work.",
       " Wants just what they need to get the job done and nothing more.",
-      " Wants reliable products that perform as promised.",
+      " Wants products that perform as promised.",
       " Wants good to great quality.",
       " Will not accept inferior products.",
       " Is rational and responsible.",

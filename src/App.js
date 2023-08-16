@@ -166,6 +166,7 @@ function App() {
                 // main romance description
                 description && (prompt += ' a product description');
                 description && (prompt += ` for ${Product_Title}. It is a ${category} product. Follow the guidelines in this list: ${guidelines.descriptionGuidelines.map(gl => gl)}`);
+                (description && guidelines.categoryGuidelines[category.toLowerCase()]) && (prompt += `Also use the guidelines in this list: ${guidelines.categoryGuidelines[category.toLowerCase()]}`)
                 description && (prompt += ` The target consumer is one that ${consumerSegmentInfo(consumer_segment)}. Do not use hashtags(#) or emojis. `);
                 // feature bullets
                 !description && (prompt += ` a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. End each bullet point with "/end"`);
