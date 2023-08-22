@@ -22,8 +22,9 @@ function App() {
     const [sheetChoices, setSheetChoices] = useState([]);
     const [wb, setWb] = useState({});
     const [sheet, setSheet] = useState('');
-    const [AIKey, setAIKey] = useState('')
-    const [AIOrg, setAIOrg] = useState('')
+    const [changingKey, setChangingKey] = useState(false);
+    const [AIKey, setAIKey] = useState('');
+    const [AIOrg, setAIOrg] = useState('');
     const dt = useRef(null);
 
     const handleCSVUpload = e => {
@@ -166,7 +167,7 @@ function App() {
                 // main romance description
                 description && (prompt += ' a product description');
                 description && (prompt += ` for ${Product_Title}. It is a ${category} product. Follow the guidelines in this list: ${guidelines.descriptionGuidelines.map(gl => gl)}`);
-                (description && guidelines.categoryGuidelines[category.toLowerCase()]) && (prompt += `Also use the guidelines in this list: ${guidelines.categoryGuidelines[category.toLowerCase()]}`)
+                (description && guidelines.categoryGuidelines[category?.toLowerCase()]) && (prompt += `Also use the guidelines in this list: ${guidelines.categoryGuidelines[category.toLowerCase()]}`)
                 description && (prompt += ` The target consumer is one that ${consumerSegmentInfo(consumer_segment)}. Do not use hashtags(#) or emojis. `);
                 // feature bullets
                 !description && (prompt += ` a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. End each bullet point with "/end"`);
@@ -262,84 +263,90 @@ function App() {
     }
 
     return (
-        <div className="container min-w-screen surface-ground">
-        <div className="container w-11 min-h-screen mx-auto ">
-            <div className="header flex flex-row justify-content-between w-full">
-                <p className="text-5xl text-primary font-main">Product Description Generator</p>
-                <img src={logo} alt="Kroger Logo" />
-            </div>
-            <Dialog className="h-15rem w-15rem" visible={!AIKey || !AIOrg} onHide={() => alert('Key and Org must be entered to proceed!')}>
-                <span className="p-float-label mt-4 mb-5">
-                    <InputText id="in" value={AIKey} onChange={(e) => setAIKey(e.target.value)} />
-                    <label htmlFor="in">AIKey</label>
-                </span>
-                <span className="p-float-label mt-4">
-                    <InputText id="in" value={AIOrg} onChange={(e) => setAIOrg(e.target.value)} />
-                    <label htmlFor="in">AIOrg</label>
-                </span>
-            </Dialog>
-            <Dialog className="h-12rem w-15rem" visible={choosingSheet} onHide={() => setChoosingSheet(false)}>
-                <h5>Select Sheet:</h5>
-                <Dropdown className="w-10rem" value={sheet} options={sheetChoices} onChange={handleDropdownSelect} />
-            </Dialog>
-            <div className="flex flex-row justify-content-start">
-                {!products.length &&
-                    <FileUpload
-                        accept=".xlsx, .csv"
-                        auto
-                        className="mt-3"
-                        customUpload
-                        chooseLabel="Browse Files"
-                        mode="basic"
-                        uploadLabel="Upload Excel File"
-                        uploadHandler={handleImport}
-                    />
-                }
-                {products.length > 0 &&
-                    <>
-                        <Button
-                            className="p-button-primary generate-button mt-3 ml-3"
-                            icon="pi pi-check"
-                            label="Generate Descriptions"
-                            onClick={generateDesciptions}
+        <div className="container min-w-screen surface-ground p-7">
+            <div className="container w-11 min-h-screen mx-auto ">
+                <div className="header flex flex-row justify-content-between w-full">
+                    <p className="text-5xl text-primary font-main">Product Description Generator</p>
+                    <img src={logo} alt="Kroger Logo" />
+                </div>
+                <Dialog className="h-15rem w-15rem" visible={(!AIKey || !AIOrg) || changingKey} onHide={() => alert('Key and Org must be entered to proceed!')}>
+                    <span className="p-float-label mt-4 mb-5">
+                        <InputText id="in" value={AIKey} onChange={(e) => setAIKey(e.target.value)} />
+                        <label htmlFor="in">AIKey</label>
+                    </span>
+                    <span className="p-float-label mt-4">
+                        <InputText id="in" value={AIOrg} onChange={(e) => setAIOrg(e.target.value)} />
+                        <label htmlFor="in">AIOrg</label>
+                    </span>
+                    <Button className="p-button-success mt-3" label="Set Credentials" onClick={() => setChangingKey(false)} />
+                </Dialog>
+                <Dialog className="h-12rem w-15rem" visible={choosingSheet} onHide={() => setChoosingSheet(false)}>
+                    <h5>Select Sheet:</h5>
+                    <Dropdown className="w-10rem" value={sheet} options={sheetChoices} onChange={handleDropdownSelect} />
+                </Dialog>
+                <div className="flex flex-row justify-content-start">
+                    {!products.length &&
+                        <FileUpload
+                            accept=".xlsx, .csv"
+                            auto
+                            className="mt-3"
+                            customUpload
+                            chooseLabel="Browse Files"
+                            mode="basic"
+                            uploadLabel="Upload Excel File"
+                            uploadHandler={handleImport}
                         />
+                    }
+                    {products.length > 0 &&
+                        <>
+                            <Button
+                                className="p-button-primary generate-button mt-3 ml-3"
+                                icon="pi pi-check"
+                                label="Generate Descriptions"
+                                onClick={generateDesciptions}
+                            />
+                            <Button
+                                className="p-button-danger ml-3 mt-3"
+                                icon="pi pi-ban"
+                                label="Clear Data"
+                                onClick={() => setProducts([])}
+                            />
+                        </>
+                    }
+                    {generated &&
                         <Button
                             className="p-button-danger ml-3 mt-3"
                             icon="pi pi-ban"
-                            label="Clear Data"
-                            onClick={() => setProducts([])}
+                            label="Clear Descriptions/Bullets"
+                            onClick={handleClear}
                         />
-                    </>
-                }
-                {generated &&
+                    }
+                    {(products.length > 0 && generated) &&
+                        <>
+                            <Button
+                                className="p-button-warning ml-3 mt-3"
+                                data-pr-tooltip="Excel"
+                                icon="pi pi-file-excel"
+                                label="Export XLSX"
+                                onClick={exportExcel}
+                            />
+                            <Button
+                                type="button"
+                                icon="pi pi-file"
+                                label="Export CSV"
+                                onClick={() => exportCSV(false)}
+                                className="p-button-warning ml-3 mt-3"
+                                data-pr-tooltip="CSV"
+                            />
+                        </>
+                    }
                     <Button
-                        className="p-button-danger ml-3 mt-3"
-                        icon="pi pi-ban"
-                        label="Clear Descriptions/Bullets"
-                        onClick={handleClear}
+                        className="p-button-warning mt-3 ml-3"
+                        icon="pi pi-key"
+                        label="Update Credentials"
+                        onClick={() => setChangingKey(true)}
                     />
-                }
-                {(products.length > 0 && generated) &&
-                    <>
-                        <Button
-                            className="p-button-warning ml-3 mt-3"
-                            data-pr-tooltip="Excel"
-                            icon="pi pi-file-excel"
-                            label="Export XLSX"
-                            onClick={exportExcel}
-                        />
-                        <Button
-                            type="button"
-                            icon="pi pi-file"
-                            label="Export CSV"
-                            onClick={() => exportCSV(false)}
-                            className="p-button-warning ml-3 mt-3"
-                            data-pr-tooltip="CSV"
-                        />
-                    </>
-                }
-            </div>
-            <div className="max-w-screen max-h-screen">
+                </div>
                 <DataTable
                     ref={dt}
                     className="pb-6 pt-3 mt-3 max-w-full max-h-full"
@@ -354,17 +361,16 @@ function App() {
                 >
                     { columns() }
                 </DataTable>
-            </div>
-            <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false}>
-                <ProgressSpinner className="min-w-100" />
-            </Dialog>
-            <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
-                <div className="container">
-                    <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
-                </div>
-            </Dialog>
+                <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false}>
+                    <ProgressSpinner className="min-w-100" />
+                </Dialog>
+                <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
+                    <div className="container">
+                        <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
+                    </div>
+                </Dialog>
                 <p>Version: 0.2</p>
-        </div>
+            </div>
         </div>
     );
 }
