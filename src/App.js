@@ -69,6 +69,7 @@ function App() {
                 const hasMultipleSheets = wb.SheetNames.length > 1;
                 if (hasMultipleSheets) {
                     setChoosingSheet(true);
+                    setSheet('')
                     setSheetChoices(wb.SheetNames);
                 } else {
                     setSheetInState(xlsx, wb.Sheets[wb.SheetNames[0]])
@@ -103,7 +104,7 @@ function App() {
                         newProducts[response?.index] = {
                             ...newProducts[response?.index],
                             description: response?.description,
-                            bullets: formatBullets(response?.bullets)
+                            bullets: response?.bullets
                         }
                     )
                 });
@@ -113,44 +114,29 @@ function App() {
     }
 
     const handleAIRequest = async (product, index) => {
-        return axios.post('https://api.openai.com/v1/completions', {
-            model: 'text-davinci-003',
-            prompt: generateAPIPrompt(true, product),
-            max_tokens: 1000
-        }, {
-                headers: {
-                    'Authorization': `Bearer ${AIKey}`,
-                    'OpenAI-Organization': AIOrg
-                }
-        }
-            ).then(async descriptionRes => {
-                return axios.post('https://api.openai.com/v1/completions', {
-                    model: 'text-davinci-003',
-                    prompt: generateAPIPrompt(false, product),
-                    max_tokens: 1000
-                }, {
+        return axios.post('https://api.openai.com/v1/chat/completions', {
+                model: 'gpt-4',
+                messages: [{
+                    role: 'user',
+                    content: generateAPIPrompt(product)
+                }],
+            },
+            {
                     headers: {
                         'Authorization': `Bearer ${AIKey}`,
-                        'OpenAI-Organization': AIOrg
+                        'OpenAI-Organization': AIOrg,
                     }
-                }
-                ).then(bulletRes => {
-                    return {
-                        index,
-                        bullets: bulletRes.data.choices[0].text,
-                        description: descriptionRes.data.choices[0].text
-                    }
-                }).catch(() => displayAPIError());
-            }).catch(() => displayAPIError());
+        }).then(res => ({
+                index,
+                description: res.data.choices[0].message.content.split('/start')[0],
+                bullets: res.data.choices[0].message.content.split('/start').slice(1)
+        })).catch(e => { setError(true); console.log(e.response.data)})
     }
 
     const displayAPIError = () => {
       setLoading(false);
       setError(true);
-
     }
-
-    const formatBullets = res => res.split('/end')
 
     const handleClear = () => {
         setGenerated(false);
@@ -160,20 +146,15 @@ function App() {
         return guidelines.consumerSegmentGuidelines[segment?.toLowerCase()] || []
     }
 
-    const generateAPIPrompt = (description, product) => {
+    const generateAPIPrompt = product => {
         if (product) {
-            const { consumer_segment, category, Product_Title } = product;
-            let prompt = 'You are a world class marketing copywriter. Write';
-                // main romance description
-                description && (prompt += ' a product description');
-                description && (prompt += ` for ${Product_Title}. It is a ${category} product. Follow the guidelines in this list: ${guidelines.descriptionGuidelines.map(gl => gl)}`);
-                (description && guidelines.categoryGuidelines[category?.toLowerCase()]) && (prompt += `Also use the guidelines in this list: ${guidelines.categoryGuidelines[category.toLowerCase()]}`)
-                description && (prompt += ` The target consumer is one that ${consumerSegmentInfo(consumer_segment)}. Do not use hashtags(#) or emojis. `);
-                // feature bullets
-                !description && (prompt += ` a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. End each bullet point with "/end"`);
+            const { brand, consumer_segment, category, isFood, Product_Title } = product;
+            let prompt = `You are a world class marketing copywriter. Write a product description for a ${category} product. The product is ${Product_Title}. The target consumer is ${consumer_segment}. ${['value', 'practical', 'performance'].includes(consumer_segment) && 'Do not embellish.'} Use 5 sentences: 1 introduction sentence containing only what the product is, 3 body sentences, and the final sentence should be exactly: ${guidelines.brandGuidelines[brand?.toLowerCase()][isFood ? 'finalSentenceFood': 'finalSentenceNonFood']}`;
+            prompt += product['Feature Bullets'] ? (`Also create a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. Start each bullet with /start and a •.`) : '';
             return prompt
         }
     }
+                // guidelines.categoryGuidelines[category?.toLowerCase()] && (prompt += `Also use the guidelines in this list: ${guidelines.categoryGuidelines[category.toLowerCase()]}`)
 
     const generateTableData = (arrays) => {
         const headerRow = arrays[0];
@@ -209,6 +190,7 @@ function App() {
             !lower.startsWith('feature_') &&
             !lower.startsWith('consumer') &&
             !lower.startsWith('ecommerce') &&
+            !lower.startsWith('sell') &&
             !lower.startsWith('keywords')
         ) &&
             <Column
