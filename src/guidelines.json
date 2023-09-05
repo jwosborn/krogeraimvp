@@ -16,6 +16,50 @@
     "  do not use the word 'reliable'.",
     " Strictly, no hashtags(#) or emojis or emoticons."
   ],
+  "brandGuidelines": {
+    "kroger": {
+      "is": ["trustworthy", "welcoming", "dependable", "affordable", "quality"],
+      "isNot": ["worldly", "serious", "formal", "generic", "cheap"],
+      "avoid": ["cheap", "generic", "basic"],
+      "finalSentenceFood": "Kroger products are tried, tested and loved by you - guaranteed fresh.",
+      "finalSentenceNonFood": "Kroger products are tried, tested and loved by you - quality guaranteed."
+    },
+    "simpletruth": {
+      "is": ["authentic", "transparent", "accessible", "simple"],
+      "isNot": ["healthy", "clean", "unreliable", "complicated"],
+      "avoid": ["simple", "healthy", "clean"],
+      "finalSentenceFood": "Simple Truth products are Free From Unwanted Ingredients 101+ ingredients that you don't want, guaranteed to leave nothing but the delicious flavor you do want!",
+      "finalSentenceNonFood": "Simple Truth products are Free From Unwanted Ingredients 101+ ingredients that you don't want, guaranteed to leave nothing but the ingredients you do want!"
+    },
+    "privateselection": {
+      "is": ["adventerous", "cultured", "indulgent", "sociable", "genuine"],
+      "isNot": ["pretentious", "boring", "stiff", "old-fashioned"],
+      "finalSentenceFood": "Private Selection products are anything but ordinary. Extraordinary guaranteed."
+    },
+    "smartway": {
+      "is": [
+        "practical",
+        "everyday",
+        "simple",
+        "trustworthy",
+        "budget-friendly"
+      ],
+      "isNot": ["extravagant", "showy", "boring", "unreliable", "indulgent"],
+      "finalSentenceFood": "Trust Smart Way products to get the job done in the kitchen on a budget - saving in the right direction.",
+      "finalSentenceNonFood": "Trust Smart Way products to get the job done around the house on a budget - saving in the right direction."
+    },
+    "heritagefarm": {
+      "is": [
+        "practical",
+        "everyday",
+        "simple",
+        "trustworthy",
+        "budget-friendly"
+      ],
+      "isNot": ["extravagant", "showy", "boring", "unreliable", "indulgent"],
+      "finalSentenceFood": "Trust Heritage Farm products to get the job done in the kitchen on a budget - fresh value grows here"
+    }
+  },
   "categoryGuidelines": {
     "frozenPizza": [
       " Include Pizza, Frozen, Crust, Toppings, and Sauce in ALL frozen pizza product details.",
