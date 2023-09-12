@@ -61,22 +61,24 @@
     }
   },
   "categoryGuidelines": {
-    "frozenPizza": [
-      " Include Pizza, Frozen, Crust, Toppings, and Sauce in ALL frozen pizza product details.",
-      " Does NOT have to include the same forma%ng in each one, as long as keywords (pizza, crust, toppings, frozen, sauce) are included in the product details.",
-      " Creatively give details unique to each product and give all details of ingredients in the product.",
-      " Most have a list of highlights either before or after product details that include size, topping ingredients, dietary restrictions, and type of crust.",
-      " Any frozen pizza that is Gluten Free, Vegetarian, Cauliflower Crust, or Dairy Free must include that fact in the description"
-    ],
-    "soda": [
-      " Include Pop, Soda, Beverage, Refreshment in ALL soda product details.",
-      " Does NOT have to include the same formatting in each one as long as keywords (pop, soda, beverage, refreshment) are included in the product details.",
-      " Creatively give details unique to each product and all details of ingredients in the product.",
-      " Most have a list of highlights either before or after product details that include fluid ounces, number of cans, or amount of liters.",
-      " Most details include the word “carbonated” or “caffeinated” somewhere in the description.",
-      " Some highlights include the number of calories in the item.",
-      " Any soda that is Zero Sugar, Caffiene Free, Zero Calorie, Diet, or Organic must include that fact in the description"
-    ]
+    "frozenPizza": {
+      "SEOTerms": ["Pizza", "Frozen", "Crust", "Toppings", "Sauce"]
+    },
+    "cookie": {
+      "SEOTerms": ["cookie", "dessert", "treat", "snack"]
+    },
+    "soda": {
+      "SEOTerms": ["soda", "pop", "soft drink", "beverage"]
+    },
+    "chips": {
+      "SEOTerms": ["chips", "snack"]
+    },
+    "pet": {
+      "SEOTerms": ["pet"]
+    },
+    "cheese": {
+      "SEOTerms": ["cheese"]
+    }
   },
   "consumerSegmentGuidelines": {
     "value": [
