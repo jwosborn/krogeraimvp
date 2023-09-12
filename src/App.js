@@ -41,8 +41,6 @@ function App() {
         reader.readAsBinaryString(e.files[0]);
     }
 
-
-
     const setSheetInState = (xlsx, ws) => {
         const data = xlsx.utils.sheet_to_json(ws, { header: 1 });
 
@@ -149,12 +147,26 @@ function App() {
     const generateAPIPrompt = product => {
         if (product) {
             const { brand, consumer_segment, category, isFood, Product_Title } = product;
-            let prompt = `You are a world class marketing copywriter. Write a product description for a ${category} product. The product is ${Product_Title}. The target consumer is ${consumer_segment}. ${['value', 'practical', 'performance'].includes(consumer_segment) && 'Do not embellish.'} Use 5 sentences: 1 introduction sentence containing only what the product is, 3 body sentences, and the final sentence should be exactly: ${guidelines.brandGuidelines[brand?.toLowerCase()][isFood ? 'finalSentenceFood': 'finalSentenceNonFood']}`;
+            let prompt = `You are a world class marketing copywriter. Write a product description for a ${
+                category
+            } product. The product is ${
+                Product_Title
+            }. The target consumer is ${
+                consumer_segment
+            }. ${
+                ['value', 'practical', 'performance'].includes(consumer_segment) && 'Do not embellish.'
+            } ${guidelines.categoryGuidelines[category.toLowerCase()] ?
+                `Include the words: ${
+                    guidelines.categoryGuidelines[category.toLowerCase()].SEOTerms.map(term => term)
+                }` :
+                ''
+            }. Use 5 sentences: 1 introduction sentence containing only what the product is, 3 body sentences, and the final sentence should be exactly: ${
+                guidelines.brandGuidelines[brand?.toLowerCase()][isFood ? 'finalSentenceFood': 'finalSentenceNonFood']
+            }`;
             prompt += product['Feature Bullets'] ? (`Also create a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. Start each bullet with /start and a •.`) : '';
             return prompt
         }
     }
-                // guidelines.categoryGuidelines[category?.toLowerCase()] && (prompt += `Also use the guidelines in this list: ${guidelines.categoryGuidelines[category.toLowerCase()]}`)
 
     const generateTableData = (arrays) => {
         const headerRow = arrays[0];
@@ -185,6 +197,7 @@ function App() {
 
     const columns = () => Object.keys(products[0] || {}).map(col => {
         const lower = col.toLowerCase()
+        console.log(generateAPIPrompt(products[0]))
         // remove image and columns with empty headers
         return (
             !lower.startsWith('feature_') &&
