@@ -197,7 +197,6 @@ function App() {
 
     const columns = () => Object.keys(products[0] || {}).map(col => {
         const lower = col.toLowerCase()
-        console.log(generateAPIPrompt(products[0]))
         // remove image and columns with empty headers
         return (
             !lower.startsWith('feature_') &&

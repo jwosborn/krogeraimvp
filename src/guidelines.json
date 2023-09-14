@@ -48,6 +48,38 @@
       "finalSentenceFood": "Trust Smart Way products to get the job done in the kitchen on a budget - saving in the right direction.",
       "finalSentenceNonFood": "Trust Smart Way products to get the job done around the house on a budget - saving in the right direction."
     },
+    "moovelous": {
+      "is": [
+        "practical",
+        "everyday",
+        "simple",
+        "trustworthy",
+        "budget-friendly"
+      ],
+      "isNot": ["extravagant", "showy", "boring", "unreliable", "indulgent"],
+      "finalSentenceFood": "",
+      "finalSentenceNonFood": ""
+    },
+    "luvsome": {
+      "is": ["authentic", "transparent", "accessible", "simple"],
+      "isNot": ["healthy", "clean", "unreliable", "complicated"],
+      "avoid": ["simple", "healthy", "clean"],
+      "finalSentenceFood": "",
+      "finalSentenceNonFood": ""
+    },
+    "abound": {
+      "is": ["adventerous", "cultured", "indulgent", "sociable", "genuine"],
+      "isNot": ["pretentious", "boring", "stiff", "old-fashioned"],
+      "finalSentenceFood": "",
+      "finalSentenceNonFood": ""
+    },
+    "petpride": {
+      "is": ["trustworthy", "welcoming", "dependable", "affordable", "quality"],
+      "isNot": ["worldly", "serious", "formal", "generic", "cheap"],
+      "avoid": ["cheap", "generic", "basic"],
+      "finalSentenceFood": "",
+      "finalSentenceNonFood": ""
+    },
     "heritagefarm": {
       "is": [
         "practical",
