@@ -225,7 +225,7 @@ function App() {
             let formattedProductsForXL = [...products];
             formattedProductsForXL = formattedProductsForXL.map(prod => ({
                 ...prod,
-                bullets: prod.bullets.join(', ')
+                bullets: prod.bullets?.join(', ') || ''
             }));
             const worksheet = xlsx.utils.json_to_sheet(formattedProductsForXL);
             const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
