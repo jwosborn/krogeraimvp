@@ -106,7 +106,6 @@ function App() {
                         }
                     )
                 });
-                console.log(res)
                 setProducts(newProducts);
                 setGenerated(true);
             }).catch(e => console.log({failed: e}));
@@ -294,7 +293,6 @@ function App() {
                     }
                     {products.length > 0 &&
                         <>
-                            {console.log(generateAPIPrompt(products[0]))}
                             <Button
                                 className="p-button-primary generate-button mt-3 ml-3"
                                 icon="pi pi-check"
