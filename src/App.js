@@ -93,27 +93,28 @@ function App() {
 
     const generateDesciptions = async () => {
         setLoading(true);
-        return Promise.all(products.map((product, index) => handleAIRequest(product, index)))
+        return Promise.allSettled(products.map((product, index) => handleAIRequest(product, index)))
             .then(async res => {
                 setLoading(false);
                 const newProducts = [...products];
                 await res?.forEach(response => {
                     response && (
-                        newProducts[response?.index] = {
-                            ...newProducts[response?.index],
-                            description: response?.description,
-                            bullets: response?.bullets
+                        newProducts[response?.value?.index] = {
+                            ...newProducts[response?.value?.index],
+                            description: response?.value?.description,
+                            bullets: response?.value?.bullets
                         }
                     )
                 });
+                console.log(res)
                 setProducts(newProducts);
                 setGenerated(true);
-            });
+            }).catch(e => console.log({failed: e}));
     }
 
     const handleAIRequest = async (product, index) => {
         return axios.post('https://api.openai.com/v1/chat/completions', {
-                model: 'gpt-3.5-turbo',
+                model: 'gpt-4',
                 messages: [{
                     role: 'user',
                     content: generateAPIPrompt(product)
