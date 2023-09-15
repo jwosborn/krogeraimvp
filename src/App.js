@@ -364,7 +364,7 @@ function App() {
                         <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
                     </div>
                 </Dialog>
-                <p>Version: 0.2</p>
+                <p>Version: 0.3</p>
             </div>
         </div>
     );
