@@ -113,7 +113,7 @@ function App() {
 
     const handleAIRequest = async (product, index) => {
         return axios.post('https://api.openai.com/v1/chat/completions', {
-                model: 'gpt-4',
+                model: 'gpt-3.5-turbo',
                 messages: [{
                     role: 'user',
                     content: generateAPIPrompt(product)
@@ -293,6 +293,7 @@ function App() {
                     }
                     {products.length > 0 &&
                         <>
+                            {console.log(generateAPIPrompt(products[0]))}
                             <Button
                                 className="p-button-primary generate-button mt-3 ml-3"
                                 icon="pi pi-check"
