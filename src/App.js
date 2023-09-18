@@ -154,13 +154,13 @@ function App() {
             }. The target consumer is ${
                 consumer_segment
             }. ${
-                ['value', 'practical', 'performance'].includes(consumer_segment) && 'Do not embellish.'
+                ['value', 'practical', 'performance'].includes(consumer_segment)  ? 'Do not embellish.' : ''
             } ${guidelines.categoryGuidelines[category.toLowerCase()] ?
                 `Include the words: ${
                     guidelines.categoryGuidelines[category.toLowerCase()].SEOTerms.map(term => term)
                 }` :
                 ''
-            }. Limit the description to 350 characters. Use 5 sentences: 3 body sentences, and the final sentence should be exactly: ${
+            }. Limit the description to 350 characters. Use 5 sentences: include the product title in the first sentence, and don't use the word 'introducing'. The final sentence should be exactly: ${
                 guidelines.brandGuidelines[brand?.toLowerCase()][isFood ? 'finalSentenceFood': 'finalSentenceNonFood'] || ''}
             }`;
             prompt += product['Feature Bullets'] ? (`Also create a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. Start each bullet with /start and a •.`) : '';
@@ -363,7 +363,7 @@ function App() {
                         <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
                     </div>
                 </Dialog>
-                <p>Version: 0.3</p>
+                <p>Version: 0.4</p>
             </div>
         </div>
     );
