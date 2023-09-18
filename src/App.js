@@ -160,8 +160,8 @@ function App() {
                     guidelines.categoryGuidelines[category.toLowerCase()].SEOTerms.map(term => term)
                 }` :
                 ''
-            }. Use 5 sentences: 1 introduction sentence containing only what the product is, 3 body sentences, and the final sentence should be exactly: ${
-                guidelines.brandGuidelines[brand?.toLowerCase()][isFood ? 'finalSentenceFood': 'finalSentenceNonFood']
+            }. Limit the description to 350 characters. Use 5 sentences: 3 body sentences, and the final sentence should be exactly: ${
+                guidelines.brandGuidelines[brand?.toLowerCase()][isFood ? 'finalSentenceFood': 'finalSentenceNonFood'] || ''}
             }`;
             prompt += product['Feature Bullets'] ? (`Also create a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. Start each bullet with /start and a •.`) : '';
             return prompt
