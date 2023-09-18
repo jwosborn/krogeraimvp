@@ -21,7 +21,7 @@
       "is": ["trustworthy", "welcoming", "dependable", "affordable", "quality"],
       "isNot": ["worldly", "serious", "formal", "generic", "cheap"],
       "avoid": ["cheap", "generic", "basic"],
-      "finalSentenceFood": "Kroger products are tried, tested and loved by you - guaranteed fresh.",
+      "finalSentenceFood": "Kroger products are tried, tested and loved by you - quality guaranteed.",
       "finalSentenceNonFood": "Kroger products are tried, tested and loved by you - quality guaranteed."
     },
     "simpletruth": {
