@@ -28,8 +28,8 @@
       "is": ["authentic", "transparent", "accessible", "simple"],
       "isNot": ["healthy", "clean", "unreliable", "complicated"],
       "avoid": ["simple", "healthy", "clean"],
-      "finalSentenceFood": "Simple Truth products are Free From Unwanted Ingredients 101+ ingredients that you don't want, guaranteed to leave nothing but the delicious flavor you do want!",
-      "finalSentenceNonFood": "Simple Truth products are Free From Unwanted Ingredients 101+ ingredients that you don't want, guaranteed to leave nothing but the ingredients you do want!"
+      "finalSentenceFood": "Simple Truth products are free from 101+ ingredients you don’t want and filled with the goodness you do want. Guaranteed.",
+      "finalSentenceNonFood": "Simple Truth products are free from 101+ ingredients you don’t want and filled with the goodness you do want. Guaranteed.!"
     },
     "privateselection": {
       "is": ["adventerous", "cultured", "indulgent", "sociable", "genuine"],
