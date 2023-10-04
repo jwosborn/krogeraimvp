@@ -159,12 +159,11 @@ function App() {
                 consumer_segment
             }. ${
                 ['value', 'practical', 'performance'].includes(consumer_segment)  ? 'Do not embellish.' : ''
-            } ${guidelines.categoryGuidelines[category.toLowerCase()] ?
-                `Include the words: ${
-                    guidelines.categoryGuidelines[category.toLowerCase()].SEOTerms.map(term => term)
-                }` :
-                ''
-            }. Use 4 sentences: include the product title in the first sentence, and don't use the word 'introducing'.`;
+            } ${
+                product.categoryNorms ? product.categoryNorms?.split(',').map(column =>
+                    `Use one sentence to emphasize the ${column}: ${product[column.replaceAll(/\s/g, '').toLowerCase()]}`)
+                : ''
+            } Use 4 sentences: include the product title in the first sentence, and don't use the word 'introducing'.`;
             prompt += product['Feature Bullets'] ? (`Also create a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. Start each bullet with /start and a •.`) : '';
             return prompt
         }
@@ -199,14 +198,7 @@ function App() {
 
     const columns = () => Object.keys(products[0] || {}).map(col => {
         const lower = col.toLowerCase()
-        // remove image and columns with empty headers
         return (
-            !lower.startsWith('feature_') &&
-            !lower.startsWith('consumer') &&
-            !lower.startsWith('ecommerce') &&
-            !lower.startsWith('sell') &&
-            !lower.startsWith('keywords')
-        ) &&
             <Column
                 key={col}
                 field={col}
@@ -214,7 +206,7 @@ function App() {
                 headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
                 style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
                 body={col === 'bullets' && bulletCell}
-            />
+            />)
     });
 
     const exportCSV = (selectionOnly) => {
@@ -355,6 +347,7 @@ function App() {
                     stripedRows
                     value={products}
                 >
+                    {console.log(generateAPIPrompt(products[0]))}
                     { columns() }
                 </DataTable>
                 <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false}>
@@ -365,7 +358,7 @@ function App() {
                         <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
                     </div>
                 </Dialog>
-                <p>Version: 0.4.1</p>
+                <p>Version: 0.5</p>
             </div>
         </div>
     );
