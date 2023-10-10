@@ -28,8 +28,8 @@
       "is": ["authentic", "transparent", "accessible", "simple"],
       "isNot": ["healthy", "clean", "unreliable", "complicated"],
       "avoid": ["simple", "healthy", "clean"],
-      "finalSentenceFood": "Simple Truth is Free From Unwanted Ingredients makint it an easy choice to get what exactly you want",
-      "finalSentenceNonFood": "Simple Truth is Free From Unwanted Ingredients makint it an easy choice to get what exactly you want"
+      "finalSentenceFood": "Simple Truth is Free From Unwanted Ingredients making it an easy choice to get what exactly you want",
+      "finalSentenceNonFood": "Simple Truth is Free From Unwanted Ingredients making it an easy choice to get what exactly you want"
     },
     "privateselection": {
       "is": ["adventerous", "cultured", "indulgent", "sociable", "genuine"],
