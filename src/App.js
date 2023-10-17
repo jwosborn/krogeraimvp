@@ -10,7 +10,7 @@ import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 import { CSVToArray } from './format';
-import guidelines from './guidelines.json';
+// import guidelines from './guidelines.json';
 
 const logo = require('./assets/kroger-logo.png');
 function App() {
@@ -18,6 +18,7 @@ function App() {
     const [products, setProducts] = useState([]);
     const [generated, setGenerated] = useState(false);
     const [error, setError] = useState(false);
+    const [errorText, setErrorText] = useState('');
     const [choosingSheet, setChoosingSheet] = useState(false);
     const [sheetChoices, setSheetChoices] = useState([]);
     const [wb, setWb] = useState({});
@@ -111,62 +112,39 @@ function App() {
             }).catch(e => console.log({failed: e}));
     }
 
+    const OpenAIResponse = prompt => axios.post('https://api.openai.com/v1/chat/completions', {
+            model: 'gpt-4',
+            messages: [{
+                role: 'user',
+                content: prompt
+            }],
+        },
+        {
+                headers: {
+                    'Authorization': `Bearer ${AIKey}`,
+                    'OpenAI-Organization': AIOrg,
+                }
+    });
+
     const handleAIRequest = async (product, index) => {
-        const { brand, isFood } = product;
-        return axios.post('https://api.openai.com/v1/chat/completions', {
-                model: 'gpt-4',
-                messages: [{
-                    role: 'user',
-                    content: generateAPIPrompt(product)
-                }],
-            },
-            {
-                    headers: {
-                        'Authorization': `Bearer ${AIKey}`,
-                        'OpenAI-Organization': AIOrg,
-                    }
-        }).then(res => ({
+        const { DescPrompt, BulletPrompt } = product;
+        return OpenAIResponse(DescPrompt).then(descRes => {
+            return OpenAIResponse(BulletPrompt).then(bulletRes => ({
                 index,
-                description: `${res.data.choices[0].message.content.split('/start')[0]} ${
-                    guidelines.brandGuidelines[brand?.split(' ').join('').toLowerCase()][isFood ? 'finalSentenceFood': 'finalSentenceNonFood']
-                    || ''
-                }`,
-                bullets: res.data.choices[0].message.content.split('/start').slice(1)
-        })).catch(e => { setError(true); console.log(e.response.data)})
+                description: descRes.data.choices[0].message.content,
+                bullets: bulletRes.data.choices[0].message.content
+            }))
+        }).catch(e => { displayAPIError(e)})
     }
 
-    const displayAPIError = () => {
-      setLoading(false);
-      setError(true);
+    const displayAPIError = (e) => {
+        setLoading(false);
+        setError(true);
+        setErrorText(e.response.data)
     }
 
     const handleClear = () => {
         setGenerated(false);
-    }
-
-    const consumerSegmentInfo = (segment) => {
-        return guidelines.consumerSegmentGuidelines[segment?.toLowerCase()] || []
-    }
-
-    const generateAPIPrompt = product => {
-        if (product) {
-            const { brand, consumer_segment, category, isFood, Product_Title } = product;
-            let prompt = `You are a world class marketing copywriter. Write a product description for a ${
-                category
-            } product. The product is ${
-                Product_Title
-            }. The target consumer is ${
-                consumer_segment
-            }. ${
-                ['value', 'practical', 'performance'].includes(consumer_segment)  ? 'Do not embellish.' : ''
-            } ${
-                product.categoryNorms ? product.categoryNorms?.split(',').map(column =>
-                    `Use one sentence to emphasize the ${column}: ${product[column.replaceAll(/\s/g, '').toLowerCase()]}`)
-                : ''
-            } Use 4 sentences: include the product title in the first sentence, and don't use the word 'introducing'.`;
-            prompt += product['Feature Bullets'] ? (`Also create a bulleted list using exactly these words: ${product['Feature Bullets'] || 'NONE'}. Start each bullet with /start and a •.`) : '';
-            return prompt
-        }
     }
 
     const generateTableData = (arrays) => {
@@ -186,27 +164,31 @@ function App() {
         })
     }
 
-    const bulletCell = data => typeof data.bullets === 'string' ?
-        data.bullets :
-     (
-        <div className="flex flex-column">
-            {data.bullets?.map(bp => (
-                <p key={bp}>{bp}</p>
-            ))}
-        </div>
-    )
+    // const bulletCell = data => typeof data.bullets === 'string' ?
+    //     data.bullets :
+    //  (
+    //     <div className="flex flex-column">
+    //         {data.bullets?.map(bp => (
+    //             <p key={bp}>{bp}</p>
+    //         ))}
+    //     </div>
+    // )
 
     const columns = () => Object.keys(products[0] || {}).map(col => {
         const lower = col.toLowerCase()
-        return (
-            <Column
-                key={col}
-                field={col}
-                header={col}
-                headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
-                style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
-                body={col === 'bullets' && bulletCell}
-            />)
+        if (['descprompt', 'upc', 'bulletprompt', 'product_title', 'description', 'bullets'].includes(lower)) {
+            return (
+                <Column
+                    key={col}
+                    field={col}
+                    header={col}
+                    headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
+                    style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
+                    // body={col === 'bullets' && bulletCell}
+                />
+            )
+        }
+        return null
     });
 
     const exportCSV = (selectionOnly) => {
@@ -347,7 +329,6 @@ function App() {
                     stripedRows
                     value={products}
                 >
-                    {console.log(generateAPIPrompt(products[0]))}
                     { columns() }
                 </DataTable>
                 <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false}>
@@ -356,6 +337,7 @@ function App() {
                 <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
                     <div className="container">
                         <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
+                        <p className="text-primary text-4xl">{errorText}</p>
                     </div>
                 </Dialog>
                 <p>Version: 0.5</p>
