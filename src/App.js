@@ -18,7 +18,7 @@ function App() {
     const [products, setProducts] = useState([]);
     const [generated, setGenerated] = useState(false);
     const [error, setError] = useState(false);
-    const [errorText, setErrorText] = useState('');
+    // const [errorText, setErrorText] = useState('');
     const [choosingSheet, setChoosingSheet] = useState(false);
     const [sheetChoices, setSheetChoices] = useState([]);
     const [wb, setWb] = useState({});
@@ -94,22 +94,27 @@ function App() {
 
     const generateDesciptions = async () => {
         setLoading(true);
-        return Promise.allSettled(products.map((product, index) => handleAIRequest(product, index)))
-            .then(async res => {
-                setLoading(false);
-                const newProducts = [...products];
-                await res?.forEach(response => {
-                    response && (
-                        newProducts[response?.value?.index] = {
-                            ...newProducts[response?.value?.index],
-                            description: response?.value?.description,
-                            bullets: response?.value?.bullets
-                        }
-                    )
-                });
-                setProducts(newProducts);
-                setGenerated(true);
-            }).catch(e => console.log({failed: e}));
+        return Promise.allSettled(products.map((product, index) => {
+            if (product.DescPrompt && product.BulletPrompt) {
+                return handleAIRequest(product, index)
+            }
+            return null
+        }))
+        .then(async res => {
+            setLoading(false);
+            const newProducts = [...products];
+            await res?.forEach(response => {
+                response && (
+                    newProducts[response?.value?.index] = {
+                        ...newProducts[response?.value?.index],
+                        description: response?.value?.description,
+                        bullets: response?.value?.bullets
+                    }
+                )
+            });
+            setProducts(newProducts);
+            setGenerated(true);
+        }).catch(e => console.log({failed: e}));
     }
 
     const OpenAIResponse = prompt => axios.post('https://api.openai.com/v1/chat/completions', {
@@ -140,7 +145,7 @@ function App() {
     const displayAPIError = (e) => {
         setLoading(false);
         setError(true);
-        setErrorText(e.response.data)
+        // setErrorText(e.response.data)
     }
 
     const handleClear = () => {
@@ -337,7 +342,7 @@ function App() {
                 <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
                     <div className="container">
                         <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
-                        <p className="text-primary text-4xl">{errorText}</p>
+                        {/* <p className="text-primary text-4xl">{errorText}</p> */}
                     </div>
                 </Dialog>
                 <p>Version: 0.5</p>
