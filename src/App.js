@@ -239,6 +239,7 @@ function App() {
 
     return (
         <div className="container min-w-screen surface-ground p-7">
+            <h1>This is My Header</h1>
             <div className="container w-11 min-h-screen mx-auto ">
                 <div className="header flex flex-row justify-content-between w-full">
                     <p className="text-5xl text-primary font-main">Product Description Generator</p>
