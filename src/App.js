@@ -117,7 +117,7 @@ function App() {
         }).catch(e => console.log({failed: e}));
     }
 
-    const OpenAIResponse = prompt => axios.post('https://api.openai.com/v1/chat/completions', {
+    const OpenAIResponse = (prompt: string) => axios.post('https://api.openai.com/v1/chat/completions', {
             model: 'gpt-4',
             messages: [{
                 role: 'user',
@@ -204,10 +204,6 @@ function App() {
         import('xlsx').then(xlsx => {
             // bullets needs to be one string, comma separated
             let formattedProductsForXL = [...products];
-            formattedProductsForXL = formattedProductsForXL.map(prod => ({
-                ...prod,
-                bullets: prod.bullets?.join(', ') || ''
-            }));
             const worksheet = xlsx.utils.json_to_sheet(formattedProductsForXL);
             const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
             const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -321,6 +317,14 @@ function App() {
                         label="Update Credentials"
                         onClick={() => setChangingKey(true)}
                     />
+                    {sheetChoices.length > 0 && (
+                        <Dropdown
+                            className="ml-5 mt-3"
+                            options={sheetChoices}
+                            value={sheet}
+                            onChange={handleDropdownSelect}
+                        />
+                    )}
                 </div>
                 <DataTable
                     ref={dt}
@@ -345,7 +349,7 @@ function App() {
                         {/* <p className="text-primary text-4xl">{errorText}</p> */}
                     </div>
                 </Dialog>
-                <p>Version: 0.5</p>
+                <p>Version: 0.6</p>
             </div>
         </div>
     );
