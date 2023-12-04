@@ -10,7 +10,8 @@ import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 import { CSVToArray } from './format';
-// import guidelines from './guidelines.json';
+
+const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
 const logo = require('./assets/kroger-logo.png');
 function App() {
@@ -23,9 +24,7 @@ function App() {
     const [sheetChoices, setSheetChoices] = useState([]);
     const [wb, setWb] = useState({});
     const [sheet, setSheet] = useState('');
-    const [changingKey, setChangingKey] = useState(false);
-    const [AIKey, setAIKey] = useState('');
-    const [AIOrg, setAIOrg] = useState('');
+    const [user, setUser] = useState('');
     const dt = useRef(null);
 
     const handleCSVUpload = e => {
@@ -117,34 +116,25 @@ function App() {
         }).catch(e => console.log({failed: e}));
     }
 
-    const OpenAIResponse = (prompt: string) => axios.post('https://api.openai.com/v1/chat/completions', {
-            model: 'gpt-4',
-            messages: [{
-                role: 'user',
-                content: prompt
-            }],
-        },
-        {
-                headers: {
-                    'Authorization': `Bearer ${AIKey}`,
-                    'OpenAI-Organization': AIOrg,
-                }
-    });
+    const OpenAIResponse: (prompt: string) => Promise<Object> = (prompt: string) => axios.post(URL, { prompt });
 
-    const handleAIRequest = async (product, index) => {
+    const handleAIRequest:(product: object, index: number) => object = async (product, index) => {
         const { DescPrompt, BulletPrompt } = product;
-        return OpenAIResponse(DescPrompt).then(descRes => {
-            return OpenAIResponse(BulletPrompt).then(bulletRes => ({
-                index,
-                description: descRes.data.choices[0].message.content,
-                bullets: bulletRes.data.choices[0].message.content
-            }))
-        }).catch(e => { displayAPIError(e)})
-    }
+        return OpenAIResponse(DescPrompt)
+            .then(descRes => OpenAIResponse(BulletPrompt)
+                .then(bulletRes => ({
+                        index,
+                        description: descRes.data[0].message.content,
+                        bullets: bulletRes.data[0].message.content
+                    }))
+                .catch(e => { displayAPIError(e)})
+            )
+    };
 
     const displayAPIError = (e) => {
         setLoading(false);
         setError(true);
+        console.error(e)
         // setErrorText(e.response.data)
     }
 
@@ -169,16 +159,6 @@ function App() {
         })
     }
 
-    // const bulletCell = data => typeof data.bullets === 'string' ?
-    //     data.bullets :
-    //  (
-    //     <div className="flex flex-column">
-    //         {data.bullets?.map(bp => (
-    //             <p key={bp}>{bp}</p>
-    //         ))}
-    //     </div>
-    // )
-
     const columns = () => Object.keys(products[0] || {}).map(col => {
         const lower = col.toLowerCase()
         if (['descprompt', 'upc', 'bulletprompt', 'product_title', 'description', 'bullets'].includes(lower)) {
@@ -189,7 +169,6 @@ function App() {
                     header={col}
                     headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
                     style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
-                    // body={col === 'bullets' && bulletCell}
                 />
             )
         }
@@ -233,6 +212,8 @@ function App() {
         })
     }
 
+    const rowNumber = (_, row) => row.rowIndex + 1
+
     return (
         <div className="container min-w-screen surface-ground p-7">
             <div className="container w-11 min-h-screen mx-auto ">
@@ -240,117 +221,109 @@ function App() {
                     <p className="text-5xl text-primary font-main">Product Description Generator</p>
                     <img src={logo} alt="Kroger Logo" />
                 </div>
-                <Dialog className="h-15rem w-15rem" visible={(!AIKey || !AIOrg) || changingKey} onHide={() => alert('Key and Org must be entered to proceed!')}>
-                    <span className="p-float-label mt-4 mb-5">
-                        <InputText id="in" value={AIKey} onChange={(e) => setAIKey(e.target.value)} />
-                        <label htmlFor="in">AIKey</label>
-                    </span>
+                <Dialog className="h-10rem w-15rem" visible={user.toLowerCase() !== 'meaghan'} onHide={() => alert('Correct user must be entered to proceed!')}>
                     <span className="p-float-label mt-4">
-                        <InputText id="in" value={AIOrg} onChange={(e) => setAIOrg(e.target.value)} />
-                        <label htmlFor="in">AIOrg</label>
+                        <InputText id="in" value={user} onChange={(e) => setUser(e.target.value)} />
+                        <label htmlFor="in">Enter User</label>
                     </span>
-                    <Button className="p-button-success mt-3" label="Set Credentials" onClick={() => setChangingKey(false)} />
                 </Dialog>
                 <Dialog className="h-12rem w-15rem" visible={choosingSheet} onHide={() => setChoosingSheet(false)}>
                     <h5>Select Sheet:</h5>
                     <Dropdown className="w-10rem" value={sheet} options={sheetChoices} onChange={handleDropdownSelect} />
                 </Dialog>
-                <div className="flex flex-row justify-content-start">
-                    {!products.length &&
-                        <FileUpload
-                            accept=".xlsx, .csv"
-                            auto
-                            className="mt-3"
-                            customUpload
-                            chooseLabel="Browse Files"
-                            mode="basic"
-                            uploadLabel="Upload Excel File"
-                            uploadHandler={handleImport}
-                        />
-                    }
-                    {products.length > 0 &&
-                        <>
-                            <Button
-                                className="p-button-primary generate-button mt-3 ml-3"
-                                icon="pi pi-check"
-                                label="Generate Descriptions"
-                                onClick={generateDesciptions}
+            {user.toLowerCase() === 'meaghan' && (
+                    <div className="flex flex-row justify-content-start">
+                        {!products.length &&
+                            <FileUpload
+                                accept=".xlsx, .csv"
+                                auto
+                                className="mt-3"
+                                customUpload
+                                chooseLabel="Browse Files"
+                                mode="basic"
+                                uploadLabel="Upload Excel File"
+                                uploadHandler={handleImport}
                             />
+                        }
+                        {products.length > 0 &&
+                            <>
+                                <Button
+                                    className="p-button-primary generate-button mt-3 ml-3"
+                                    icon="pi pi-check"
+                                    label="Generate Descriptions"
+                                    onClick={generateDesciptions}
+                                />
+                                <Button
+                                    className="p-button-danger ml-3 mt-3"
+                                    icon="pi pi-ban"
+                                    label="Clear Data"
+                                    onClick={() => setProducts([])}
+                                />
+                            </>
+                        }
+                        {generated &&
                             <Button
                                 className="p-button-danger ml-3 mt-3"
                                 icon="pi pi-ban"
-                                label="Clear Data"
-                                onClick={() => setProducts([])}
+                                label="Clear Descriptions/Bullets"
+                                onClick={handleClear}
                             />
-                        </>
-                    }
-                    {generated &&
-                        <Button
-                            className="p-button-danger ml-3 mt-3"
-                            icon="pi pi-ban"
-                            label="Clear Descriptions/Bullets"
-                            onClick={handleClear}
-                        />
-                    }
-                    {(products.length > 0 && generated) &&
-                        <>
-                            <Button
-                                className="p-button-warning ml-3 mt-3"
-                                data-pr-tooltip="Excel"
-                                icon="pi pi-file-excel"
-                                label="Export XLSX"
-                                onClick={exportExcel}
+                        }
+                        {(products.length > 0 && generated) &&
+                            <>
+                                <Button
+                                    className="p-button-warning ml-3 mt-3"
+                                    data-pr-tooltip="Excel"
+                                    icon="pi pi-file-excel"
+                                    label="Export XLSX"
+                                    onClick={exportExcel}
+                                />
+                                <Button
+                                    type="button"
+                                    icon="pi pi-file"
+                                    label="Export CSV"
+                                    onClick={() => exportCSV(false)}
+                                    className="p-button-warning ml-3 mt-3"
+                                    data-pr-tooltip="CSV"
+                                />
+                            </>
+                        }
+                        {sheetChoices.length > 0 && (
+                            <Dropdown
+                                className="ml-5 mt-3"
+                                options={sheetChoices}
+                                value={sheet}
+                                onChange={handleDropdownSelect}
                             />
-                            <Button
-                                type="button"
-                                icon="pi pi-file"
-                                label="Export CSV"
-                                onClick={() => exportCSV(false)}
-                                className="p-button-warning ml-3 mt-3"
-                                data-pr-tooltip="CSV"
-                            />
-                        </>
-                    }
-                    <Button
-                        className="p-button-warning mt-3 ml-3"
-                        icon="pi pi-key"
-                        label="Update Credentials"
-                        onClick={() => setChangingKey(true)}
-                    />
-                    {sheetChoices.length > 0 && (
-                        <Dropdown
-                            className="ml-5 mt-3"
-                            options={sheetChoices}
-                            value={sheet}
-                            onChange={handleDropdownSelect}
-                        />
-                    )}
-                </div>
-                <DataTable
-                    ref={dt}
-                    className="pb-6 pt-3 mt-3 max-w-full max-h-full"
-                    columnResizeMode="fit"
-                    emptyMessage="Please Upload a File to Begin."
-                    responsiveLayout="stack"
-                    resizableColumns
-                    showGridlines
-                    size="small"
-                    stripedRows
-                    value={products}
-                >
-                    { columns() }
-                </DataTable>
-                <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false}>
-                    <ProgressSpinner className="min-w-100" />
-                </Dialog>
-                <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
-                    <div className="container">
-                        <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
-                        {/* <p className="text-primary text-4xl">{errorText}</p> */}
+                        )}
                     </div>
-                </Dialog>
-                <p>Version: 0.6</p>
-            </div>
+            )}
+                    <DataTable
+                        ref={dt}
+                        className="pb-6 pt-3 mt-3 max-w-full max-h-full"
+                        columnResizeMode="fit"
+                        emptyMessage="Please Upload a File to Begin."
+                        responsiveLayout="stack"
+                        resizableColumns
+                        showGridlines
+                        size="small"
+                        stripedRows
+                        value={products}
+                    >
+                        <Column field="Index" header="#" body={rowNumber}/>
+                        { columns() }
+                    </DataTable>
+                    <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false}>
+                        <ProgressSpinner className="min-w-100" />
+                    </Dialog>
+                    <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
+                        <div className="container">
+                            <p className="text-primary text-4xl">Something went wrong... Please try again.</p>
+                            {/* <p className="text-primary text-4xl">{errorText}</p> */}
+                        </div>
+                    </Dialog>
+                    <p>Version: 0.6</p>
+                </div>
         </div>
     );
 }
