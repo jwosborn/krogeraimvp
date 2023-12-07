@@ -27,7 +27,8 @@ function App() {
     const [user, setUser] = useState('');
     const dt = useRef(null);
 
-    const handleCSVUpload = e => {
+    const handleCSVUpload: (e: any) => void =
+    e => {
         const reader = new FileReader();
         reader.onload = () => {
             // convert to table rows
@@ -41,7 +42,8 @@ function App() {
         reader.readAsBinaryString(e.files[0]);
     }
 
-    const setSheetInState = (xlsx, ws) => {
+    const setSheetInState: (xlsx: any, ws: any) => void =
+    (xlsx, ws) => {
         const data = xlsx.utils.sheet_to_json(ws, { header: 1 });
 
         // Prepare DataTable
@@ -58,7 +60,8 @@ function App() {
         setProducts(_importedData)
     }
 
-    const handleXLSXUpload = e => {
+    const handleXLSXUpload: (e: any) => void =
+    e => {
         import('xlsx').then(async xlsx => {
             const reader = new FileReader();
             reader.onload = async (e) => {
@@ -78,7 +81,8 @@ function App() {
         });
     }
 
-    const handleImport = (e) => {
+    const handleImport: (e: any) => void =
+    (e) => {
         const file = e.files[0];
 
         if (file.type === 'text/csv') {
@@ -91,9 +95,10 @@ function App() {
         handleXLSXUpload(e)
     }
 
-    const generateDesciptions = async () => {
+    const generateDesciptions: (productArray: any[]) => void =
+    async (productArray) => {
         setLoading(true);
-        return Promise.allSettled(products.map((product, index) => {
+        return Promise.allSettled(productArray.map((product, index) => {
             if (product.DescPrompt && product.BulletPrompt) {
                 return handleAIRequest(product, index)
             }
@@ -101,7 +106,7 @@ function App() {
         }))
         .then(async res => {
             setLoading(false);
-            const newProducts = [...products];
+            const newProducts = [...productArray];
             await res?.forEach(response => {
                 response && (
                     newProducts[response?.value?.index] = {
@@ -113,25 +118,30 @@ function App() {
             });
             setProducts(newProducts);
             setGenerated(true);
-        }).catch(e => console.log({failed: e}));
+        }).catch(e => { console.log({failed: e})});
     }
 
-    const OpenAIResponse: (prompt: string) => Promise<Object> = (prompt: string) => axios.post(URL, { prompt });
+    const OpenAIResponse: (url: string, prompt: string) => Promise<Object> =
+    (url: string, prompt: string) => axios.post(url, { prompt });
 
-    const handleAIRequest:(product: object, index: number) => object = async (product, index) => {
+    const handleAIRequest:(product: object, index: number) => object =
+    async (product, index) => {
         const { DescPrompt, BulletPrompt } = product;
-        return OpenAIResponse(DescPrompt)
-            .then(descRes => OpenAIResponse(BulletPrompt)
-                .then(bulletRes => ({
+        return OpenAIResponse(URL, DescPrompt)
+            .then(descRes => OpenAIResponse(URL, BulletPrompt)
+                .then(bulletRes => {
+                    return ({
                         index,
                         description: descRes.data[0].message.content,
                         bullets: bulletRes.data[0].message.content
-                    }))
-                .catch(e => { displayAPIError(e)})
+                    })
+                })
+                .catch(e => { displayAPIError(e) })
             )
     };
 
-    const displayAPIError = (e) => {
+    const displayAPIError: (e: any) => void =
+    (e) => {
         setLoading(false);
         setError(true);
         console.error(e)
@@ -140,9 +150,11 @@ function App() {
 
     const handleClear = () => {
         setGenerated(false);
+        // need func to remove desc/bullets from each prod
     }
 
-    const generateTableData = (arrays) => {
+    const generateTableData: (arrays: [][]) => object =
+    arrays => {
         const headerRow = arrays[0];
         const tableRows = arrays.slice(1)
 
@@ -159,7 +171,8 @@ function App() {
         })
     }
 
-    const columns = () => Object.keys(products[0] || {}).map(col => {
+    const columns: (productArray: any[]) => JSX.Element | null =
+    (productArray) => Object.keys(productArray[0] || {}).map(col => {
         const lower = col.toLowerCase()
         if (['descprompt', 'upc', 'bulletprompt', 'product_title', 'description', 'bullets'].includes(lower)) {
             return (
@@ -175,14 +188,16 @@ function App() {
         return null
     });
 
-    const exportCSV = (selectionOnly) => {
+    const exportCSV: (selectionOnly: any) => void =
+    (selectionOnly) => {
         dt.current.exportCSV({ selectionOnly });
     }
 
-    const exportExcel = () => {
+    const exportExcel: (productArray: any[]) => void =
+    (productArray) => {
         import('xlsx').then(xlsx => {
             // bullets needs to be one string, comma separated
-            let formattedProductsForXL = [...products];
+            let formattedProductsForXL = [...productArray];
             const worksheet = xlsx.utils.json_to_sheet(formattedProductsForXL);
             const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
             const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -190,7 +205,8 @@ function App() {
         });
     }
 
-    const saveAsExcelFile = (buffer, fileName) => {
+    const saveAsExcelFile: (buffer: any, fileName: any) => void =
+    (buffer, fileName) => {
         import('file-saver').then(module => {
             if (module && module.default) {
                 let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -204,15 +220,17 @@ function App() {
         });
     }
 
-    const handleDropdownSelect = e => {
+    const handleDropdownSelect: (e: any, workbook: any) => void =
+    (e, workbook) => {
         import('xlsx').then(xlsx => {
             setSheet(e.value);
             setChoosingSheet(false);
-            setSheetInState(xlsx, wb.Sheets[e.value]);
+            setSheetInState(xlsx, workbook.Sheets[e.value]);
         })
     }
 
-    const rowNumber = (_, row) => row.rowIndex + 1
+    const rowNumber: (_: any, row: any) => number =
+    (_, row) => row.rowIndex + 1
 
     return (
         <div className="container min-w-screen surface-ground p-7">
@@ -229,7 +247,7 @@ function App() {
                 </Dialog>
                 <Dialog className="h-12rem w-15rem" visible={choosingSheet} onHide={() => setChoosingSheet(false)}>
                     <h5>Select Sheet:</h5>
-                    <Dropdown className="w-10rem" value={sheet} options={sheetChoices} onChange={handleDropdownSelect} />
+                    <Dropdown className="w-10rem" value={sheet} options={sheetChoices} onChange={e => handleDropdownSelect(e, wb)} />
                 </Dialog>
             {user.toLowerCase() === 'meaghan' && (
                     <div className="flex flex-row justify-content-start">
@@ -251,24 +269,24 @@ function App() {
                                     className="p-button-primary generate-button mt-3 ml-3"
                                     icon="pi pi-check"
                                     label="Generate Descriptions"
-                                    onClick={generateDesciptions}
+                                    onClick={() => generateDesciptions(products)}
                                 />
                                 <Button
                                     className="p-button-danger ml-3 mt-3"
                                     icon="pi pi-ban"
                                     label="Clear Data"
-                                    onClick={() => setProducts([])}
+                                    onClick={() => { setProducts([]); setSheet(''); setSheetChoices([]); }}
                                 />
                             </>
                         }
-                        {generated &&
+                        {/* {generated &&
                             <Button
                                 className="p-button-danger ml-3 mt-3"
                                 icon="pi pi-ban"
                                 label="Clear Descriptions/Bullets"
                                 onClick={handleClear}
                             />
-                        }
+                        } */}
                         {(products.length > 0 && generated) &&
                             <>
                                 <Button
@@ -276,7 +294,7 @@ function App() {
                                     data-pr-tooltip="Excel"
                                     icon="pi pi-file-excel"
                                     label="Export XLSX"
-                                    onClick={exportExcel}
+                                    onClick={() => exportExcel(products)}
                                 />
                                 <Button
                                     type="button"
@@ -311,7 +329,7 @@ function App() {
                         value={products}
                     >
                         <Column field="Index" header="#" body={rowNumber}/>
-                        { columns() }
+                        { columns(products) }
                     </DataTable>
                     <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false}>
                         <ProgressSpinner className="min-w-100" />
@@ -322,7 +340,7 @@ function App() {
                             {/* <p className="text-primary text-4xl">{errorText}</p> */}
                         </div>
                     </Dialog>
-                    <p>Version: 0.6</p>
+                    <p>Version: 1.0</p>
                 </div>
         </div>
     );
