@@ -7,6 +7,7 @@ import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import { FileUpload } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { saveAs } from 'file-saver';
 
@@ -96,7 +97,31 @@ function App() {
         handleXLSXUpload(e)
     }
 
-    const generateDesciptions: (productArray: any[]) => void =
+    const formattedAIResponse: (newProductsArr: any[], response: any) => any[] =
+    (newProductsArr, response) => {
+        return {
+                ...newProductsArr[response.index],
+                description: response.description,
+                bullets: response.bullets
+            }
+    };
+
+    const generateDescription: (product: any, index: number) => void =
+    (product, index) => {
+        setLoading(true);
+        const { DescPrompt, BulletPrompt } = product;
+        return (DescPrompt && BulletPrompt) ?
+            handleAIRequest(product, index).then(res => {
+                setGenerated(true);
+                setLoading(false);
+                const newProducts = [...products]
+                newProducts[index] = formattedAIResponse(newProducts, res)
+                setProducts(newProducts);
+            })
+        : null
+    }
+
+    const generateDesciptions:  (productArray: any[]) => Promise<void> =
     async (productArray) => {
         setLoading(true);
         return Promise.allSettled(productArray.map((product, index) => {
@@ -107,16 +132,13 @@ function App() {
         }))
         .then(async (res: any) => {
             setLoading(false);
-            const newProducts = [...productArray];
+            let newProducts = [...productArray];
+            // return array of arrays bc formattedAIResponse returns an array each time
+            // need to just add the products to the array then set that array in state once that's all done.
             await res?.forEach(response => {
-                response && (
-                    newProducts[response?.value?.index] = {
-                        ...newProducts[response?.value?.index],
-                        description: response?.value?.description,
-                        bullets: response?.value?.bullets
-                    }
-                )
+                newProducts[response.value.index] = formattedAIResponse(newProducts, response.value);
             });
+            console.log(newProducts)
             setProducts(newProducts);
             setGenerated(true);
         }).catch(e => { console.log({failed: e})}); // TODO: More robust error handling
@@ -125,7 +147,7 @@ function App() {
     const OpenAIResponse: (url: string, prompt: string) => Promise<Object> =
     (url: string, prompt: string) => axios.post(url, { prompt });
 
-    const handleAIRequest:(product: any, index: number) => object =
+    const handleAIRequest:(product: any, index: number) => any =
     async (product, index) => {
         const { DescPrompt, BulletPrompt } = product;
         return OpenAIResponse(URL, DescPrompt)
@@ -149,10 +171,10 @@ function App() {
         // setErrorText(e.response.data)
     }
 
-    const handleClear = () => {
-        setGenerated(false);
+    // const handleClear = () => {
+    //     setGenerated(false);
         // need func to remove desc/bullets from each prod
-    }
+    // }
 
     const generateTableData: (arrays: [][]) => object[] =
     arrays => {
@@ -172,16 +194,35 @@ function App() {
         })
     }
 
+    const cellEditor = (options) => {
+        return <InputTextarea className="h-30rem w-12" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
+    }
+
+    const onCellEditComplete = (e) => {
+        let { rowIndex, newValue, field, originalEvent: event } = e;
+
+        if (newValue.trim().length > 0) {
+            // rowData[field] = newValue;
+            const newProducts = [...products];
+            newProducts[rowIndex][field] = newValue;
+            setProducts(newProducts);
+        } else {
+            event.preventDefault();
+        }
+    }
+
     const columns: (productArray: any[]) => React.ReactElement[] | null =
-    (productArray) => Object.keys(productArray[0] || {}).map((col: any) => {
+    (productArray) => Object.keys(productArray[0] || {}).map(col => {
         const lower = col.toLowerCase()
         if (['descprompt', 'upc', 'bulletprompt', 'product_title', 'description', 'bullets'].includes(lower)) {
             return (
                 <Column
-                    key={col}
+                    editor={(options) => cellEditor(options)}
                     field={col}
                     header={col}
                     headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
+                    key={col}
+                    onCellEditComplete={onCellEditComplete}
                     style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
                 />
             )
@@ -229,6 +270,14 @@ function App() {
     const rowNumber: (_: any, row: any) => number =
     (_, row) => row.rowIndex + 1
 
+    const generateButton = (product, row) => (
+        <Button
+            className="p-button-success"
+            icon="pi pi-refresh"
+            onClick={() => generateDescription(product, row.rowIndex)}
+        />
+    )
+
     return (
         <div className="container min-w-screen surface-ground p-7">
             <div className="container w-11 min-h-screen mx-auto ">
@@ -265,7 +314,7 @@ function App() {
                                 <Button
                                     className="p-button-primary generate-button mt-3 ml-3"
                                     icon="pi pi-check"
-                                    label="Generate Descriptions"
+                                    label="Run All Descriptions"
                                     onClick={() => generateDesciptions(products)}
                                 />
                                 <Button
@@ -321,12 +370,15 @@ function App() {
                         responsiveLayout="stack"
                         resizableColumns
                         showGridlines
+                        scrollable
+                        scrollHeight="65vh"
                         size="small"
                         stripedRows
                         value={products}
                     >
                         <Column field="Index" header="#" body={rowNumber}/>
                         { columns(products) }
+                        {Boolean(products.length) && <Column header="Run" body={generateButton} />}
                     </DataTable>
                     <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false} onHide={() => setLoading(false)}>
                         <ProgressSpinner className="min-w-100" />
@@ -337,7 +389,7 @@ function App() {
                             {/* <p className="text-primary text-4xl">{errorText}</p> */}
                         </div>
                     </Dialog>
-                    <p>Version: 1.0</p>
+                    <p>Version: 1.0.1</p>
                 </div>
         </div>
     );
