@@ -32,6 +32,15 @@ test('sets credentials', async () => {
 
   })
 
+  // Test case: test generate with mock API response
+  test('generate description', async () => {
+    render(<App />);
+    
+
+  } )
+
+  // Test case: 
+
 
 // test('uploads a file', async () => {
 //     const { container } = render(<App />)

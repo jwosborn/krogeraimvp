@@ -119,7 +119,7 @@ function App() {
             });
             setProducts(newProducts);
             setGenerated(true);
-        }).catch(e => { console.log({failed: e})});
+        }).catch(e => { console.log({failed: e})}); // TODO: More robust error handling
     }
 
     const OpenAIResponse: (url: string, prompt: string) => Promise<Object> =
@@ -137,7 +137,7 @@ function App() {
                         bullets: bulletRes.data[0].message.content
                     })
                 })
-                .catch(e => { displayAPIError(e) })
+                .catch(e => { displayAPIError(e) }) // TODO: More robust error handling
             )
     };
 
