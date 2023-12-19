@@ -8,8 +8,9 @@ import { Dropdown } from 'primereact/dropdown';
 import { FileUpload } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { saveAs } from 'file-saver';
 
-import { CSVToArray } from './format';
+import { CSVToArray } from './utils/format';
 
 const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
@@ -205,19 +206,15 @@ function App() {
         });
     }
 
-    const saveAsExcelFile: (buffer: any, fileName: any) => void =
-    (buffer, fileName) => {
-        import('file-saver').then(module => {
-            if (module && module.default) {
-                let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-                let EXCEL_EXTENSION = '.xlsx';
-                const data = new Blob([buffer], {
-                    type: EXCEL_TYPE
-                });
+    const saveAsExcelFile = (buffer: any, fileName: any) => {
+        // Prepare data + file parameters
+        let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        let EXCEL_EXTENSION = '.xlsx';
+        const data = new Blob([buffer], {
+            type: EXCEL_TYPE
+        })
 
-                module.default.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-            }
-        });
+        saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
     }
 
     const handleDropdownSelect: (e: any, workbook: any) => void =

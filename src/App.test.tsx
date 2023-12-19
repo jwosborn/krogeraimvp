@@ -4,6 +4,7 @@ import App from './App';
 import '@testing-library/jest-dom'
 import { userEvent } from '@testing-library/user-event';
 
+// Test case: Verify initialization of the App component
 test('initializes properly', () => {
   render(<App />);
   const title = screen.getByText(/product description generator/i);
@@ -14,6 +15,8 @@ test('initializes properly', () => {
   expect(credentialsDialog).toBeInTheDocument();
 });
 
+
+// Test case: Verify credential setting functionality
 test('sets credentials', async () => {
   render(<App />);
   const userInput = screen.getByLabelText(/enter user/i)

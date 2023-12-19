@@ -7,3 +7,7 @@
   font-size: 11px;
   padding: 0.25rem 1rem;
 }
+
+.min-w-100{
+  align-items: center;
+}
