@@ -1,8 +1,12 @@
 {
+  "testEnvironment": "jsdom",
+  "extensionsToTreatAsEsm": [".png"],
   "preset": "ts-jest",
   "verbose": true,
   "transform": {
     "^.+\\.(ts|tsx)?$": "ts-jest",
-    "^.+\\.(js|jsx)$": "babel-jest"
+    "^.+\\.(js|jsx)$": "babel-jest",
+    "^.+\\.jsx$": "babel-jest",
+    ".+\\.(css|scss|png|jpg|svg)$": "jest-transform-stub"
   }
 }

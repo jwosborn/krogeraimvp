@@ -104,7 +104,7 @@ function App() {
             }
             return null
         }))
-        .then(async res => {
+        .then(async (res: any) => {
             setLoading(false);
             const newProducts = [...productArray];
             await res?.forEach(response => {
@@ -124,12 +124,12 @@ function App() {
     const OpenAIResponse: (url: string, prompt: string) => Promise<Object> =
     (url: string, prompt: string) => axios.post(url, { prompt });
 
-    const handleAIRequest:(product: object, index: number) => object =
+    const handleAIRequest:(product: any, index: number) => object =
     async (product, index) => {
         const { DescPrompt, BulletPrompt } = product;
         return OpenAIResponse(URL, DescPrompt)
-            .then(descRes => OpenAIResponse(URL, BulletPrompt)
-                .then(bulletRes => {
+            .then((descRes: any) => OpenAIResponse(URL, BulletPrompt)
+                .then((bulletRes: any) => {
                     return ({
                         index,
                         description: descRes.data[0].message.content,
@@ -153,7 +153,7 @@ function App() {
         // need func to remove desc/bullets from each prod
     }
 
-    const generateTableData: (arrays: [][]) => object =
+    const generateTableData: (arrays: [][]) => object[] =
     arrays => {
         const headerRow = arrays[0];
         const tableRows = arrays.slice(1)
@@ -171,8 +171,8 @@ function App() {
         })
     }
 
-    const columns: (productArray: any[]) => JSX.Element | null =
-    (productArray) => Object.keys(productArray[0] || {}).map(col => {
+    const columns: (productArray: any[]) => React.ReactElement[] | null =
+    (productArray) => Object.keys(productArray[0] || {}).map((col: any) => {
         const lower = col.toLowerCase()
         if (['descprompt', 'upc', 'bulletprompt', 'product_title', 'description', 'bullets'].includes(lower)) {
             return (
@@ -311,7 +311,7 @@ function App() {
                                 className="ml-5 mt-3"
                                 options={sheetChoices}
                                 value={sheet}
-                                onChange={handleDropdownSelect}
+                                onChange={(e) => handleDropdownSelect(e, wb)}
                             />
                         )}
                     </div>
@@ -331,7 +331,7 @@ function App() {
                         <Column field="Index" header="#" body={rowNumber}/>
                         { columns(products) }
                     </DataTable>
-                    <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false}>
+                    <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false} onHide={() => setLoading(false)}>
                         <ProgressSpinner className="min-w-100" />
                     </Dialog>
                     <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
