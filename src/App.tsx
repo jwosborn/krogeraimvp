@@ -10,6 +10,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { saveAs } from 'file-saver';
+import "./App.css";
 
 import { CSVToArray } from './utils/format';
 
@@ -380,8 +381,10 @@ function App() {
                         { columns(products) }
                         {Boolean(products.length) && <Column header="Run" body={generateButton} />}
                     </DataTable>
-                    <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false} onHide={() => setLoading(false)}>
-                        <ProgressSpinner className="min-w-100" />
+                    <Dialog className="h-12rem" header="Generating Amazing Content..." visible={true} closable={false} onHide={() => setLoading(false)}>
+                        <div className="centered-spinner">
+                            <ProgressSpinner />
+                        </div>
                     </Dialog>
                     <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
                         <div className="container">

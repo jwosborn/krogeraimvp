@@ -8,6 +8,8 @@
   padding: 0.25rem 1rem;
 }
 
-.min-w-100{
-  align-items: center;
+
+/* Overriding inline styles with !important */
+.centered-spinner .p-progress-spinner {
+  display: flex !important; /* Override the inline-block display from primeReact component*/
 }
