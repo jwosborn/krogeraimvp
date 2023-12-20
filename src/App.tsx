@@ -14,7 +14,7 @@ import { CSVToArray } from './format';
 
 const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
-const logo = require('./assets/kroger-logo.png');
+const logo = require('./assets/th-logo.png');
 function App() {
     const [loading, setLoading] = useState(false);
     const [products, setProducts] = useState([]);
@@ -213,7 +213,7 @@ function App() {
     const columns: (productArray: any[]) => React.ReactElement[] | null =
     (productArray) => Object.keys(productArray[0] || {}).map(col => {
         const lower = col.toLowerCase()
-        if (['descprompt', 'upc', 'bulletprompt', 'product_title', 'description', 'bullets'].includes(lower)) {
+        if (['upc', 'product_title', 'description', 'bullets'].includes(lower)) {
             return (
                 <Column
                     editor={(options) => cellEditor(options)}
@@ -284,9 +284,11 @@ function App() {
     return (
         <div className="container min-w-screen surface-ground p-7">
             <div className="container w-11 min-h-screen mx-auto ">
-                <div className="header flex flex-row justify-content-between w-full">
-                    <p className="text-5xl text-primary font-main">Product Description Generator</p>
-                    <img src={logo} alt="Kroger Logo" />
+                <div className="header flex flex-row justify-content-evenly w-full">
+                    <img className="max-h-10rem" src={logo} alt="Thinhaus Logo" />
+                    <div className="my-auto">
+                        <p className="text-4xl text-primary font-main">Product Description Generator</p>
+                    </div>
                 </div>
                 <Dialog className="h-10rem w-15rem" visible={user.toLowerCase() !== 'meaghan'} onHide={() => alert('Correct user must be entered to proceed!')}>
                     <span className="p-float-label mt-4">
@@ -299,12 +301,12 @@ function App() {
                     <Dropdown className="w-10rem" value={sheet} options={sheetChoices} onChange={e => handleDropdownSelect(e, wb)} />
                 </Dialog>
             {user.toLowerCase() === 'meaghan' && (
-                    <div className="flex flex-row justify-content-start">
+                    <div className="flex flex-row justify-content-start border-1 border-200">
                         {!products.length &&
                             <FileUpload
                                 accept=".xlsx, .csv"
                                 auto
-                                className="mt-3"
+                                className="ml-3 my-3"
                                 customUpload
                                 chooseLabel="Browse Files"
                                 mode="basic"
@@ -315,13 +317,13 @@ function App() {
                         {products.length > 0 &&
                             <>
                                 <Button
-                                    className="p-button-primary generate-button mt-3 ml-3"
+                                    className="p-button-primary generate-button my-3 ml-3"
                                     icon="pi pi-check"
                                     label="Run All Descriptions"
                                     onClick={() => generateDesciptions(products)}
                                 />
                                 <Button
-                                    className="p-button-danger ml-3 mt-3"
+                                    className="p-button-danger ml-3 my-3"
                                     icon="pi pi-ban"
                                     label="Clear Data"
                                     onClick={() => { setProducts([]); setSheet(''); setSheetChoices([]); }}
@@ -339,7 +341,7 @@ function App() {
                         {(products.length > 0 && generated) &&
                             <>
                                 <Button
-                                    className="p-button-warning ml-3 mt-3"
+                                    className="p-button-warning ml-3 my-3"
                                     data-pr-tooltip="Excel"
                                     icon="pi pi-file-excel"
                                     label="Export XLSX"
@@ -350,14 +352,14 @@ function App() {
                                     icon="pi pi-file"
                                     label="Export CSV"
                                     onClick={() => exportCSV(false)}
-                                    className="p-button-warning ml-3 mt-3"
+                                    className="p-button-warning ml-3 my-3"
                                     data-pr-tooltip="CSV"
                                 />
                             </>
                         }
                         {sheetChoices.length > 0 && (
                             <Dropdown
-                                className="ml-5 mt-3"
+                                className="ml-5 my-3"
                                 options={sheetChoices}
                                 value={sheet}
                                 onChange={(e) => handleDropdownSelect(e, wb)}
