@@ -13,6 +13,7 @@ import { saveAs } from 'file-saver';
 import "./App.css";
 
 import { CSVToArray } from './utils/format';
+import { Login } from './components/Login';
 
 const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
@@ -286,12 +287,7 @@ function App() {
                     <p className="text-5xl text-primary font-main">Product Description Generator</p>
                     <img src={logo} alt="Kroger Logo" />
                 </div>
-                <Dialog className="h-10rem w-15rem" visible={user.toLowerCase() !== 'meaghan'} onHide={() => alert('Correct user must be entered to proceed!')}>
-                    <span className="p-float-label mt-4">
-                        <InputText id="in" value={user} onChange={(e) => setUser(e.target.value)} />
-                        <label htmlFor="in">Enter User</label>
-                    </span>
-                </Dialog>
+                <Login user={user} setUser={setUser} />
                 <Dialog className="h-12rem w-15rem" visible={choosingSheet} onHide={() => setChoosingSheet(false)}>
                     <h5>Select Sheet:</h5>
                     <Dropdown className="w-10rem" value={sheet} options={sheetChoices} onChange={e => handleDropdownSelect(e, wb)} />
@@ -381,7 +377,7 @@ function App() {
                         { columns(products) }
                         {Boolean(products.length) && <Column header="Run" body={generateButton} />}
                     </DataTable>
-                    <Dialog className="h-12rem" header="Generating Amazing Content..." visible={true} closable={false} onHide={() => setLoading(false)}>
+                    <Dialog className="h-12rem" header="Generating Amazing Content..." visible={loading} closable={false} onHide={() => setLoading(false)}>
                         <div className="centered-spinner">
                             <ProgressSpinner />
                         </div>
