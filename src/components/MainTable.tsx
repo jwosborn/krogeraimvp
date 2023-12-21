@@ -105,7 +105,7 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated }: M
     const columns: (productArray: any[]) => React.ReactElement[] | null =
     (productArray) => Object.keys(productArray[0] || {}).map(col => {
         const lower = col.toLowerCase()
-        if (['descprompt', 'upc', 'bulletprompt', 'product_title', 'description', 'bullets'].includes(lower)) {
+        if (['upc', 'product_title', 'description', 'bullets'].includes(lower)) {
             return (
                 <Column
                     editor={(options) => cellEditor(options)}
