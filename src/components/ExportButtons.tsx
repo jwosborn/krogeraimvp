@@ -44,7 +44,7 @@ export const ExportButtons = ({ products, generated,  }: ExportButtonsProps) => 
         products.length > 0 && generated && (
           <>
             <Button
-              className="p-button-warning ml-3 mt-3"
+              className="p-button-warning ml-3 my-3"
               data-pr-tooltip="Excel"
               icon="pi pi-file-excel"
               label="Export XLSX"
@@ -55,7 +55,7 @@ export const ExportButtons = ({ products, generated,  }: ExportButtonsProps) => 
               icon="pi pi-file"
               label="Export CSV"
               onClick={() => exportCSV(false)}
-              className="p-button-warning ml-3 mt-3"
+              className="p-button-warning ml-3 my-3"
               data-pr-tooltip="CSV"
             />
           </>
