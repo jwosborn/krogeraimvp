@@ -6,7 +6,7 @@ import "primereact/resources/primereact.min.css";                  //core css
 import "primeicons/primeicons.css";                                //icons
 import "./utils/theme.css";
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from './utils/reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

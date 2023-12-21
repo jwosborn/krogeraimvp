@@ -1,0 +1,12 @@
+[
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Kroger® Beer Battered Shrimp is where delicious meets affordable. Packed with 11g of protein, it's the ultimate weekday dinner or weekend treat. Made from quality shrimp and golden beer batter, it offers great taste at a great price. Perfect for family gatherings, pair with your favorite dip for a meal that brings smiles."
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ]
+  
