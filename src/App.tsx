@@ -13,7 +13,7 @@ import { DropdownSelect } from './components/DropdownSelect'
 
 const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
-const logo = require('./assets/kroger-logo.png');
+const logo = require('./assets/th-logo.png');
 function App() {
     const [loading, setLoading] = useState(false);
     const [products, setProducts] = useState([]);
@@ -30,9 +30,11 @@ function App() {
     return (
         <div className="container min-w-screen surface-ground p-7">
             <div className="container w-11 min-h-screen mx-auto ">
-                <div className="header flex flex-row justify-content-between w-full">
-                    <p className="text-5xl text-primary font-main">Product Description Generator</p>
-                    <img src={logo} alt="Kroger Logo" />
+                <div className="header flex flex-row justify-content-evenly w-full">
+                    <img className="max-h-10rem" src={logo} alt="Thinhaus Logo" />
+                    <div className="my-auto">
+                        <p className="text-4xl text-primary font-main">Product Description Generator</p>
+                    </div>
                 </div>
                 <Login 
                     user={user} 
@@ -74,7 +76,7 @@ function App() {
                                 setError={setError}                                
                                 />
                                 <Button
-                                    className="p-button-danger ml-3 mt-3"
+                                    className="p-button-danger ml-3 my-3"
                                     icon="pi pi-ban"
                                     label="Clear Data"
                                     onClick={() => { setProducts([]); setSheet(''); setSheetChoices([]); setGenerated(false) }}

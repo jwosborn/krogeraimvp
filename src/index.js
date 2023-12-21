@@ -4,7 +4,7 @@ import '/node_modules/primeflex/primeflex.css';
 import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
 import "primereact/resources/primereact.min.css";                  //core css
 import "primeicons/primeicons.css";                                //icons
-import "./utils/kroger-theme.css";
+import "./utils/theme.css";
 import App from './App';
 import reportWebVitals from './utils/reportWebVitals';
 
