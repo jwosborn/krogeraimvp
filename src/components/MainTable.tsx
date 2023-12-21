@@ -88,7 +88,7 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt 
     const onCellEditComplete = (e) => {
         let { rowIndex, newValue, field, originalEvent: event } = e;
 
-        if (newValue.trim().length > 0) {
+        if (newValue?.trim().length > 0) {
             // rowData[field] = newValue;
             const newProducts = [...products];
             // const newProducts = [products];
