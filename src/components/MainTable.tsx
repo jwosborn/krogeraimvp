@@ -13,12 +13,13 @@ type MainTableProps = {
     // Loading: boolean,
     setLoading: (value: boolean) => void,
     setGenerated: (value: boolean) => void
+    dt: React.MutableRefObject<any>,
 };
 
-export const MainTable = ({ products, setProducts, setLoading, setGenerated }: MainTableProps) => {
+export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt }: MainTableProps) => {
 
     // state vars
-    const dt = useRef(null);
+    // const dt = useRef(null);
 
     const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 

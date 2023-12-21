@@ -6,11 +6,12 @@ import { saveAs } from 'file-saver';
 
 type ExportButtonsProps = {
     products: object[],
-    generated: boolean
+    generated: boolean,
+    dt: React.MutableRefObject<any>,
 };
 
-export const ExportButtons = ({ products, generated,  }: ExportButtonsProps) => {
-    const dt = useRef(null);
+export const ExportButtons = ({ products, generated, dt }: ExportButtonsProps) => {
+    // const dt = useRef(null);
     
     const exportCSV: (selectionOnly: any) => void =
     (selectionOnly) => {

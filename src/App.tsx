@@ -26,6 +26,7 @@ function App() {
     const [sheet, setSheet] = useState('');
     const [user, setUser] = useState('');
     const [isLogin, setIsLogin] = useState(false);
+    const dt = useRef(null);
 
     return (
         <div className="container min-w-screen surface-ground p-7">
@@ -83,7 +84,7 @@ function App() {
                                 />
                             </>
                         }
-                        <ExportButtons products={products} generated={generated}/>
+                        <ExportButtons products={products} generated={generated} dt={dt}/>
                         {sheetChoices.length > 0 && (
                             <DropdownSelect 
                                 wb={wb} 
@@ -96,7 +97,7 @@ function App() {
                         )}
                     </div>
             )}
-                <MainTable products={products} setProducts={setProducts} setLoading={setLoading} setGenerated={setGenerated} />
+                <MainTable products={products} setProducts={setProducts} setLoading={setLoading} setGenerated={setGenerated} dt={dt} />
                 
                 <Loader loading={loading} setLoading={setLoading} />
 
