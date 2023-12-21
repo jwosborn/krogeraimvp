@@ -1,8 +1,43 @@
 import React from 'react'
-import { act, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, fireEvent, getByRole, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import App from './App';
 import '@testing-library/jest-dom'
 import { userEvent } from '@testing-library/user-event';
+import bulletMockResponse from './mocks/BulletResponseMock.json';
+import { UploadButton } from './components/UploadButton';
+
+
+describe("Test Generate Descriptions App", () => {
+  
+  beforeEach(async () => {
+    render(<App />);
+    const userInput = screen.getByLabelText(/enter user/i);
+    const user = userEvent.setup();
+    
+    // Type into the input field
+    await user.type(userInput, 'meaghan');
+  })
+
+  // Test case: Upload button functionality + DropdownSelect component
+  test('upload xlxs', async () => {
+    const mockFile = new File(['file contents'], 'test.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+    const uploadButton = screen.getByText('Browse Files')
+    expect(uploadButton).toBeInTheDocument();
+
+    // Simulate the click event on the upload button
+    fireEvent.click(uploadButton);
+
+    // Find the file input element
+    // const inputEl = screen.getByLabelText(/file input label/i); // Replace with the actual label or appropriate selector
+    fireEvent.change(uploadButton, { target: { files: [mockFile] } });
+
+    // Assert setProducts was called with the expected data
+    // This step requires that you have a mock of setProducts available
+    // expect(mockSetProducts).toHaveBeenCalledWith(expectedProducts);
+  });
+    
+});
 
 // Test case: Verify initialization of the App component
 test('initializes properly', () => {
@@ -15,10 +50,9 @@ test('initializes properly', () => {
   expect(credentialsDialog).toBeInTheDocument();
 });
 
-
 // Test case: Verify credential setting functionality
 test('sets credentials', async () => {
-  render(<App />);
+  const {debug} = render(<App />);
   const userInput = screen.getByLabelText(/enter user/i)
 
   expect(userInput).toBeInTheDocument();
@@ -28,38 +62,7 @@ test('sets credentials', async () => {
     await user.type(userInput, 'foo')
   })
 
+  debug();
+
   expect(userInput).toHaveValue('foo')
-
-  })
-
-  // Test case: test generate with mock API response
-  test('generate description', async () => {
-    render(<App />);
-    
-
-  } )
-
-  // Test case: 
-
-
-// test('uploads a file', async () => {
-//     const { container } = render(<App />)
-//     const userInput = screen.getByLabelText(/enter user/i)
-
-//     expect(userInput).toBeInTheDocument();
-
-//     const file = new File(['hello'], 'hello.png', {type: 'image/png'})
-//     const user = userEvent.setup()
-//     await act(async () => {
-//       await user.type(userInput, 'meaghan')
-//     })
-
-//     const fileInput: any = container.querySelector(
-//         'input[type="file"]'
-//     )
-
-//     await act(async () => {
-//         await user.upload(fileInput, file)
-//         expect(fileInput.files[0]).toStrictEqual(file)
-//     })
-// });
+  })  
