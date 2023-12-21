@@ -105,7 +105,7 @@ export const UploadButton = ({ products, setProducts, setChoosingSheet, setSheet
         <FileUpload
             accept=".xlsx, .csv"
             auto
-            className="mt-3"
+            className="ml-3 my-3"
             customUpload
             chooseLabel="Browse Files"
             mode="basic"

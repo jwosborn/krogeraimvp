@@ -19,7 +19,6 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated }: M
 
     // state vars
     const dt = useRef(null);
-    // const [generated, setGenerated] = useState(false);
 
     const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 

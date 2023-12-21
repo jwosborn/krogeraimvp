@@ -77,7 +77,7 @@ export const RunAllButton = ({ URL, products, setProducts, setLoading, setGenera
     return (
         <>
             <Button
-                className="p-button-primary generate-button mt-3 ml-3"
+                className="p-button-primary generate-button my-3 ml-3"
                 icon="pi pi-check"
                 label="Run All Descriptions"
                 onClick={() => generateDesciptions(products)}

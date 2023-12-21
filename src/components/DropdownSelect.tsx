@@ -44,7 +44,7 @@ export const DropdownSelect = ({ wb, sheet, setSheet, setChoosingSheet, setProdu
     return (
         <>
             <Dropdown 
-                className="w-10rem" 
+                className="ml-5 my-3" 
                 value={sheet} 
                 options={sheetChoices} 
                 onChange={e => handleDropdownSelect(e, wb)} 

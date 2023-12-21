@@ -54,7 +54,7 @@ function App() {
                     />
                     </Dialog>
             {isLogin && (
-                    <div className="flex flex-row justify-content-start">
+                    <div className="flex flex-row justify-content-start border-1 border-200">
                         {!products.length &&
                             <UploadButton 
                                 products={products} 
