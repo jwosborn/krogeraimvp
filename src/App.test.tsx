@@ -7,6 +7,7 @@ import productsMock from './mocks/productsMock.json';
 import { UploadButton } from './components/UploadButton';
 import renderer from 'react-test-renderer';
 import { Loader } from './components/Loader';
+import { MainTable } from './components/MainTable';
 
 const ReactTestRenderer = require('react-test-renderer');
 
@@ -163,4 +164,32 @@ describe('Loader Component', () => {
     // Check that the text is not present in the document render
     expect(queryByText('Generating Amazing Content...')).not.toBeInTheDocument();
   });
+
+})
+
+describe('MainTable Component', () => {
+  // Mock state update functions
+  const mockSetProducts = jest.fn();
+  const mockSetLoading = jest.fn();
+  const mockSetGenerated = jest.fn();
+  const mockDt = jest.fn();
+  
+  it('Maintable loads products data', () =>{
+    render(
+      <MainTable 
+        products={productsMock} 
+        setProducts={mockSetProducts} 
+        setLoading={mockSetLoading} 
+        setGenerated={mockSetGenerated} 
+        dt={undefined}      
+      />
+    );
+
+      // Check if the product names from the mock are rendered
+      productsMock.forEach(product => {
+        expect(screen.getByText(product.Product_Title)).toBeInTheDocument();
+      });
+
+  });
+
 })
