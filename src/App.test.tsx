@@ -8,6 +8,7 @@ import { UploadButton } from './components/UploadButton';
 import renderer from 'react-test-renderer';
 import { Loader } from './components/Loader';
 import { MainTable } from './components/MainTable';
+import { RunAllButton } from './components/RunAllButton';
 
 const ReactTestRenderer = require('react-test-renderer');
 
@@ -172,9 +173,8 @@ describe('MainTable Component', () => {
   const mockSetProducts = jest.fn();
   const mockSetLoading = jest.fn();
   const mockSetGenerated = jest.fn();
-  const mockDt = jest.fn();
   
-  it('Maintable loads products data', () =>{
+  it('MainTable loads products data', () =>{
     render(
       <MainTable 
         products={productsMock} 
@@ -191,5 +191,28 @@ describe('MainTable Component', () => {
       });
 
   });
+});
 
-})
+describe('RunAllButton Component', () => {
+  // Mock state update functions
+  const mockSetProducts = jest.fn();
+  const mockSetLoading = jest.fn();
+  const mockSetGenerated = jest.fn();
+  const mockSetError = jest.fn();
+  
+  it('RunAllButton sends for API request', () =>{
+    render(
+      <RunAllButton 
+      URL={''} 
+      products={[]} 
+      setProducts={mockSetProducts} 
+      setLoading={mockSetLoading} 
+      setGenerated={mockSetGenerated} 
+      setError={mockSetError}      
+      />
+    );
+    
+    expect(screen.getByText('Run All Descriptions')).toBeInTheDocument();
+    expect(mockSetLoading).toHaveBeenCalled();
+  });
+});
