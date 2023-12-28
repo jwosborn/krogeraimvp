@@ -11,6 +11,7 @@ import { Loader } from './components/Loader';
 import { MainTable } from './components/MainTable';
 import { RunAllButton } from './components/RunAllButton';
 import mockAxios from 'jest-mock-axios';
+import { Login } from './components/Login';
 
 const ReactTestRenderer = require('react-test-renderer');
 
@@ -221,7 +222,7 @@ describe('RunAllButton Component (Happy Path)', () => {
     // test if the button rendered with expected test
     expect(screen.getByText('Run All Descriptions')).toBeInTheDocument();
 
-    // Simulate user interaction
+    // Simulate user click
     fireEvent.click(screen.getByText('Run All Descriptions'));
 
     // Wait for async operations (API call)
@@ -239,5 +240,60 @@ describe('RunAllButton Component (Happy Path)', () => {
 
     // Reset mock axios for cleanup
     mockAxios.reset()
+  });
+});
+
+describe('Login Component', () => {
+  // Mock state update functions
+  const mockUser = jest.fn(() => '');
+  const mockSetUser = jest.fn();
+  const mockIsLogin = jest.fn(() => false);
+  const mockSetIsLogin = jest.fn();
+  
+  it('Login works with user input (happy path)', async () =>{
+    const { queryByText } = render(
+      <Login 
+        user={''} 
+        setUser={mockSetUser} 
+        isLogin={false} 
+        setIsLogin={mockSetIsLogin}      
+      />
+    );
+    
+    // test if the button rendered with expected test
+    const userInput = screen.getByLabelText(/enter user/i)
+
+    expect(userInput).toBeInTheDocument();
+  
+    fireEvent.change(userInput, { target: { value: 'meaghan' } });
+    fireEvent.keyDown(userInput, { key: 'Enter', code: 'Enter', keyCode: 13, charCode: 13 }); //Enter press
+ 
+    expect(mockSetUser).toHaveBeenCalledWith('meaghan');
+    // expect(mockSetIsLogin).toHaveBeenCalledWith(false); //TODO: add correct check for if isLogin was changed
+  });
+
+  it('Login throws error for invalid user (sad path)', async () =>{
+    const { queryByText } = render(
+      <Login 
+        user={''} 
+        setUser={mockSetUser} 
+        isLogin={false} 
+        setIsLogin={mockSetIsLogin}      
+      />
+    );
+    
+    // test if the button rendered with expected test
+    const userInput = screen.getByLabelText(/enter user/i)
+
+    expect(userInput).toBeInTheDocument();
+    expect(queryByText("Invalid Credentials")).not.toBeInTheDocument();
+  
+    fireEvent.change(userInput, { target: { value: 'InvalidUser' } });
+    fireEvent.keyDown(userInput, { key: 'Enter', code: 'Enter', keyCode: 13, charCode: 13 }); //Enter press
+
+    // Test if user was set and if error message appears 
+    expect(mockSetUser).toHaveBeenCalledWith('InvalidUser');
+    expect(queryByText("Invalid Credentials")).toBeInTheDocument();
+
   });
 });

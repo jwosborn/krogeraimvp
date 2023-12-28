@@ -12,6 +12,7 @@ type LoginProps = {
 
 const checkCredentials = (user: string, setIsLogin: (value: boolean) => void, setError: (value: boolean) => void) => {
     if (user.toLowerCase() === 'meaghan') {
+        setError(false)
         setIsLogin(true);
     } else {
         setError(true)
@@ -33,7 +34,7 @@ export const Login = ({ user, setUser, isLogin, setIsLogin }: LoginProps) => {
                 <InputText id="in" value={user} onChange={(e) => setUser(e.currentTarget.value)} onKeyDown={handleKeyPress} />
                 <label htmlFor="in">Enter User</label>
             </span>
-            {isError && <Message severity="error" text="Invalid Credentials" />}
+            {isError && <Message className='mt-2' severity="error" text="Invalid Credentials" />}
         </Dialog>
     );
 };
