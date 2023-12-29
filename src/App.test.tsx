@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, fireEvent, getByRole, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, fireEvent, getByRole, getByTestId, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import App from './App';
 import '@testing-library/jest-dom'
 import { userEvent } from '@testing-library/user-event';
@@ -11,29 +11,8 @@ import { Loader } from './components/Loader';
 import { MainTable } from './components/MainTable';
 import { RunAllButton } from './components/RunAllButton';
 import mockAxios from 'jest-mock-axios';
- import { Login } from './components/Login';
-
-const ReactTestRenderer = require('react-test-renderer');
-
-// Mocks
-jest.mock('xlsx', () => ({
-  read: jest.fn().mockReturnValue({
-    SheetNames: ['UPLOAD'],
-    Sheets: {
-      Sheet1: {}
-    }
-  }),
-  utils: {
-    sheet_to_json: jest.fn().mockReturnValue([['Index', 'group',	'Product_Title',	'New Shrimp Title',	'UPC', 'brand','claim/raised',	'attribute',	'cook-state',	'meat type',	'flavor',	'cut type',	'marketing',	'ingredients',	'ingredients2',	'Feature', 'Bullets',	'category',	'DescPrompt',	'BulletPrompt'],
-    ['']])
-  }
-}));
-
-// Mock function for CSVToArray (if it's a custom function)
-jest.mock('./utils/format', () => ({
-  CSVToArray: jest.fn().mockReturnValue([['Header1', 'Header2'], ['Row1Data1', 'Row1Data2']])
-}));
-
+import { Login } from './components/Login';
+import { DropdownSelect } from './components/DropdownSelect';
 
 // Test case: Verify initialization of the App component
 it('initializes properly', () => {
@@ -116,30 +95,6 @@ describe('UploadButton', () => {
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
-
-  // it('handles file upload for CSV files', async () => {
-  //   const { getByText } = render(
-  //     <UploadButton
-  //       products={[]}
-  //       setProducts={mockSetProducts}
-  //       setChoosingSheet={mockSetChoosingSheet}
-  //       setSheet={mockSetSheet}
-  //       setSheetChoices={mockSetSheetChoices}
-  //       setWb={mockSetWb}
-  //     />
-  //   );
-
-  //   const fileUpload = getByText('Browse Files').parentNode;
-  //   fireEvent.change(fileUpload, { target: { files: [mockCSVFile] } });
-
-  //   // Wait for any asynchronous operations
-  //   await waitFor(() => {
-  //     expect(mockSetProducts).toHaveBeenCalled();
-  //     // Additional assertions
-  //   });
-  // });
-
-  // multiple sheets in an Excel file, or other edge cases.
 });
 
 describe('Loader Component', () => {
@@ -247,7 +202,7 @@ describe('Login Component', () => {
   // Mock state update functions
   const mockUser = 'meaghan';
   const mockSetUser = jest.fn();
-  const mockSetIsLogin = jest.fn(() => Promise.resolve());
+  const mockSetIsLogin = jest.fn();
   
   it('Login works with user input (happy path)', async () =>{
     render(
@@ -296,5 +251,53 @@ describe('Login Component', () => {
     expect(mockSetUser).toHaveBeenCalledWith('InvalidUser');
     expect(queryByText("Invalid Credentials")).toBeInTheDocument();
 
+  });
+});
+
+describe('DropdownSelect Component', () => {
+  // Mock state update functions
+  const mockWb = {
+    Sheets: {
+      Sheet1: {
+        A1: { v: 'Header1' },
+        A2: { v: 'Value1' },
+      },
+      Sheet2: {
+        A1: { v: 'Header2' },
+        A2: { v: 'Value2' },
+      },
+    },
+    SheetNames: ['Sheet1', 'Sheet2', /* other sheet names */],
+  };
+  
+  const mockSheet = 'Sheet1';
+  const mockSetSheet = jest.fn();
+  const mockSetChoosingSheet = jest.fn();
+  const mockSetProducts = jest.fn();
+  const mockSheetChoices = [{ label: 'Sheet1', value: 'Sheet1' }, { label: 'Sheet2', value: 'Sheet2'}];
+  
+  it('Selecting workbook sheet updates state', async () =>{
+    const { getByTestId } = render(
+      <DropdownSelect 
+        wb={mockWb} 
+        sheet={''} 
+        setSheet={mockSetSheet} 
+        setChoosingSheet={mockSetChoosingSheet} 
+        setProducts={mockSetProducts} 
+        sheetChoices={mockSheetChoices}      
+      />
+    );
+
+    const dropdownSelect = getByTestId('DropdownSelect');
+
+    fireEvent.click(dropdownSelect);
+    fireEvent.click(screen.getByText('Sheet2'));
+
+    await waitFor(() => {
+      // Assertions
+      expect(mockSetSheet).toHaveBeenCalledWith('Sheet2');
+      expect(mockSetChoosingSheet).toHaveBeenCalledWith(false);
+      expect(mockSetProducts).toHaveBeenCalled(); 
+    })
   });
 });
