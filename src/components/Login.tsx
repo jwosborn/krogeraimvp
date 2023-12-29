@@ -24,6 +24,7 @@ export const Login = ({ user, setUser, isLogin, setIsLogin }: LoginProps) => {
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
+            setUser(user);
             checkCredentials(user, setIsLogin, setIsError)
         }
     }
