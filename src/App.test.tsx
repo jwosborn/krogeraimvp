@@ -11,7 +11,7 @@ import { Loader } from './components/Loader';
 import { MainTable } from './components/MainTable';
 import { RunAllButton } from './components/RunAllButton';
 import mockAxios from 'jest-mock-axios';
-import { Login } from './components/Login';
+ import { Login } from './components/Login';
 
 const ReactTestRenderer = require('react-test-renderer');
 
@@ -245,15 +245,14 @@ describe('RunAllButton Component (Happy Path)', () => {
 
 describe('Login Component', () => {
   // Mock state update functions
-  const mockUser = jest.fn(() => '');
+  const mockUser = 'meaghan';
   const mockSetUser = jest.fn();
-  const mockIsLogin = jest.fn(() => false);
-  const mockSetIsLogin = jest.fn();
+  const mockSetIsLogin = jest.fn(() => Promise.resolve());
   
   it('Login works with user input (happy path)', async () =>{
-    const { queryByText } = render(
+    render(
       <Login 
-        user={''} 
+        user={mockUser}
         setUser={mockSetUser} 
         isLogin={false} 
         setIsLogin={mockSetIsLogin}      
@@ -267,9 +266,11 @@ describe('Login Component', () => {
   
     fireEvent.change(userInput, { target: { value: 'meaghan' } });
     fireEvent.keyDown(userInput, { key: 'Enter', code: 'Enter', keyCode: 13, charCode: 13 }); //Enter press
- 
-    expect(mockSetUser).toHaveBeenCalledWith('meaghan');
-    // expect(mockSetIsLogin).toHaveBeenCalledWith(false); //TODO: add correct check for if isLogin was changed
+
+    await waitFor(() => {
+      expect(mockSetUser).toHaveBeenCalled();
+      expect(mockSetIsLogin).toHaveBeenCalledWith(true);
+    })
   });
 
   it('Login throws error for invalid user (sad path)', async () =>{

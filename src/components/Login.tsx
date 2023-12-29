@@ -20,11 +20,11 @@ const checkCredentials = (user: string, setIsLogin: (value: boolean) => void, se
 };
 
 export const Login = ({ user, setUser, isLogin, setIsLogin }: LoginProps) => {
-    const [isError, setError] = useState(false);
+    const [isError, setIsError] = useState(false);
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            checkCredentials(user, setIsLogin, setError)
+            checkCredentials(user, setIsLogin, setIsError)
         }
     }
 
