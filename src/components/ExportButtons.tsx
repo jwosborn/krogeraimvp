@@ -50,6 +50,7 @@ export const ExportButtons = ({ products, generated, dt }: ExportButtonsProps) =
               icon="pi pi-file-excel"
               label="Export XLSX"
               onClick={() => exportExcel(products)}
+              data-testid="Export-Excel"
             />
             <Button
               type="button"

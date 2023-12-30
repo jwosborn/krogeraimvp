@@ -13,6 +13,11 @@ import { RunAllButton } from './components/RunAllButton';
 import mockAxios from 'jest-mock-axios';
 import { Login } from './components/Login';
 import { DropdownSelect } from './components/DropdownSelect';
+import { ExportButtons } from './components/ExportButtons';
+import * as xlsx from 'xlsx';
+import { saveAs } from 'file-saver';
+
+
 
 // Test case: Verify initialization of the App component
 it('initializes properly', () => {
@@ -298,6 +303,64 @@ describe('DropdownSelect Component', () => {
       expect(mockSetSheet).toHaveBeenCalledWith('Sheet2');
       expect(mockSetChoosingSheet).toHaveBeenCalledWith(false);
       expect(mockSetProducts).toHaveBeenCalled(); 
+    })
+  });
+});
+
+
+// Mock 'file-saver' saveAs function
+jest.mock('file-saver', () => ({
+  saveAs: jest.fn(),
+}));
+
+describe('ExportButtons Component', () => {
+
+  const mockGenerated = true;
+
+
+  it('Export to xlxs', async () => {
+    // Spy on xlsx.utils.json_to_sheet
+    const jsonToSheetSpy = jest.spyOn(xlsx.utils, 'json_to_sheet');
+
+    // Mocking the 'xlsx' module
+    jest.mock('xlsx', () => ({
+      ...jest.requireActual('xlsx'),
+      utils: {
+        json_to_sheet: jest.fn(),
+      },
+      write: jest.fn(),
+    }));
+
+    // // Mock 'file-saver' saveAs function
+    // jest.mock('file-saver', () => ({
+    //   saveAs: jest.fn(),
+    // }));
+
+    const { getByTestId } = render(
+      <ExportButtons
+        products={productsMock}
+        generated={mockGenerated}
+        dt={undefined}
+      />
+    );
+
+    const exportButtons = getByTestId('Export-Excel');
+
+    fireEvent.click(exportButtons);
+
+    // Wait for the asynchronous code to complete
+    await Promise.resolve();
+
+    await waitFor(() => {
+      // Assertions for exportExcel    
+      const jsonToSheetMock = xlsx.utils.json_to_sheet as jest.Mock;
+      const xlsxWriteMock = xlsx.write as jest.Mock;
+      // expect(jsonToSheetMock).toHaveBeenCalledWith(productsMock);
+      expect(jsonToSheetMock).toHaveBeenCalled();
+      // expect(xlsxWriteMock).toHaveBeenCalledWith(
+      //   { Sheets: { data: jsonToSheetMock(productsMock) }, SheetNames: ['data'] },
+      //   { bookType: 'xlsx', type: 'array' }
+      // );
     })
   });
 });
