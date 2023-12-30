@@ -3,10 +3,14 @@
 exports[`UploadButton handles file upload for XLSX files 1`] = `
 <div
   className="p-fileupload p-fileupload-basic p-component ml-3 my-3"
+  data-pc-name="fileupload"
+  data-pc-section="root"
   style={{}}
 >
   <div
     className=""
+    data-pc-name="messages"
+    data-pc-section="root"
     id={null}
     style={{}}
   >
@@ -14,6 +18,7 @@ exports[`UploadButton handles file upload for XLSX files 1`] = `
   </div>
   <span
     className="p-button p-component p-fileupload-choose"
+    data-pc-section="basicbutton"
     onBlur={[Function]}
     onFocus={[Function]}
     onKeyDown={[Function]}
@@ -24,6 +29,7 @@ exports[`UploadButton handles file upload for XLSX files 1`] = `
     <svg
       aria-hidden={true}
       className="p-icon p-button-icon p-button-icon-left"
+      data-pc-section="chooseicon"
       fill="none"
       height="14"
       viewBox="0 0 14 14"
@@ -52,11 +58,13 @@ exports[`UploadButton handles file upload for XLSX files 1`] = `
     </svg>
     <span
       className="p-button-label p-clickable"
+      data-pc-section="label"
     >
       Browse Files
     </span>
     <input
       accept=".xlsx, .csv"
+      data-pc-section="input"
       disabled={false}
       multiple={false}
       onChange={[Function]}

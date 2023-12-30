@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FileUpload } from "primereact/fileupload";
-import { CSVToArray } from '../utils/format';
+import { CSVToArray } from '../../utils/format';
 
 type UploadButtonProps = {
     products: object[],

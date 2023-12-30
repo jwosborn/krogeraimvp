@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { FileUpload } from "primereact/fileupload";
-import { CSVToArray } from '../utils/format';
+import { CSVToArray } from '../../utils/format';
 import { Button } from "primereact/button";
 import { saveAs } from 'file-saver';
 

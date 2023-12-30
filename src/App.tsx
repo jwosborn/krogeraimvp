@@ -3,13 +3,13 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import "./App.css";
 
-import { Login } from './components/Login';
-import { MainTable } from './components/MainTable';
-import { UploadButton } from './components/UploadButton';
-import { ExportButtons } from './components/ExportButtons';
-import { Loader } from './components/Loader';
-import { RunAllButton } from './components/RunAllButton';
-import { DropdownSelect } from './components/DropdownSelect'
+import { Login } from './components/Login/Login';
+import { MainTable } from './components/MainTable/MainTable';
+import { UploadButton } from './components/UploadButton/UploadButton';
+import { ExportButtons } from './components/ExportButtons/ExportButtons';
+import { Loader } from './components/Loader/Loader';
+import { RunAllButton } from './components/RunAllButton/RunAllButton';
+import { DropdownSelect } from './components/DropdownSelect/DropdownSelect'
 
 const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
