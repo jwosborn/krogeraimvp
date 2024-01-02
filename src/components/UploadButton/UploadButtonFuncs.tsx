@@ -2,10 +2,11 @@
 import * as xlsx from 'xlsx';
 import { CSVToArray } from '../../utils/format';
 
-export const generateTableData = (arrays: any[][]): any[] => {
+export const generateTableData = (arrays: any[][]): object[] => {
     const headerRow = arrays[0];
     const tableRows = arrays.slice(1);
 
+    // convert arrays to obj with header: value
     return tableRows.map(row => {
         let obj: any = {};
         row.forEach((val, idx) => {
@@ -21,7 +22,9 @@ export const generateTableData = (arrays: any[][]): any[] => {
 export const handleCSVUpload = (e: any, setProducts: Function): void => {
     const reader = new FileReader();
     reader.onload = () => {
+        // convert to table rows
         const arrays = CSVToArray(reader.result);
+        //parse table rows and align rows to header
         const table = generateTableData(arrays);
         setProducts(table.slice(1));
     };
@@ -36,13 +39,12 @@ export const handleXLSXUpload = async (
     setSheet: Function,
     setSheetChoices: Function,
     setSheetInState: Function
-): Promise<void> => {
+    ): Promise<void> => {
     const reader = new FileReader();
 
-    reader.onload = async (event) => {
-        const wb = xlsx.read(event.target.result, { type: 'array' });
+    reader.onload = async (e) => {
+        const wb = xlsx.read(e.target.result, { type: 'array' });
         setWb(wb);
-
         const hasMultipleSheets = wb.SheetNames.length > 1;
         if (hasMultipleSheets) {
             setChoosingSheet(true);
@@ -58,10 +60,12 @@ export const handleXLSXUpload = async (
 
 export const setSheetInState = (xlsx: any, ws: any, setProducts: Function): void => {
     const data = xlsx.utils.sheet_to_json(ws, { header: 1 });
+
+    //Prepare DataTable
     const cols = data[0];
     data.shift();
 
-    const _importedData = data.map(d => {
+    let _importedData = data.map(d => {
         return cols.reduce((obj, c, i) => {
             obj[c] = d[i];
             return obj;
@@ -74,6 +78,7 @@ export const handleImport = (e: any, setProducts: Function, setWb: Function, set
     const file = e.files[0];
 
     if (file.type === 'text/csv') {
+        // CSV workflow
         handleCSVUpload(e, setProducts);
     } else {
         handleXLSXUpload(e, setWb, setChoosingSheet, setSheet, setSheetChoices, setSheetInState);

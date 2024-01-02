@@ -3,14 +3,13 @@ import * as xlsx from 'xlsx';
 import '@testing-library/jest-dom'
 import {
   generateTableData,
-  handleCSVUpload,
   handleXLSXUpload,
   setSheetInState,
   handleImport,
 } from './UploadButtonFuncs';
 import { CSVToArray } from '../../utils/format.js'
 import { UploadButton } from './UploadButton';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import productsMock from '../../mocks/productsMock.json';
 
 // Mocks
@@ -167,7 +166,7 @@ describe('UploadButtonFuncs', () => {
       files: [new File(['XLSX Content'], 'file.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })],
     };
 
-    await handleImport(eventMock, setProductsMock, setWbMock, setChoosingSheetMock, setSheetMock, setSheetChoicesMock);
+    handleImport(eventMock, setProductsMock, setWbMock, setChoosingSheetMock, setSheetMock, setSheetChoicesMock);
 
     expect(setProductsMock).not.toHaveBeenCalled();
     expect(setWbMock).toHaveBeenCalledWith(expect.objectContaining({
@@ -179,6 +178,26 @@ describe('UploadButtonFuncs', () => {
     expect(setSheetChoicesMock).toHaveBeenCalledWith(['UPLOAD', 'UPLOAD2']);
     xlsxReadMock.mockRestore();
   });
+
+  it('handleImport with CSV file', () => {
+    const setProductsMock = jest.fn();
+    const setWbMock = jest.fn();
+    const setChoosingSheetMock = jest.fn();
+    const setSheetMock = jest.fn();
+    const setSheetChoicesMock = jest.fn();
+
+    // Spy on CSVToArray and mock its return value
+    const mockCSVData = [['DescPrompt', 'BulletPrompt'], ['DescPromptData', 'BulletPromptData']];
+    CSVToArray.mockReturnValue(mockCSVData);
+
+    // Create a mock file and simulate file upload
+    const file = new File(['DescPrompt,BulletPrompt\nDescPromptData,BulletPromptData'], 'test.csv', { type: 'text/csv' });
+    const eventMock = { files: [file] };
+
+    handleImport(eventMock, setProductsMock, setWbMock, setChoosingSheetMock, setSheetMock, setSheetChoicesMock);
+
+    expect(setProductsMock).toHaveBeenCalled();
+  })
 });
 
 describe('UploadButton Component', () => {
@@ -189,15 +208,9 @@ describe('UploadButton Component', () => {
   const mockSetSheetChoices = jest.fn();
   const mockSetWb = jest.fn();
 
-  const file = new File([new ArrayBuffer(1)], 'file.jpg');
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
-
-  // Mock files for upload
-  const mockXLSXFile = new File([''], 'example.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  const mockCSVFile = new File(['Header1,Header2\nRow1Data1,Row1Data2'], 'example.csv', { type: 'text/csv' });
 
   it('renders the file upload component when products array is empty', () => {
     render(
