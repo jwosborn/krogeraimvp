@@ -16,10 +16,7 @@ type MainTableProps = {
     dt: React.MutableRefObject<any>,
 };
 
-export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt }: MainTableProps) => {
-
-    // state vars
-    // const dt = useRef(null);
+const MainTable = ({ products, setProducts, setLoading, setGenerated, dt }: MainTableProps) => {
 
     const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
@@ -31,6 +28,7 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt 
             className="p-button-success"
             icon="pi pi-refresh"
             onClick={() => generateDescription(product, row.rowIndex)}
+            data-testid={`generateButton${row.rowIndex}`}
         />
     )
 
@@ -65,12 +63,11 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt 
     const displayAPIError: (e: any) => void =
         (e) => {
             setLoading(false);
-            // setError(true);
             console.error(e)
             // setErrorText(e.response.data)
         }
 
-    const generateDescription: (product: any, index: number) => void =
+        const generateDescription: (product: any, index: number) => void =
         (product, index) => {
             setLoading(true);
             const { DescPrompt, BulletPrompt } = product;
@@ -84,14 +81,12 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt 
                 })
             : null
         }
+      
 
     const onCellEditComplete = (e) => {
         let { rowIndex, newValue, field, originalEvent: event } = e;
-
         if (newValue?.trim().length > 0) {
-            // rowData[field] = newValue;
             const newProducts = [...products];
-            // const newProducts = [products];
             newProducts[rowIndex][field] = newValue;
             setProducts(newProducts);
         } else {
@@ -100,7 +95,7 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt 
     }
 
     const cellEditor = (options) => {
-        return <InputTextarea className="h-30rem w-12" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
+        return <InputTextarea className="h-30rem w-12" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} data-testid={'editCell'} />;
     }
 
     const columns: (productArray: any[]) => React.ReactElement[] | null =
@@ -116,6 +111,7 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt 
                     key={col}
                     onCellEditComplete={onCellEditComplete}
                     style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
+                    data-testid={`bigoltest${col}`}
                 />
             )
         }
@@ -147,3 +143,5 @@ export const MainTable = ({ products, setProducts, setLoading, setGenerated, dt 
 
     );
 };
+
+export default MainTable;

@@ -4,7 +4,7 @@ import { Dialog } from 'primereact/dialog';
 import "./App.css";
 
 import { Login } from './components/Login/Login';
-import { MainTable } from './components/MainTable/MainTable';
+import MainTable from './components/MainTable/MainTable';
 import { UploadButton } from './components/UploadButton/UploadButton';
 import { ExportButtons } from './components/ExportButtons/ExportButtons';
 import { Loader } from './components/Loader/Loader';
