@@ -19,10 +19,7 @@ write: jest.fn(),
 
 
 describe('ExportButtons Component', () => {
-  
-
     const mockGenerated = true;
-  
   
     it('Export to xlxs', async () => {  
       const { getByTestId } = render(
