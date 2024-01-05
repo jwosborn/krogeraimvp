@@ -41,7 +41,7 @@ describe('RunAllButton Component', () => {
 
       fireEvent.click(screen.getByText('Run All Descriptions'));
   
-      // Wait for async operations (API call)
+      // Assertions
       await waitFor(() => {
         expect(mockAxios.post).toHaveBeenCalledTimes(29); // 29 prompts in data
         expect(mockSetLoading).toHaveBeenCalledWith(true); // started loading
@@ -82,19 +82,18 @@ describe('RunAllButtonFuncs function tests', () =>{
 
 
   it('generateDescriptions function creates descriptions', async () => {
-    const result = generateDescriptions(productsMock, mockSetLoading, mockSetProducts, mockURL, mockSetGenerated, mockSetError);
+    generateDescriptions([productsMock[0]], mockSetLoading, mockSetProducts, mockURL, mockSetGenerated, mockSetError);
 
+    // Assertions
     await waitFor(() => {
       expect(mockSetLoading).toHaveBeenCalledWith(true);
+      expect(mockSetLoading).toHaveBeenCalledWith(false);
+      expect(mockSetProducts).toHaveBeenCalled();
+      expect(mockSetGenerated).toHaveBeenCalledWith(true);
     })
   })
 
   it('handleAIRequest returns with expected data', async () => {
-    // Mock axios for successful response
-    // (axios.post as jest.Mock)
-    //   .mockResolvedValueOnce({ data: [{ message: { content: 'Mock Test Description' } }] })
-    //   .mockResolvedValueOnce({ data: [{ message: { content: 'Mock Test Bullets' } }] });
-
     // Setup mock parameters
     const singleProductMock = productsMock[0]
     const mockIndex = 0;
