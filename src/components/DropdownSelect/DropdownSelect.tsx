@@ -48,6 +48,7 @@ export const DropdownSelect = ({ wb, sheet, setSheet, setChoosingSheet, setProdu
                 value={sheet} 
                 options={sheetChoices} 
                 onChange={e => handleDropdownSelect(e, wb)} 
+                data-testid="DropdownSelect"
             />
         </>
 )};

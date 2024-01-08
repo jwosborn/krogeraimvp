@@ -8,5 +8,9 @@
     "^.+\\.(js|jsx)$": "babel-jest",
     "^.+\\.jsx$": "babel-jest",
     ".+\\.(css|scss|png|jpg|svg)$": "jest-transform-stub"
-  }
+  },
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "src/components/*/*.tsx"
+    ]
 }
