@@ -97,7 +97,14 @@ function App() {
                         )}
                     </div>
             )}
-                <MainTable products={products} setProducts={setProducts} setLoading={setLoading} setGenerated={setGenerated} dt={dt} />
+                <MainTable 
+                    products={products} 
+                    setProducts={setProducts} 
+                    setLoading={setLoading} 
+                    setGenerated={setGenerated} 
+                    setError={setError}
+                    dt={dt} 
+                />
                 
                 <Loader loading={loading} setLoading={setLoading} />
 

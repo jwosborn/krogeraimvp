@@ -11,6 +11,7 @@ describe('MainTable Component', () => {
     const mockSetProducts = jest.fn();
     const mockSetLoading = jest.fn();
     const mockSetGenerated = jest.fn();
+    const mockSetError = jest.fn();
     
     it('MainTable loads products data', () => {
       render(
@@ -19,6 +20,7 @@ describe('MainTable Component', () => {
           setProducts={mockSetProducts} 
           setLoading={mockSetLoading} 
           setGenerated={mockSetGenerated} 
+          setError={mockSetError}
           dt={undefined}      
         />
       );
@@ -37,6 +39,7 @@ describe('MainTable Component', () => {
           setProducts={mockSetProducts} 
           setLoading={mockSetLoading} 
           setGenerated={mockSetGenerated} 
+          setError={mockSetError}
           dt={undefined}      
         />
       );
@@ -63,6 +66,7 @@ describe('MainTable Component', () => {
           setProducts={mockSetProducts} 
           setLoading={mockSetLoading} 
           setGenerated={mockSetGenerated} 
+          setError={mockSetError}
           dt={undefined}      
         />
       );
