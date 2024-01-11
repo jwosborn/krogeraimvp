@@ -114,3 +114,43 @@ describe('RunAllButtonFuncs function tests', () =>{
     jest.restoreAllMocks();
   });
 });
+
+describe("Failure Scenarios", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });  
+
+  beforeEach(() => {
+    // Reset mock functions before each test
+    mockSetLoading.mockClear();
+    mockSetError.mockClear();
+    (axios.post as jest.Mock).mockClear();
+
+    // Mock axios.post to throw an error
+    (axios.post as jest.Mock)
+      .mockRejectedValueOnce(new Error('Network error'));
+  });
+
+  // Mock state update functions
+  const mockSetLoading = jest.fn();
+  const mockSetError = jest.fn();
+
+  it('handleAIRequest returns with ERROR', async () => {
+    // Setup mock parameters
+    const singleProductMock = productsMock[0]
+    const mockIndex = 0;
+    const mockURL = 'http://mockForTesturl.com';
+
+    try {
+      // Call the function and await its result
+      await handleAIRequest(singleProductMock, mockIndex, mockURL, mockSetLoading, mockSetError);
+  
+    } catch (error) {
+      expect(mockSetLoading).toHaveBeenCalledWith(false);
+      expect(mockSetError).toHaveBeenCalledWith(true);
+    }
+
+    jest.restoreAllMocks();
+  });
+
+})
