@@ -5,6 +5,8 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import axios from "axios";
 import { generateDescriptions } from "../RunAllButton/RunAllButtonFuncs";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
 
 type MainTableProps = {
     products: object[],
@@ -16,6 +18,9 @@ type MainTableProps = {
 };
 
 const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, dt }: MainTableProps) => {
+    const [showDialog, setShowDialog] = useState(false);
+    const [editedValue, setEditedValue] = useState('');
+    const [editingCell, setEditingCell] = useState({ rowIndex: null, field: null });
 
     const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
@@ -27,7 +32,7 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
             className="p-button-success"
             icon="pi pi-refresh"
             // onClick={() => generateDescription(product, row.rowIndex)}
-            onClick={() => generateDescriptions([product], setLoading, setProducts, URL, setGenerated, setError)}
+            onClick={() => generateDescriptions(products, setLoading, setProducts, URL, setGenerated, setError, row.rowIndex)}
             data-testid={`generateButton${row.rowIndex}`}
         />
     )
@@ -43,9 +48,37 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         }
     }
 
+    const openDialog = (rowIndex, field, value) => {
+        if(field != "UPC"){
+            setShowDialog(true);
+            setEditedValue(value);
+            setEditingCell({ rowIndex, field });
+        }
+    };
+
+    const onDialogSave = () => {
+        if (editedValue.trim().length > 0) {
+            const newProducts = [...products];
+            newProducts[editingCell.rowIndex][editingCell.field] = editedValue;
+            setProducts(newProducts);
+        }
+        setShowDialog(false);
+    };
+
     const cellEditor = (options) => {
-        return <InputTextarea className="h-30rem w-12" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} data-testid={'editCell'} />;
-    }
+        return (
+            <div onClick={() => openDialog(options.rowIndex, options.field, options.value)}>
+                {options.value}
+            </div>
+        );
+    };
+
+    const dialogFooter = (
+        <div>
+            <Button label="Cancel" icon="pi pi-times" onClick={() => setShowDialog(false)} className="p-button-text" />
+            <Button label="Save" icon="pi pi-check" onClick={onDialogSave} autoFocus />
+        </div>
+    );
 
     const columns: (productArray: any[]) => React.ReactElement[] | null =
     (productArray) => Object.keys(productArray[0] || {}).map(col => {
@@ -56,6 +89,8 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
                     editor={(options) => cellEditor(options)}
                     field={col}
                     header={col}
+                    showApplyButton={true}
+                    onFilterApplyClick={() => null}
                     headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
                     key={col}
                     onCellEditComplete={onCellEditComplete}
@@ -66,7 +101,6 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         }
         return null
     });
-
 
     return (
     <div>  
@@ -88,8 +122,25 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
             { columns(products) }
             {Boolean(products.length) && <Column header="Run" body={generateButton} />}
         </DataTable>
-    </div>   
 
+        <Dialog 
+            className="f"
+            visible={showDialog} 
+            style={{ width: '50vw' }} 
+            header={editingCell.field}
+            modal={true}
+            footer={dialogFooter} 
+            onHide={() => setShowDialog(false)}
+        >
+            <InputTextarea 
+                rows={5}
+                cols={30}
+                value={editedValue} 
+                onChange={(e) => setEditedValue(e.target.value)} 
+                autoFocus 
+            />
+        </Dialog>
+    </div>   
     );
 };
 
