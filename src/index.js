@@ -7,6 +7,7 @@ import "primeicons/primeicons.css";                                //icons
 import "./utils/theme.css";
 import App from './App';
 import reportWebVitals from './utils/reportWebVitals';
+import 'primeicons/primeicons.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -29,7 +29,7 @@ function App() {
     const dt = useRef(null);
 
     return (
-        <div className="container min-w-screen surface-ground p-7">
+        <div className="container min-w-screen surface-ground">
             <div className="container w-11 min-h-screen mx-auto ">
                 <div className="header flex flex-row justify-content-evenly w-full">
                     <img className="max-h-10rem" src={logo} alt="Thinhaus Logo" />
@@ -37,28 +37,28 @@ function App() {
                         <p className="text-4xl text-primary font-main">Product Description Generator</p>
                     </div>
                 </div>
-                <Login 
-                    user={user} 
-                    setUser={setUser} 
-                    isLogin={isLogin} 
-                    setIsLogin={setIsLogin} 
+                <Login
+                    user={user}
+                    setUser={setUser}
+                    isLogin={isLogin}
+                    setIsLogin={setIsLogin}
                 />
                 <Dialog className="h-12rem w-15rem" visible={choosingSheet} onHide={() => setChoosingSheet(false)}>
                     <h5>Select Sheet:</h5>
-                    <DropdownSelect 
-                        wb={wb} 
-                        sheet={sheet} 
-                        setSheet={setSheet} 
-                        setChoosingSheet={setChoosingSheet} 
-                        setProducts={setProducts} 
-                        sheetChoices={sheetChoices} 
+                    <DropdownSelect
+                        wb={wb}
+                        sheet={sheet}
+                        setSheet={setSheet}
+                        setChoosingSheet={setChoosingSheet}
+                        setProducts={setProducts}
+                        sheetChoices={sheetChoices}
                     />
                     </Dialog>
             {isLogin && (
                     <div className="flex flex-row justify-content-start border-1 border-200">
                         {!products.length &&
-                            <UploadButton 
-                                products={products} 
+                            <UploadButton
+                                products={products}
                                 setProducts={setProducts}
                                 setChoosingSheet={setChoosingSheet}
                                 setSheet={setSheet}
@@ -68,13 +68,13 @@ function App() {
                         }
                         {products.length > 0 &&
                             <>
-                                <RunAllButton 
-                                URL={URL} 
-                                products={products} 
-                                setProducts={setProducts} 
-                                setLoading={setLoading} 
-                                setGenerated={setGenerated} 
-                                setError={setError}                                
+                                <RunAllButton
+                                URL={URL}
+                                products={products}
+                                setProducts={setProducts}
+                                setLoading={setLoading}
+                                setGenerated={setGenerated}
+                                setError={setError}
                                 />
                                 <Button
                                     className="p-button-danger ml-3 my-3"
@@ -86,26 +86,26 @@ function App() {
                         }
                         <ExportButtons products={products} generated={generated} dt={dt}/>
                         {sheetChoices.length > 0 && (
-                            <DropdownSelect 
-                                wb={wb} 
-                                sheet={sheet} 
-                                setSheet={setSheet} 
-                                setChoosingSheet={setChoosingSheet} 
-                                setProducts={setProducts} 
-                                sheetChoices={sheetChoices} 
+                            <DropdownSelect
+                                wb={wb}
+                                sheet={sheet}
+                                setSheet={setSheet}
+                                setChoosingSheet={setChoosingSheet}
+                                setProducts={setProducts}
+                                sheetChoices={sheetChoices}
                             />
                         )}
                     </div>
             )}
-                <MainTable 
-                    products={products} 
-                    setProducts={setProducts} 
-                    setLoading={setLoading} 
-                    setGenerated={setGenerated} 
+                <MainTable
+                    products={products}
+                    setProducts={setProducts}
+                    setLoading={setLoading}
+                    setGenerated={setGenerated}
                     setError={setError}
-                    dt={dt} 
+                    dt={dt}
                 />
-                
+
                 <Loader loading={loading} setLoading={setLoading} />
 
                 <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>

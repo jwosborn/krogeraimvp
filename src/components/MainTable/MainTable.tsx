@@ -1,13 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
-import axios from "axios";
 import { generateDescriptions } from "../RunAllButton/RunAllButtonFuncs";
 import { Dialog } from "primereact/dialog";
-import { InputText } from "primereact/inputtext";
-import 'primeicons/primeicons.css';
 
 type MainTableProps = {
     products: object[],
@@ -50,11 +47,9 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
     }
 
     const openDialog = (rowIndex, field, value) => {
-        if(field != "UPC"){
-            setShowDialog(true);
-            setEditedValue(value);
-            setEditingCell({ rowIndex, field });
-        }
+        setShowDialog(true);
+        setEditedValue(value);
+        setEditingCell({ rowIndex, field });
     };
 
     const onDialogSave = () => {
@@ -66,21 +61,27 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         setShowDialog(false);
     };
 
-    const cellEditor = (options) => {
-        return (
-            <div onClick={() => openDialog(options.rowIndex, options.field, options.value)}>
-                {options.value}
-            </div>
-        );
-    };
-
     const dialogFooter = (
         <div>
             <Button label="Cancel" icon="pi pi-times" onClick={() => setShowDialog(false)} className="p-button-text" />
             <Button label="Save" icon="pi pi-check" onClick={onDialogSave} autoFocus />
         </div>
     );
-    
+
+    const editableCell = (rowData, index, col) => (
+        <div className="flex flex-row justify-content-between">
+            {rowData[col]}
+            {rowData[col] &&
+                <Button
+                    icon="pi pi-pencil"
+                    className="p-button-rounded p-button-text ml-3 min-w-min"
+                    onClick={() => openDialog(index, col, rowData[col])}>
+                </Button>
+            }
+        </div>
+    )
+
+
     const columns: (productArray: any[]) => React.ReactElement[] | null =
     (productArray) => {
         // Getting all unique keys from each product
@@ -88,23 +89,27 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         productArray.forEach(product => {
             Object.keys(product).forEach(key => allKeys.add(key));
         });
-    
+
         // Mapping over unique keys to create columns
         return Array.from(allKeys).map(col => {
             const lower = col.toLowerCase();
-            if (['upc', 'product_title', 'description', 'bullets'].includes(lower)) {
+            if (['upc', 'product_title','descprompt', 'bulletprompt', 'description', 'bullets'].includes(lower)) {
                 return (
                     <Column
-                        editor={(options) => cellEditor(options)}
+                        // editor={(options) => cellEditor(options)}
                         field={col}
                         header={col}
                         showApplyButton={true}
                         onFilterApplyClick={() => null}
-                        headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
+                        headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29ABE2'}}
                         key={col}
                         onCellEditComplete={onCellEditComplete}
                         style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
                         data-testid={`bigoltest${col}`}
+                        body={lower !== 'upc'
+                            ? (rowData, options) => editableCell(rowData, options.rowIndex, col)
+                            : undefined
+                        }
                     />
                 );
             }
@@ -113,7 +118,7 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
     };
 
     return (
-    <div>  
+    <div>
         <DataTable
             ref={dt}
             className="pb-6 pt-3 mt-3 max-w-full max-h-full"
@@ -133,24 +138,25 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
             {Boolean(products.length) && <Column header="Run" body={generateButton} />}
         </DataTable>
 
-        <Dialog 
+        <Dialog
             className="f"
-            visible={showDialog} 
-            style={{ width: '50vw' }} 
+            visible={showDialog}
+            style={{ width: '50vw', height: '45vw' }}
             header={editingCell.field}
             modal={true}
-            footer={dialogFooter} 
+            footer={dialogFooter}
             onHide={() => setShowDialog(false)}
         >
-            <InputTextarea 
-                rows={5}
-                cols={30}
-                value={editedValue} 
-                onChange={(e) => setEditedValue(e.target.value)} 
-                autoFocus 
+            <InputTextarea
+                className="p-2 w-11 mx-3"
+                rows={25}
+                // cols={45}
+                value={editedValue}
+                onChange={(e) => setEditedValue(e.target.value)}
+                autoFocus
             />
         </Dialog>
-    </div>   
+    </div>
     );
 };
 
