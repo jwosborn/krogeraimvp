@@ -7,6 +7,7 @@ import axios from "axios";
 import { generateDescriptions } from "../RunAllButton/RunAllButtonFuncs";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
+import 'primeicons/primeicons.css';
 
 type MainTableProps = {
     products: object[],
@@ -79,28 +80,37 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
             <Button label="Save" icon="pi pi-check" onClick={onDialogSave} autoFocus />
         </div>
     );
-
+    
     const columns: (productArray: any[]) => React.ReactElement[] | null =
-    (productArray) => Object.keys(productArray[0] || {}).map(col => {
-        const lower = col.toLowerCase()
-        if (['upc', 'product_title', 'description', 'bullets'].includes(lower)) {
-            return (
-                <Column
-                    editor={(options) => cellEditor(options)}
-                    field={col}
-                    header={col}
-                    showApplyButton={true}
-                    onFilterApplyClick={() => null}
-                    headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
-                    key={col}
-                    onCellEditComplete={onCellEditComplete}
-                    style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
-                    data-testid={`bigoltest${col}`}
-                />
-            )
-        }
-        return null
-    });
+    (productArray) => {
+        // Getting all unique keys from each product
+        const allKeys = new Set<string>();
+        productArray.forEach(product => {
+            Object.keys(product).forEach(key => allKeys.add(key));
+        });
+    
+        // Mapping over unique keys to create columns
+        return Array.from(allKeys).map(col => {
+            const lower = col.toLowerCase();
+            if (['upc', 'product_title', 'description', 'bullets'].includes(lower)) {
+                return (
+                    <Column
+                        editor={(options) => cellEditor(options)}
+                        field={col}
+                        header={col}
+                        showApplyButton={true}
+                        onFilterApplyClick={() => null}
+                        headerStyle={['description', 'bullets'].includes(lower) && {backgroundColor: '#29abe2'}}
+                        key={col}
+                        onCellEditComplete={onCellEditComplete}
+                        style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
+                        data-testid={`bigoltest${col}`}
+                    />
+                );
+            }
+            return null;
+        });
+    };
 
     return (
     <div>  

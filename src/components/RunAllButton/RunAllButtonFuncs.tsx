@@ -23,9 +23,9 @@ export const generateDescriptions = async (
 
     try {
         const res = await Promise.allSettled(
-            productsToUpdate.map((product, index) => {
+            productsToUpdate.map(async (product, index) => {
                 if (product.DescPrompt && product.BulletPrompt) {
-                    return handleAIRequest(product, typeof indexToUpdate === 'undefined' ? index : indexToUpdate, URL, setLoading, setError);
+                    return await handleAIRequest(product, typeof indexToUpdate === 'undefined' ? index : indexToUpdate, URL, setLoading, setError);
                 }
                 return null; // Need to throw invalid request form (or something) error here
             })
@@ -36,11 +36,15 @@ export const generateDescriptions = async (
         // need to just add the products to the array then set that array in state once that's all done.
         res.forEach((response, i) => {
             if (response.status === 'fulfilled' && response.value) {
-                newProducts[response.value.index] = formattedAIResponse([newProducts[response.value.index]], response.value);
+                newProducts[response.value.index] = {
+                    ...newProducts[response.value.index],
+                    ...formattedAIResponse([newProducts[response.value.index]], response.value)
+                };
             }
         });
-
-        setProducts(newProducts);
+        setProducts(preProducts => {
+            return newProducts
+        });
         setGenerated(true);
     } catch (e) {
         console.error({ failed: e });
