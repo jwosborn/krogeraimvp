@@ -5,6 +5,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { generateDescriptions } from "../RunAllButton/RunAllButtonFuncs";
 import { Dialog } from "primereact/dialog";
+import "./MainTable.css"
 
 type MainTableProps = {
     products: object[],
@@ -68,13 +69,36 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         </div>
     );
 
-    const editableCell = (rowData, index, col) => (
-        <div className="flex flex-row justify-content-between">
-            {rowData[col]}
+    const highlighter = (rowData:any = '') => {
+        const bannedWords = ['practical', 'straightforward', 'free form', 'wholesome', 'all', 'only', 'pure', 'real', 'healthy', 'boost', 'well-balanced', 'hand-crafted', 'all natural', 'natural', 'minimally precessed', 'processed', 'simple', 'protein packed', 'full of protein', 'muscle-building', 'freshness', 'fresh', 'source of energy', 'trace', 'clean', 'unadulterated', 'nutritious', 'healthiness', 'whisper', 'rich source', 'unparalleled', 'perfect', 'authentically', 'robust', 'hint', 'pinch', '100%']
+        const regexBanned = new RegExp(`(${bannedWords.join('|')})`, 'gi');
+
+        const factCheckWords = ['protein', 'energy', 'omega 3 fatty acids', 'daily value', 'per serving', 'antioxidant', 'low fat', 'lowfat', 'gluten free', 'low sodium', 'low cholesterol', 'low saturated fat', 'good source', 'excellent source', 'whole wheat', 'light', 'reduced', 'added', 'added', 'extra', 'plus', 'fortified', 'enriched', 'more', 'less', 'high', 'rich in', 'contains', 'provides', 'lean', 'extra lean', 'high potency', 'modified', 'no', 'free', 'zero', 'amount', 'keto', 'low carb', 'antibiotics', 'hormones', 'growth hormones', 'no sugar added', 'msg', 'cage free', 'made with' , 'fresh']
+        const regexFactCheck = new RegExp(`(${factCheckWords.join('|')})`, 'gi');
+
+        const BannedParts = rowData.split(regexBanned);
+        const factCheckParts = rowData.split(regexFactCheck);
+        return (
+            <>
+                {BannedParts.map((part, index) => (
+                    regexBanned.test(part) ? <span key={index} className="banned-highlight">{part}</span> : part
+                ))}
+                {factCheckParts.map((part, index) => (
+                    regexFactCheck.test(part) ? <span key={index} className="factCheck-highlight">{part}</span> : part
+                ))}
+            </>
+        );
+    }
+
+    const editableCell = (rowData, index, col, lower) => (
+        <div className="edit-cell">
+            {console.log(lower)}
+            {['description', 'bullets'].includes(lower) && lower !== undefined ? highlighter(rowData[col]): rowData[col]}
             {rowData[col] &&
                 <Button
                     icon="pi pi-pencil"
-                    className="p-button-rounded p-button-text ml-3 min-w-min"
+                    // className="p-button-rounded p-button-text ml-3 min-w-min contents"
+                    className="edit-button"
                     onClick={() => openDialog(index, col, rowData[col])}>
                 </Button>
             }
@@ -107,7 +131,7 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
                         style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
                         data-testid={`bigoltest${col}`}
                         body={lower !== 'upc'
-                            ? (rowData, options) => editableCell(rowData, options.rowIndex, col)
+                            ? (rowData, options) => editableCell(rowData, options.rowIndex, col, lower)
                             : undefined
                         }
                     />
