@@ -76,24 +76,27 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         const factCheckWords = ['protein', 'energy', 'omega 3 fatty acids', 'daily value', 'per serving', 'antioxidant', 'low fat', 'lowfat', 'gluten free', 'low sodium', 'low cholesterol', 'low saturated fat', 'good source', 'excellent source', 'whole wheat', 'light', 'reduced', 'added', 'added', 'extra', 'plus', 'fortified', 'enriched', 'more', 'less', 'high', 'rich in', 'contains', 'provides', 'lean', 'extra lean', 'high potency', 'modified', 'no', 'free', 'zero', 'amount', 'keto', 'low carb', 'antibiotics', 'hormones', 'growth hormones', 'no sugar added', 'msg', 'cage free', 'made with' , 'fresh']
         const regexFactCheck = new RegExp(`(${factCheckWords.join('|')})`, 'gi');
 
-        const BannedParts = rowData.split(regexBanned);
-        const factCheckParts = rowData.split(regexFactCheck);
+        const combinedRegex = new RegExp(`(?:${regexBanned.source})|(?:${regexFactCheck.source})`, 'gi');
+        const parts = rowData.split(combinedRegex).filter(part => part);
         return (
             <>
-                {BannedParts.map((part, index) => (
-                    regexBanned.test(part) ? <span key={index} className="banned-highlight">{part}</span> : part
-                ))}
-                {factCheckParts.map((part, index) => (
-                    regexFactCheck.test(part) ? <span key={index} className="factCheck-highlight">{part}</span> : part
-                ))}
+                {parts.map((part, index) => {
+                    if (regexBanned.test(part)) {
+                        return <span key={index} className="banned-highlight">{part}</span>;
+                    } else if (regexFactCheck.test(part)) {
+                        return <span key={index} className="factCheck-highlight">{part}</span>;
+                    } else {
+                        // If the part matches neither, return it without any highlighting
+                        return part;
+                    }
+                })}
             </>
         );
     }
 
     const editableCell = (rowData, index, col, lower) => (
         <div className="edit-cell">
-            {console.log(lower)}
-            {['description', 'bullets'].includes(lower) && lower !== undefined ? highlighter(rowData[col]): rowData[col]}
+            {(['description', 'bullets'].includes(lower) && lower !== undefined) ? highlighter(rowData[col]): rowData[col]}
             {rowData[col] &&
                 <Button
                     icon="pi pi-pencil"
