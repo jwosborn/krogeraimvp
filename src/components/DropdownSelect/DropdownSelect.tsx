@@ -42,12 +42,11 @@ export const DropdownSelect = ({ wb, sheet, setSheet, setChoosingSheet, setProdu
     }
 
     return (
-        <>
-            <Dropdown 
-                className="ml-5 my-3" 
-                value={sheet} 
-                options={sheetChoices} 
-                onChange={e => handleDropdownSelect(e, wb)} 
-            />
-        </>
+        <Dropdown 
+            className="ml-5 my-3" 
+            value={sheet} 
+            options={sheetChoices} 
+            onChange={e => handleDropdownSelect(e, wb)} 
+            data-testid="DropdownSelect"
+        />
 )};

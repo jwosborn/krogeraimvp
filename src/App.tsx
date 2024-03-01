@@ -3,13 +3,13 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import "./App.css";
 
-import { Login } from './components/Login';
-import { MainTable } from './components/MainTable';
-import { UploadButton } from './components/UploadButton';
-import { ExportButtons } from './components/ExportButtons';
-import { Loader } from './components/Loader';
-import { RunAllButton } from './components/RunAllButton';
-import { DropdownSelect } from './components/DropdownSelect'
+import { Login } from './components/Login/Login';
+import MainTable from './components/MainTable/MainTable';
+import { UploadButton } from './components/UploadButton/UploadButton';
+import { ExportButtons } from './components/ExportButtons/ExportButtons';
+import { Loader } from './components/Loader/Loader';
+import { RunAllButton } from './components/RunAllButton/RunAllButton';
+import { DropdownSelect } from './components/DropdownSelect/DropdownSelect'
 
 const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 
@@ -29,7 +29,7 @@ function App() {
     const dt = useRef(null);
 
     return (
-        <div className="container min-w-screen surface-ground p-7">
+        <div className="container min-w-screen surface-ground">
             <div className="container w-11 min-h-screen mx-auto ">
                 <div className="header flex flex-row justify-content-evenly w-full">
                     <img className="max-h-10rem" src={logo} alt="Thinhaus Logo" />
@@ -37,28 +37,28 @@ function App() {
                         <p className="text-4xl text-primary font-main">Product Description Generator</p>
                     </div>
                 </div>
-                <Login 
-                    user={user} 
-                    setUser={setUser} 
-                    isLogin={isLogin} 
-                    setIsLogin={setIsLogin} 
+                <Login
+                    user={user}
+                    setUser={setUser}
+                    isLogin={isLogin}
+                    setIsLogin={setIsLogin}
                 />
                 <Dialog className="h-12rem w-15rem" visible={choosingSheet} onHide={() => setChoosingSheet(false)}>
                     <h5>Select Sheet:</h5>
-                    <DropdownSelect 
-                        wb={wb} 
-                        sheet={sheet} 
-                        setSheet={setSheet} 
-                        setChoosingSheet={setChoosingSheet} 
-                        setProducts={setProducts} 
-                        sheetChoices={sheetChoices} 
+                    <DropdownSelect
+                        wb={wb}
+                        sheet={sheet}
+                        setSheet={setSheet}
+                        setChoosingSheet={setChoosingSheet}
+                        setProducts={setProducts}
+                        sheetChoices={sheetChoices}
                     />
                     </Dialog>
             {isLogin && (
                     <div className="flex flex-row justify-content-start border-1 border-200">
                         {!products.length &&
-                            <UploadButton 
-                                products={products} 
+                            <UploadButton
+                                products={products}
                                 setProducts={setProducts}
                                 setChoosingSheet={setChoosingSheet}
                                 setSheet={setSheet}
@@ -68,13 +68,13 @@ function App() {
                         }
                         {products.length > 0 &&
                             <>
-                                <RunAllButton 
-                                URL={URL} 
-                                products={products} 
-                                setProducts={setProducts} 
-                                setLoading={setLoading} 
-                                setGenerated={setGenerated} 
-                                setError={setError}                                
+                                <RunAllButton
+                                URL={URL}
+                                products={products}
+                                setProducts={setProducts}
+                                setLoading={setLoading}
+                                setGenerated={setGenerated}
+                                setError={setError}
                                 />
                                 <Button
                                     className="p-button-danger ml-3 my-3"
@@ -86,19 +86,26 @@ function App() {
                         }
                         <ExportButtons products={products} generated={generated} dt={dt}/>
                         {sheetChoices.length > 0 && (
-                            <DropdownSelect 
-                                wb={wb} 
-                                sheet={sheet} 
-                                setSheet={setSheet} 
-                                setChoosingSheet={setChoosingSheet} 
-                                setProducts={setProducts} 
-                                sheetChoices={sheetChoices} 
+                            <DropdownSelect
+                                wb={wb}
+                                sheet={sheet}
+                                setSheet={setSheet}
+                                setChoosingSheet={setChoosingSheet}
+                                setProducts={setProducts}
+                                sheetChoices={sheetChoices}
                             />
                         )}
                     </div>
             )}
-                <MainTable products={products} setProducts={setProducts} setLoading={setLoading} setGenerated={setGenerated} dt={dt} />
-                
+                <MainTable
+                    products={products}
+                    setProducts={setProducts}
+                    setLoading={setLoading}
+                    setGenerated={setGenerated}
+                    setError={setError}
+                    dt={dt}
+                />
+
                 <Loader loading={loading} setLoading={setLoading} />
 
                 <Dialog className="h-12rem" header="Oops..." visible={error} closable onHide={() => setError(false)}>
