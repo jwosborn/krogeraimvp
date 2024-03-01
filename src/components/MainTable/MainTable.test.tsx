@@ -21,6 +21,7 @@ describe('MainTable Component', () => {
           setLoading={mockSetLoading} 
           setGenerated={mockSetGenerated} 
           setError={mockSetError}
+          wordLists={[['BannedTest'],['factCheckTest']]}
           dt={undefined}      
         />
       );
@@ -40,6 +41,7 @@ describe('MainTable Component', () => {
           setLoading={mockSetLoading} 
           setGenerated={mockSetGenerated} 
           setError={mockSetError}
+          wordLists={[['BannedTest'],['factCheckTest']]}
           dt={undefined}      
         />
       );
@@ -67,6 +69,7 @@ describe('MainTable Component', () => {
           setLoading={mockSetLoading} 
           setGenerated={mockSetGenerated} 
           setError={mockSetError}
+          wordLists={[['BannedTest'],['factCheckTest']]}
           dt={undefined}      
         />
       );

@@ -26,6 +26,8 @@ describe('ExportButtons Component', () => {
         <ExportButtons
           products={productsMock}
           generated={mockGenerated}
+          wordLists={[['BannedTest'],['factCheckTest']]}
+          URL="http://localhost:3001"
           dt={undefined}
         />
       );

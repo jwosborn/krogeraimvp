@@ -13,10 +13,11 @@ type MainTableProps = {
     setLoading: (value: boolean) => void,
     setGenerated: (value: boolean) => void,
     setError: (value: boolean) => void,
+    wordLists: object,
     dt: React.MutableRefObject<any>
 };
 
-const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, dt }: MainTableProps) => {
+const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, wordLists, dt }: MainTableProps) => {
     const [showDialog, setShowDialog] = useState(false);
     const [editedValue, setEditedValue] = useState('');
     const [editingCell, setEditingCell] = useState({ rowIndex: null, field: null });
@@ -30,7 +31,6 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         <Button
             className="p-button-success"
             icon="pi pi-refresh"
-            // onClick={() => generateDescription(product, row.rowIndex)}
             onClick={() => generateDescriptions(products, setLoading, setProducts, URL, setGenerated, setError, row.rowIndex)}
             data-testid={`generateButton${row.rowIndex}`}
         />
@@ -69,11 +69,11 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         </div>
     );
 
-    const highlighter = (rowData:any = '') => {
-        const bannedWords = ['practical', 'straightforward', 'free form', 'wholesome', 'all', 'only', 'pure', 'real', 'healthy', 'boost', 'well-balanced', 'hand-crafted', 'all natural', 'natural', 'minimally precessed', 'processed', 'simple', 'protein packed', 'full of protein', 'muscle-building', 'freshness', 'fresh', 'source of energy', 'trace', 'clean', 'unadulterated', 'nutritious', 'healthiness', 'whisper', 'rich source', 'unparalleled', 'perfect', 'authentically', 'robust', 'hint', 'pinch', '100%']
+    const highlighter = (rowData:any = '', wordLists = {bannedWords: [''], factCheckWords: ['']}) => {
+        const bannedWords = wordLists.bannedWords
         const regexBanned = new RegExp(`(${bannedWords.join('|')})`, 'gi');
 
-        const factCheckWords = ['protein', 'energy', 'omega 3 fatty acids', 'daily value', 'per serving', 'antioxidant', 'low fat', 'lowfat', 'gluten free', 'low sodium', 'low cholesterol', 'low saturated fat', 'good source', 'excellent source', 'whole wheat', 'light', 'reduced', 'added', 'added', 'extra', 'plus', 'fortified', 'enriched', 'more', 'less', 'high', 'rich in', 'contains', 'provides', 'lean', 'extra lean', 'high potency', 'modified', 'no', 'free', 'zero', 'amount', 'keto', 'low carb', 'antibiotics', 'hormones', 'growth hormones', 'no sugar added', 'msg', 'cage free', 'made with' , 'fresh']
+        const factCheckWords = wordLists.factCheckWords
         const regexFactCheck = new RegExp(`(${factCheckWords.join('|')})`, 'gi');
 
         const combinedRegex = new RegExp(`(?:${regexBanned.source})|(?:${regexFactCheck.source})`, 'gi');
@@ -82,11 +82,11 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
             <>
                 {parts.map((part, index) => {
                     if (regexBanned.test(part)) {
-                        return <span key={index} className="banned-highlight">{part}</span>;
+                        return <span key={`${part + index}`} className="banned-highlight">{part}</span>;
                     } else if (regexFactCheck.test(part)) {
-                        return <span key={index} className="factCheck-highlight">{part}</span>;
+                        return <span key={`${part + index}`} className="factCheck-highlight">{part}</span>;
                     } else {
-                        // If the part matches neither, return it without any highlighting
+                        // If the part matches neither, return it without highlighting
                         return part;
                     }
                 })}
@@ -94,9 +94,9 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         );
     }
 
-    const editableCell = (rowData, index, col, lower) => (
+    const editableCell = (rowData, index, col, lower, wordLists) => (
         <div className="edit-cell">
-            {(['description', 'bullets'].includes(lower) && lower !== undefined) ? highlighter(rowData[col]): rowData[col]}
+            {(['description', 'bullets'].includes(lower) && lower !== undefined) ? highlighter(rowData[col], wordLists) : rowData[col]}
             {rowData[col] &&
                 <Button
                     icon="pi pi-pencil"
@@ -134,7 +134,7 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
                         style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
                         data-testid={`bigoltest${col}`}
                         body={lower !== 'upc'
-                            ? (rowData, options) => editableCell(rowData, options.rowIndex, col, lower)
+                            ? (rowData, options) => editableCell(rowData, options.rowIndex, col, lower, wordLists)
                             : undefined
                         }
                     />

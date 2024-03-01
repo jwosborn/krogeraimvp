@@ -3,43 +3,37 @@ import { FileUpload } from "primereact/fileupload";
 import { CSVToArray } from '../../utils/format';
 import { Button } from "primereact/button";
 import { saveAs } from 'file-saver';
+import axios from "axios";
 
 type ExportButtonsProps = {
     products: object[],
     generated: boolean,
+    wordLists: object,
+    URL: string,
     dt: React.MutableRefObject<any>,
 };
 
-export const ExportButtons = ({ products, generated, dt }: ExportButtonsProps) => {
-    // const dt = useRef(null);
-    
+export const ExportButtons = ({ products, generated, wordLists, URL, dt }: ExportButtonsProps) => {
+      
     const exportCSV: (selectionOnly: any) => void =
     (selectionOnly) => {
         dt.current.exportCSV({ selectionOnly });
     }
 
-    const exportExcel: (productArray: any[]) => void =
-    (productArray) => {
-        import('xlsx').then(xlsx => {
-            // bullets needs to be one string, comma separated
-            let formattedProductsForXL = [...productArray];
-            const worksheet = xlsx.utils.json_to_sheet(formattedProductsForXL);
-            const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-            const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-            saveAsExcelFile(excelBuffer, 'products');
+    const sendExport = async (productsArray, wordLists) => {
+      try {
+        const response = await axios.post(URL + "/download-excel", {productsArray, wordLists}, {
+          responseType: 'blob'
         });
-    }
-
-    const saveAsExcelFile = (buffer: any, fileName: any) => {
-        // Prepare data + file parameters
-        let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        let EXCEL_EXTENSION = '.xlsx';
-        const data = new Blob([buffer], {
-            type: EXCEL_TYPE
-        })
-
-        saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-    }
+        const blob = new Blob([response.data], { 
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+        });
+        const fileName = 'products ' + '_export_' + new Date().getTime() + '.xlsx';
+        saveAs(blob, fileName); 
+      } catch (error) {
+        console.error("Error downloading the file", error);
+      }
+    };
 
     return (
         products.length > 0 && generated && (
@@ -49,7 +43,7 @@ export const ExportButtons = ({ products, generated, dt }: ExportButtonsProps) =
               data-pr-tooltip="Excel"
               icon="pi pi-file-excel"
               label="Export XLSX"
-              onClick={() => exportExcel(products)}
+              onClick={async () => sendExport(products, wordLists)}
               data-testid="Export-Excel"
             />
             <Button
