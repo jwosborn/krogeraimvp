@@ -22,7 +22,7 @@ export const ExportButtons = ({ products, generated, wordLists, URL, dt }: Expor
 
     const sendExport = async (productsArray, wordLists) => {
       try {
-        const response = await axios.post(URL + "/download-excel", {productsArray, wordLists}, {
+        const response = await axios.post(URL + "download-excel", {productsArray, wordLists}, {
           responseType: 'blob'
         });
         const blob = new Blob([response.data], { 
