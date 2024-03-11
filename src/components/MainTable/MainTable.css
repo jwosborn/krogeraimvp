@@ -1,0 +1,30 @@
+.banned-highlight {
+    background-color: rgba(255, 0, 0, 0.544);
+    font-weight: bold;
+    padding: 0 1px; 
+    display: inline; 
+    height: min-content;
+  }
+
+.factCheck-highlight {
+  background-color: orange;
+  font-weight: bold;
+  padding: 0 1px; 
+  display: inline; 
+  height: min-content;
+}
+
+.edit-cell {
+  min-width: 150px;
+  max-width: 300px;
+  display: inline-block;
+}
+
+.edit-button {
+  border-radius: 20px; /* Adjust to your preference */
+  background-color: transparent;
+  border: none;
+  color: rgb(41, 171, 226); 
+  min-width: min-content;
+  vertical-align: top;
+}

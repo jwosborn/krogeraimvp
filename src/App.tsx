@@ -12,6 +12,10 @@ import { RunAllButton } from './components/RunAllButton/RunAllButton';
 import { DropdownSelect } from './components/DropdownSelect/DropdownSelect'
 
 const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
+const wordLists = {
+    bannedWords: ['practical', 'straightforward', 'free form', 'wholesome', 'all', 'only', 'pure', 'real', 'healthy', 'boost', 'well-balanced', 'hand-crafted', 'all natural', 'natural', 'minimally precessed', 'processed', 'simple', 'protein packed', 'full of protein', 'muscle-building', 'freshness', 'fresh', 'source of energy', 'trace', 'clean', 'unadulterated', 'nutritious', 'healthiness', 'whisper', 'rich source', 'unparalleled', 'perfect', 'authentically', 'robust', 'hint', 'pinch', '100%'],
+    factCheckWords: ['protein', 'energy', 'omega 3 fatty acids', 'daily value', 'per serving', 'antioxidant', 'low fat', 'lowfat', 'gluten free', 'low sodium', 'low cholesterol', 'low saturated fat', 'good source', 'excellent source', 'whole wheat', '\\blight\\b', 'reduced', 'added', 'added', 'extra', 'plus', 'fortified', 'enriched', 'more', 'less', 'high', 'rich in', 'contains', 'provides', 'lean', 'extra lean', 'high potency', 'modified', '\\bno\\b', 'free', 'zero', 'amount', 'keto', 'low carb', 'antibiotics', 'hormones', 'growth hormones', 'no sugar added', 'msg', 'cage free', 'made with' , 'fresh']
+}
 
 const logo = require('./assets/th-logo.png');
 function App() {
@@ -19,7 +23,6 @@ function App() {
     const [products, setProducts] = useState([]);
     const [generated, setGenerated] = useState(false);
     const [error, setError] = useState(false);
-    // const [errorText, setErrorText] = useState('');
     const [choosingSheet, setChoosingSheet] = useState(false);
     const [sheetChoices, setSheetChoices] = useState([]);
     const [wb, setWb] = useState({});
@@ -84,7 +87,7 @@ function App() {
                                 />
                             </>
                         }
-                        <ExportButtons products={products} generated={generated} dt={dt}/>
+                        <ExportButtons products={products} generated={generated} wordLists={wordLists} URL={URL} dt={dt}/>
                         {sheetChoices.length > 0 && (
                             <DropdownSelect
                                 wb={wb}
@@ -103,6 +106,7 @@ function App() {
                     setLoading={setLoading}
                     setGenerated={setGenerated}
                     setError={setError}
+                    wordLists={wordLists}
                     dt={dt}
                 />
 

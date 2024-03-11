@@ -5,6 +5,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { generateDescriptions } from "../RunAllButton/RunAllButtonFuncs";
 import { Dialog } from "primereact/dialog";
+import "./MainTable.css"
 
 type MainTableProps = {
     products: object[],
@@ -12,10 +13,11 @@ type MainTableProps = {
     setLoading: (value: boolean) => void,
     setGenerated: (value: boolean) => void,
     setError: (value: boolean) => void,
+    wordLists: object,
     dt: React.MutableRefObject<any>
 };
 
-const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, dt }: MainTableProps) => {
+const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, wordLists, dt }: MainTableProps) => {
     const [showDialog, setShowDialog] = useState(false);
     const [editedValue, setEditedValue] = useState('');
     const [editingCell, setEditingCell] = useState({ rowIndex: null, field: null });
@@ -29,7 +31,6 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         <Button
             className="p-button-success"
             icon="pi pi-refresh"
-            // onClick={() => generateDescription(product, row.rowIndex)}
             onClick={() => generateDescriptions(products, setLoading, setProducts, URL, setGenerated, setError, row.rowIndex)}
             data-testid={`generateButton${row.rowIndex}`}
         />
@@ -68,13 +69,39 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
         </div>
     );
 
-    const editableCell = (rowData, index, col) => (
-        <div className="flex flex-row justify-content-between">
-            {rowData[col]}
+    const highlighter = (rowData:any = '', wordLists = {bannedWords: [''], factCheckWords: ['']}) => {
+        const bannedWords = wordLists.bannedWords
+        const regexBanned = new RegExp(`(${bannedWords.join('|')})`, 'gi');
+
+        const factCheckWords = wordLists.factCheckWords
+        const regexFactCheck = new RegExp(`(${factCheckWords.join('|')})`, 'gi');
+
+        const combinedRegex = new RegExp(`(?:${regexBanned.source})|(?:${regexFactCheck.source})`, 'gi');
+        const parts = rowData.split(combinedRegex).filter(part => part);
+        return (
+            <>
+                {parts.map((part, index) => {
+                    if (regexBanned.test(part)) {
+                        return <span key={`${part + index}`} className="banned-highlight">{part}</span>;
+                    } else if (regexFactCheck.test(part)) {
+                        return <span key={`${part + index}`} className="factCheck-highlight">{part}</span>;
+                    } else {
+                        // If the part matches neither, return it without highlighting
+                        return part;
+                    }
+                })}
+            </>
+        );
+    }
+
+    const editableCell = (rowData, index, col, lower, wordLists) => (
+        <div className="edit-cell">
+            {(['description', 'bullets'].includes(lower) && lower !== undefined) ? highlighter(rowData[col], wordLists) : rowData[col]}
             {rowData[col] &&
                 <Button
                     icon="pi pi-pencil"
-                    className="p-button-rounded p-button-text ml-3 min-w-min"
+                    // className="p-button-rounded p-button-text ml-3 min-w-min contents"
+                    className="edit-button"
                     onClick={() => openDialog(index, col, rowData[col])}>
                 </Button>
             }
@@ -107,7 +134,7 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
                         style={{ overflowWrap: 'break-word', whiteSpace: 'normal'}}
                         data-testid={`bigoltest${col}`}
                         body={lower !== 'upc'
-                            ? (rowData, options) => editableCell(rowData, options.rowIndex, col)
+                            ? (rowData, options) => editableCell(rowData, options.rowIndex, col, lower, wordLists)
                             : undefined
                         }
                     />
