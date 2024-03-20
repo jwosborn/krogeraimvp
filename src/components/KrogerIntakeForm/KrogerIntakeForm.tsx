@@ -8,9 +8,9 @@ import { FileUpload } from 'primereact/fileupload';
 
 const KrogerIntakeForm = () => {
     const [formState, setFormState] = useState({
-        gtin: '',
-        commodity: '',
-        subCommodity: '',
+        gtin: [''],
+        commodity: [''],
+        subCommodity: [''],
         effectiveDate: null,
         field: '',
         userName: '',
@@ -38,6 +38,20 @@ const KrogerIntakeForm = () => {
         setFormState(prevState => ({ ...prevState, files: e.files }));
     };
 
+    const handleAddFields = (field) => {
+        setFormState(prevState => ({
+            ...prevState,
+            [field]: [...prevState[field], '']
+        }));
+    };
+
+    const handleFieldChange = (index, name, value) => {
+        setFormState(prevState => ({
+            ...prevState,
+            [name]: prevState[name].map((item, i) => i === index ? value : item),
+        }));
+    };
+
     const handleSubmit = () => {
         console.log(formState)
     }
@@ -45,11 +59,59 @@ const KrogerIntakeForm = () => {
     return (
         <div className="container flex flex-column max-w-24rem w-full">
             <h3>Submit Your Form</h3>
-            <div>
-                <InputText className='w-full' value={formState.gtin} onChange={handleChange} name="gtin" placeholder="GTIN" />
+            <div className="mt-4">
+                {formState?.gtin.map((gtin, index) => (
+                    <div key={index} className="flex align-items-center">
+                        <InputText
+                            className="w-full mr-2"
+                            value={gtin}
+                            onChange={(e) => handleFieldChange(index, "gtin", e.target.value)}
+                            placeholder="GTIN"
+                        />
+                    </div>
+                ))}
+                <Button
+                    label="Add GTIN"
+                    icon="pi pi-plus"
+                    onClick={() => handleAddFields('gtin')}
+                    className="p-button-success mt-2"
+                />
             </div>
             <div className="mt-4">
-                <InputText className='w-full' value={formState.commodity} onChange={handleChange} name="commodity" placeholder="Commodity" />
+                {formState?.commodity.map((commodity, index) => (
+                    <div key={index} className="flex align-items-center">
+                        <InputText
+                            className="w-full mr-2"
+                            value={commodity}
+                            onChange={(e) => handleFieldChange(index, "commodity", e.target.value)}
+                            placeholder="Commodity"
+                        />
+                    </div>
+                ))}
+                <Button
+                    label="Add Commodity"
+                    icon="pi pi-plus"
+                    onClick={() => handleAddFields('commodity')}
+                    className="p-button-success mt-2"
+                />
+            </div>
+            <div className="mt-4">
+                {formState?.subCommodity.map((subCommodity, index) => (
+                    <div key={index} className="flex align-items-center">
+                        <InputText
+                            className="w-full mr-2"
+                            value={subCommodity}
+                            onChange={(e) => handleFieldChange(index, "subCommodity", e.target.value)}
+                            placeholder="SubCommodity"
+                        />
+                    </div>
+                ))}
+                <Button
+                    label="Add SubCommodity"
+                    icon="pi pi-plus"
+                    onClick={() => handleAddFields('subCommodity')}
+                    className="p-button-success mt-2"
+                />
             </div>
             <div className="mt-4">
                 <Calendar className='w-full' value={formState.effectiveDate} onSelect={handleDateChange} dateFormat="yy-mm-dd" showIcon name="effectiveDate" />
