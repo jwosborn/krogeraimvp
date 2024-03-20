@@ -38,26 +38,60 @@ const KrogerIntakeForm = () => {
         setFormState(prevState => ({ ...prevState, files: e.files }));
     };
 
-    const handleAddFields = (field) => {
-        setFormState(prevState => ({
-            ...prevState,
-            [field]: [...prevState[field], '']
-        }));
-    };
+    const handleDymamicFields = (field, title) => {
+        const items = formState?.[field];
 
-    const handleRemoveFields = (field, index) => {
-        setFormState(prevState => ({
-            ...prevState,
-            [field]: prevState[field].filter((_, item) => item !== index)
-        }));
-    };
+        const handleAddFields = (field) => {
+            setFormState(prevState => ({
+                ...prevState,
+                [field]: [...prevState[field], '']
+            }));
+        };
 
-    const handleFieldChange = (index, name, value) => {
-        setFormState(prevState => ({
-            ...prevState,
-            [name]: prevState[name].map((item, i) => i === index ? value : item),
-        }));
-    };
+        const handleRemoveFields = (field, index) => {
+            setFormState(prevState => ({
+                ...prevState,
+                [field]: prevState[field].filter((_, item) => item !== index)
+            }));
+        };
+
+        const handleFieldChange = (index, name, value) => {
+            setFormState(prevState => ({
+                ...prevState,
+                [name]: prevState[name].map((item, i) => i === index ? value : item),
+            }));
+        };
+
+        return (
+            <>
+                {items.map((item, index) => (
+                    <div key={index} className="h-3rem flex align-items-center justify-content-center relative mt-4">
+                        <InputText
+                            className="w-full h-3rem px-2"
+                            value={item}
+                            onChange={(e) => handleFieldChange(index, field, e.target.value)}
+                            placeholder={title}
+                        />
+                        <div className="absolute right-0 -mr-6">
+                            {items.length > 1 && index > 0 && <Button
+                                severity="danger" rounded
+                                icon="pi pi-minus"
+                                onClick={() => handleRemoveFields(field, index)}
+                                className="w-2rem h-2rem"
+                            />}
+                            {index === 0 && <Button
+                                severity="success" rounded
+                                icon="pi pi-plus"
+                                onClick={() => handleAddFields(field)}
+                                className="w-2rem h-2rem p-button-success"
+                            />}
+                        </div>
+                    </div>
+                ))}
+
+            </>
+        )
+    }
 
     const handleSubmit = () => {
         console.log(formState)
@@ -65,92 +99,25 @@ const KrogerIntakeForm = () => {
 
     return (
         <div className="container flex flex-column max-w-24rem w-full">
-            <h3>Submit Your Form</h3>
+            <h2>Submit Your Form</h2>
+            {handleDymamicFields('gtin', 'GTIN')}
+            {handleDymamicFields('commodity', 'Commodity')}
+            {handleDymamicFields('subCommodity', 'SubCommodity')}
             <div className="mt-4">
-                {formState?.gtin.map((gtin, index) => (
-                    <div key={index} className="flex align-items-center">
-                        <InputText
-                            className="w-full mr-2"
-                            value={gtin}
-                            onChange={(e) => handleFieldChange(index, "gtin", e.target.value)}
-                            placeholder="GTIN"
-                        />
-                        <Button
-                            icon="pi pi-minus"
-                            onClick={() => handleRemoveFields('gtin', index)}
-                            className="p-button-rounded p-button-danger"
-                        />
-                    </div>
-                ))}
-                <Button
-                    label="Add GTIN"
-                    icon="pi pi-plus"
-                    onClick={() => handleAddFields('gtin')}
-                    className="p-button-success mt-2"
-                />
-            </div>
-            <div className="mt-4">
-                {formState?.commodity.map((commodity, index) => (
-                    <div key={index} className="flex align-items-center">
-                        <InputText
-                            className="w-full mr-2"
-                            value={commodity}
-                            onChange={(e) => handleFieldChange(index, "commodity", e.target.value)}
-                            placeholder="Commodity"
-                        />
-                        <Button
-                            icon="pi pi-minus"
-                            onClick={() => handleRemoveFields('commodity', index)}
-                            className="p-button-rounded p-button-danger"
-                        />
-                    </div>
-                ))}
-                <Button
-                    label="Add Commodity"
-                    icon="pi pi-plus"
-                    onClick={() => handleAddFields('commodity')}
-                    className="p-button-success mt-2"
-                />
-            </div>
-            <div className="mt-4">
-                {formState?.subCommodity.map((subCommodity, index) => (
-                    <div key={index} className="flex align-items-center">
-                        <InputText
-                            className="w-full mr-2"
-                            value={subCommodity}
-                            onChange={(e) => handleFieldChange(index, "subCommodity", e.target.value)}
-                            placeholder="SubCommodity"
-                        />
-                        <Button
-                            icon="pi pi-minus"
-                            onClick={() => handleRemoveFields('subCommodity', index)}
-                            className="p-button-rounded p-button-danger"
-                        />
-                    </div>
-                ))}
-                <Button
-                    label="Add SubCommodity"
-                    icon="pi pi-plus"
-                    onClick={() => handleAddFields('subCommodity')}
-                    className="p-button-success mt-2"
-                />
-            </div>
-            <div className="mt-4">
-                <Calendar className='w-full' value={formState.effectiveDate} onSelect={handleDateChange} dateFormat="yy-mm-dd" showIcon name="effectiveDate" />
+                <Calendar style={{ height: '3rem' }} className='w-full' value={formState.effectiveDate} onSelect={handleDateChange} dateFormat="yy-mm-dd" showIcon name="effectiveDate" />
             </div>
             <div className="mt-4">
                 <InputTextarea className='w-full' value={formState.issue} onChange={handleChange} name="issue" rows={3} autoResize />
             </div>
             <div className="mt-4">
                 <FileUpload uploadHandler={handleFileUpload} name="demo[]" multiple accept="image/*" maxFileSize={1000000} auto customUpload emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
-
             </div>
             <div className="flex align-items-center mt-4">
-                <Checkbox className='mr-2' inputId="isPackImage" checked={formState.isPackImage} onChange={handleCheckboxChange} />
-                <label htmlFor="isPackImage">Is Pack Image?</label>
+                <Checkbox inputId="isPackImage" name="" checked={formState.isPackImage} onChange={handleCheckboxChange} />
+                <label htmlFor="isPackImage" className="ml-2">Pack Image?</label>
             </div>
-            <div className="mt-4">
-                <Button onClick={handleSubmit} label="Submit" icon="pi pi-check" />
+            <div className="w-full h-3rem mt-4">
+                <Button className="w-full h-full px-4" onClick={handleSubmit} label="Submit" icon="pi" />
             </div>
         </div>
     );
