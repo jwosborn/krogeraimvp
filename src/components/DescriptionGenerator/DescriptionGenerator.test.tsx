@@ -1,12 +1,12 @@
 import { act, render, screen } from '@testing-library/react';
-import App from './App';
+import DescriptionGenerator from './DescriptionGenerator';
 import '@testing-library/jest-dom'
 import { userEvent } from '@testing-library/user-event';
 
 describe('Complete App testing', () => {
   // Test case: Verify initialization of the App component
   it('initializes properly', () => {
-    render(<App />);
+    render(<DescriptionGenerator />);
     const title = screen.getByText(/product description generator/i);
     const credentialsDialog = screen.getByRole('dialog');
 
@@ -18,7 +18,7 @@ describe('Complete App testing', () => {
 
   // Test case: Verify credential setting functionality
   it('sets credentials', async () => {
-    render(<App />);
+    render(<DescriptionGenerator />);
     const userInput = screen.getByLabelText(/enter user/i)
 
     expect(userInput).toBeInTheDocument();
