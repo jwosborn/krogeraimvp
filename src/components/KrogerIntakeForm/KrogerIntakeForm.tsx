@@ -45,6 +45,13 @@ const KrogerIntakeForm = () => {
         }));
     };
 
+    const handleRemoveFields = (field, index) => {
+        setFormState(prevState => ({
+            ...prevState,
+            [field]: prevState[field].filter((_, item) => item !== index)
+        }));
+    };
+
     const handleFieldChange = (index, name, value) => {
         setFormState(prevState => ({
             ...prevState,
@@ -68,6 +75,11 @@ const KrogerIntakeForm = () => {
                             onChange={(e) => handleFieldChange(index, "gtin", e.target.value)}
                             placeholder="GTIN"
                         />
+                        <Button
+                            icon="pi pi-minus"
+                            onClick={() => handleRemoveFields('gtin', index)}
+                            className="p-button-rounded p-button-danger"
+                        />
                     </div>
                 ))}
                 <Button
@@ -86,6 +98,11 @@ const KrogerIntakeForm = () => {
                             onChange={(e) => handleFieldChange(index, "commodity", e.target.value)}
                             placeholder="Commodity"
                         />
+                        <Button
+                            icon="pi pi-minus"
+                            onClick={() => handleRemoveFields('commodity', index)}
+                            className="p-button-rounded p-button-danger"
+                        />
                     </div>
                 ))}
                 <Button
@@ -103,6 +120,11 @@ const KrogerIntakeForm = () => {
                             value={subCommodity}
                             onChange={(e) => handleFieldChange(index, "subCommodity", e.target.value)}
                             placeholder="SubCommodity"
+                        />
+                        <Button
+                            icon="pi pi-minus"
+                            onClick={() => handleRemoveFields('subCommodity', index)}
+                            className="p-button-rounded p-button-danger"
                         />
                     </div>
                 ))}
