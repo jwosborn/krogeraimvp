@@ -5,6 +5,7 @@ import { Calendar } from "primereact/calendar";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Checkbox } from "primereact/checkbox";
 import { FileUpload } from "primereact/fileupload";
+import { Dropdown } from 'primereact/dropdown';
 
 const KrogerIntakeForm = () => {
     const [formState, setFormState] = useState({
@@ -15,15 +16,26 @@ const KrogerIntakeForm = () => {
         field: "",
         userName: "",
         email: "",
-        role: "",
+        role: [
+            { name: 'Client' },
+            { name: 'Employee' },
+        ],
         issue: "",
         files: [],
         isPackImage: false,
+        selectedRole: ""
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormState((prevState) => ({ ...prevState, [name]: value }));
+    };
+
+    const handleSelectRole = (selectedRole) => {
+        setFormState(prevState => ({
+            ...prevState,
+            selectedRole: selectedRole,
+        }));
     };
 
     const handleDateChange = (e) => {
@@ -70,7 +82,7 @@ const KrogerIntakeForm = () => {
                         className="w-full h-3rem flex align-items-center justify-content-between relative mt-4"
                     >
                         <InputText
-                            className="w-full h-3rem pl-2 pr-5"
+                            className="w-full h-3rem pr-5"
                             value={item}
                             onChange={(e) => handleFieldChange(index, field, e.target.value)}
                             placeholder={title}
@@ -80,14 +92,22 @@ const KrogerIntakeForm = () => {
                                 <i
                                     onClick={() => handleRemoveFields(field, index)}
                                     className="pi pi-times"
-                                    style={{ fontSize: "1.1rem", color: "red", fontWeight: 'bold' }}
+                                    style={{
+                                        fontSize: "1.1rem",
+                                        color: "red",
+                                        fontWeight: "bold",
+                                    }}
                                 ></i>
                             )}
                             {index === 0 && (
                                 <i
                                     onClick={() => handleAddFields(field)}
                                     className="pi pi-plus"
-                                    style={{ fontSize: "1.1rem", color: "green", fontWeight: 'bold' }}
+                                    style={{
+                                        fontSize: "1.1rem",
+                                        color: "green",
+                                        fontWeight: "bold",
+                                    }}
                                 ></i>
                             )}
                         </div>
@@ -116,7 +136,39 @@ const KrogerIntakeForm = () => {
                     dateFormat="yy-mm-dd"
                     showIcon
                     name="effectiveDate"
+                    placeholder="Effective Date"
                 />
+            </div>
+            <div className="mt-4">
+                <InputText
+                    className="w-full h-3rem"
+                    value={formState.field}
+                    onChange={handleChange}
+                    name="field"
+                    placeholder="Field"
+                />
+            </div>
+            <div className="mt-4">
+                <InputText
+                    className="w-full h-3rem"
+                    value={formState.userName}
+                    onChange={handleChange}
+                    name="userName"
+                    placeholder="User Name"
+                />
+            </div>
+            <div className="mt-4">
+                <InputText
+                    className="w-full h-3rem"
+                    value={formState.email}
+                    onChange={handleChange}
+                    name="email"
+                    placeholder="Email"
+                />
+            </div>
+            <div className="mt-4">
+                <Dropdown value={formState.selectedRole} onChange={(e) => handleSelectRole(e.value)} options={formState.role} optionLabel="name"
+                    placeholder="Select a Role" className="w-full h-3rem flex align-items-center" />
             </div>
             <div className="mt-4">
                 <InputTextarea
@@ -126,6 +178,7 @@ const KrogerIntakeForm = () => {
                     name="issue"
                     rows={3}
                     autoResize
+                    placeholder="Issue"
                 />
             </div>
             <div className="mt-4">
