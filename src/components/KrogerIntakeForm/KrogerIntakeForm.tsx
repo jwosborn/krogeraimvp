@@ -155,15 +155,14 @@ const KrogerIntakeForm = () => {
     setIsLoading(true);
     axios
       .post(
-        // "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
-        "",
+        "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
         dataIn
       )
       .then((response) => {
         console.log("Form submitted successfully:", response.data);
+        setShowModal(true);
       })
       .catch((error) => {
-        setShowModal(true);
         console.error("Error submitting form:", error);
       })
       .finally(() => {
@@ -298,7 +297,7 @@ const KrogerIntakeForm = () => {
       <Dialog
         header="Enter another issue?"
         visible={showModal}
-        style={{ width: "15vw" }}
+        style={{ maxWidth: "350px", width: "100%", textAlign: "center" }}
         onHide={() => onCloseModal({ isAnotherIssue: false })}
       >
         <div className="card flex flex-wrap gap-2 justify-content-center">
