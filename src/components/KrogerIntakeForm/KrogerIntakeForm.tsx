@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "axios";
+
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
@@ -22,6 +24,8 @@ const KrogerIntakeForm = () => {
     isPackImage: false,
     selectedRole: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -133,7 +137,7 @@ const KrogerIntakeForm = () => {
       GTIN: gtin,
       commodity,
       subCommodity,
-      effectiveDate: effectiveDate.toISOString(),
+      effectiveDate: effectiveDate?.toISOString() || "",
       field,
       userName,
       email,
@@ -142,6 +146,22 @@ const KrogerIntakeForm = () => {
       files,
       isPackImage,
     };
+
+    setIsLoading(true);
+    axios
+      .post(
+        "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
+        dataIn
+      )
+      .then((response) => {
+        console.log("Form submitted successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
 
     console.log(dataIn);
   };
@@ -241,8 +261,9 @@ const KrogerIntakeForm = () => {
         <Button
           className="w-full h-full px-4"
           onClick={handleSubmit}
-          label="Submit"
-          icon="pi"
+          label={isLoading ? "Submitting..." : "Submit"}
+          icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
+          disabled={isLoading}
         />
       </div>
     </div>
