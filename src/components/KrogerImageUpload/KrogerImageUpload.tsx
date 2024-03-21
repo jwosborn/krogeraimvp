@@ -1,42 +1,65 @@
 import React, { useState, useRef } from "react";
 
-import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
 import { Checkbox } from "primereact/checkbox";
 
 const KrogerImageUpload = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState({
+    gtin: "",
+    commodityName: "",
+    commodityNumber: "",
+    image: null,
+  });
+
+  const [activeCheckboxIndex, setActiveCheckboxIndex] = useState(null);
 
   const fileUploadRefs = useRef<any>(
     [...Array(6)].map(() => React.createRef())
   );
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const onUpload = (e) => {
+    setData((prevState) => ({ ...prevState, image: e.files }));
+  };
+
+  const handleSubmit = () => {
+    console.log(data);
+  };
+
   const generateFileUploadFields = () => {
-    return fileUploadRefs.current.map((ref, index) => (
+    return fileUploadRefs.current.map((_, index) => (
       <div key={index} className="col-6 mt-4">
         <span className="mb-2 block">Carousel {index + 1} position</span>
         <FileUpload
-          ref={ref}
-          uploadHandler={() => {}}
+          id={`fileUpload${index}`}
+          uploadHandler={handleSubmit}
+          onSelect={onUpload}
           name={`demo[]`}
-          multiple
           accept="image/*"
           maxFileSize={1000000}
           customUpload
+          multiple={activeCheckboxIndex === index}
           emptyTemplate={
             <p className="m-0">Drag and drop files here to upload.</p>
           }
         />
         <div className="flex align-items-center mt-2">
           <Checkbox
-            inputId="isPackImage"
-            name=""
-            checked={false}
-            onChange={() => {}}
+            inputId={`fileUploadCheckbox${index}`}
+            checked={activeCheckboxIndex === index}
+            onChange={() => {
+              setActiveCheckboxIndex(
+                activeCheckboxIndex === index ? null : index
+              );
+            }}
           />
-          <label htmlFor="isPackImage" className="ml-2">
-            Multiple SKU?
+          <label htmlFor={`fileUploadCheckbox${index}`} className="ml-2">
+            Multiple?
           </label>
         </div>
       </div>
@@ -52,37 +75,28 @@ const KrogerImageUpload = () => {
         <div className="col-12">
           <InputText
             className="w-full h-3rem mt-4"
-            value={""}
-            onChange={() => {}}
+            value={data.gtin}
+            onChange={handleChange}
             name="gtin"
             placeholder="GTIN"
           />
           <InputText
             className="w-full h-3rem mt-4"
-            value={""}
-            onChange={() => {}}
+            value={data.commodityName}
+            onChange={handleChange}
             name="commodityName"
             placeholder="Commodity Name"
           />
           <InputText
             className="w-full h-3rem mt-4"
-            value={""}
-            onChange={() => {}}
+            value={data.commodityNumber}
+            onChange={handleChange}
             name="commodityNumber"
             placeholder="Commodity Number"
           />
         </div>
         {generateFileUploadFields()}
       </div>
-      {/* <div className="w-full h-4rem mt-4">
-        <Button
-          className="w-full h-full"
-          onClick={() => {}}
-          label={isLoading ? "Submitting..." : "Submit"}
-          icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
-          disabled={isLoading}
-        />
-      </div> */}
     </div>
   );
 };
