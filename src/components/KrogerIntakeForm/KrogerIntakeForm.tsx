@@ -8,9 +8,10 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Checkbox } from "primereact/checkbox";
 import { FileUpload } from "primereact/fileupload";
 import { Dropdown } from "primereact/dropdown";
+import { Dialog } from "primereact/dialog";
 
 const KrogerIntakeForm = () => {
-  const [formState, setFormState] = useState({
+  const initialFormState = {
     gtin: [""],
     commodity: [""],
     subCommodity: [""],
@@ -23,8 +24,9 @@ const KrogerIntakeForm = () => {
     files: [],
     isPackImage: false,
     selectedRole: "",
-  });
-
+  };
+  const [formState, setFormState] = useState(initialFormState);
+  const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -150,10 +152,12 @@ const KrogerIntakeForm = () => {
     setIsLoading(true);
     axios
       .post(
-        "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
+        // "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
+        "",
         dataIn
       )
       .then((response) => {
+        setShowModal(true);
         console.log("Form submitted successfully:", response.data);
       })
       .catch((error) => {
@@ -162,111 +166,145 @@ const KrogerIntakeForm = () => {
       .finally(() => {
         setIsLoading(false);
       });
+  };
 
-    console.log(dataIn);
+  const onCloseModal = ({ isAnotherIssue }) => {
+    if (isAnotherIssue) {
+      setFormState({
+        ...initialFormState,
+        userName: formState.userName,
+        email: formState.email,
+        selectedRole: formState.selectedRole,
+      });
+    } else {
+      setFormState(initialFormState);
+    }
+    setShowModal(false);
   };
 
   return (
-    <div className="container flex flex-column max-w-24rem w-full">
-      <h3 className="mb-0 text-center text-2xl uppercase">Intake Form</h3>
-      {handleDymamicFields("gtin", "GTIN")}
-      {handleDymamicFields("commodity", "Commodity")}
-      {handleDymamicFields("subCommodity", "SubCommodity")}
-      <div className="mt-4">
-        <Calendar
-          style={{ height: "3rem" }}
-          className="w-full"
-          value={formState.effectiveDate}
-          onSelect={handleDateChange}
-          dateFormat="yy-mm-dd"
-          showIcon
-          name="effectiveDate"
-          placeholder="Effective Date"
-        />
+    <>
+      <div className="container flex flex-column max-w-24rem w-full">
+        <h3 className="mb-0 text-center text-2xl uppercase">Intake Form</h3>
+        {handleDymamicFields("gtin", "GTIN")}
+        {handleDymamicFields("commodity", "Commodity")}
+        {handleDymamicFields("subCommodity", "SubCommodity")}
+        <div className="mt-4">
+          <Calendar
+            style={{ height: "3rem" }}
+            className="w-full"
+            value={formState.effectiveDate}
+            onSelect={handleDateChange}
+            dateFormat="yy-mm-dd"
+            showIcon
+            name="effectiveDate"
+            placeholder="Effective Date"
+          />
+        </div>
+        <div className="mt-4">
+          <InputText
+            className="w-full h-3rem"
+            value={formState.field}
+            onChange={handleChange}
+            name="field"
+            placeholder="Field"
+          />
+        </div>
+        <div className="mt-4">
+          <InputText
+            className="w-full h-3rem"
+            value={formState.userName}
+            onChange={handleChange}
+            name="userName"
+            placeholder="User Name"
+          />
+        </div>
+        <div className="mt-4">
+          <InputText
+            className="w-full h-3rem"
+            value={formState.email}
+            onChange={handleChange}
+            name="email"
+            placeholder="Email"
+          />
+        </div>
+        <div className="mt-4">
+          <Dropdown
+            value={formState.selectedRole}
+            onChange={(e) => handleSelectRole(e.value)}
+            options={formState.role}
+            optionLabel="name"
+            placeholder="Select a Role"
+            className="w-full h-3rem flex align-items-center"
+          />
+        </div>
+        <div className="mt-4">
+          <InputTextarea
+            className="w-full"
+            value={formState.issue}
+            onChange={handleChange}
+            name="issue"
+            rows={3}
+            autoResize
+            placeholder="Issue"
+          />
+        </div>
+        <div className="mt-4">
+          <FileUpload
+            uploadHandler={handleFileUpload}
+            name="demo[]"
+            multiple
+            accept="image/*"
+            maxFileSize={1000000}
+            auto
+            customUpload
+            emptyTemplate={
+              <p className="m-0">Drag and drop files to here to upload.</p>
+            }
+          />
+        </div>
+        <div className="flex align-items-center mt-4">
+          <Checkbox
+            inputId="isPackImage"
+            name=""
+            checked={formState.isPackImage}
+            onChange={handleCheckboxChange}
+          />
+          <label htmlFor="isPackImage" className="ml-2">
+            Pack Image?
+          </label>
+        </div>
+        <div className="w-full h-3rem mt-4">
+          <Button
+            className="w-full h-full px-4"
+            onClick={handleSubmit}
+            label={isLoading ? "Submitting..." : "Submit"}
+            icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
+            disabled={isLoading}
+          />
+        </div>
       </div>
-      <div className="mt-4">
-        <InputText
-          className="w-full h-3rem"
-          value={formState.field}
-          onChange={handleChange}
-          name="field"
-          placeholder="Field"
-        />
-      </div>
-      <div className="mt-4">
-        <InputText
-          className="w-full h-3rem"
-          value={formState.userName}
-          onChange={handleChange}
-          name="userName"
-          placeholder="User Name"
-        />
-      </div>
-      <div className="mt-4">
-        <InputText
-          className="w-full h-3rem"
-          value={formState.email}
-          onChange={handleChange}
-          name="email"
-          placeholder="Email"
-        />
-      </div>
-      <div className="mt-4">
-        <Dropdown
-          value={formState.selectedRole}
-          onChange={(e) => handleSelectRole(e.value)}
-          options={formState.role}
-          optionLabel="name"
-          placeholder="Select a Role"
-          className="w-full h-3rem flex align-items-center"
-        />
-      </div>
-      <div className="mt-4">
-        <InputTextarea
-          className="w-full"
-          value={formState.issue}
-          onChange={handleChange}
-          name="issue"
-          rows={3}
-          autoResize
-          placeholder="Issue"
-        />
-      </div>
-      <div className="mt-4">
-        <FileUpload
-          uploadHandler={handleFileUpload}
-          name="demo[]"
-          multiple
-          accept="image/*"
-          maxFileSize={1000000}
-          auto
-          customUpload
-          emptyTemplate={
-            <p className="m-0">Drag and drop files to here to upload.</p>
-          }
-        />
-      </div>
-      <div className="flex align-items-center mt-4">
-        <Checkbox
-          inputId="isPackImage"
-          name=""
-          checked={formState.isPackImage}
-          onChange={handleCheckboxChange}
-        />
-        <label htmlFor="isPackImage" className="ml-2">
-          Pack Image?
-        </label>
-      </div>
-      <div className="w-full h-3rem mt-4">
-        <Button
-          className="w-full h-full px-4"
-          onClick={handleSubmit}
-          label={isLoading ? "Submitting..." : "Submit"}
-          icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
-          disabled={isLoading}
-        />
-      </div>
-    </div>
+      <Dialog
+        header="Enter another issue?"
+        visible={showModal}
+        style={{ width: "15vw" }}
+        onHide={() => onCloseModal({ isAnotherIssue: false })}
+      >
+        <div className="card flex flex-wrap gap-2 justify-content-center">
+          <Button
+            onClick={() => onCloseModal({ isAnotherIssue: true })}
+            icon="pi pi-check"
+            label="Yes"
+          ></Button>
+          <Button
+            onClick={() => onCloseModal({ isAnotherIssue: false })}
+            icon="pi pi-times"
+            label="No"
+            className="p-button-danger"
+          ></Button>
+        </div>
+      </Dialog>
+    </>
   );
 };
 
