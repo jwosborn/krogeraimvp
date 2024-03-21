@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 
 import { Button } from "primereact/button";
@@ -29,6 +29,8 @@ const KrogerIntakeForm = () => {
   const [formState, setFormState] = useState(initialFormState);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const fileUploadRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -158,10 +160,10 @@ const KrogerIntakeForm = () => {
         dataIn
       )
       .then((response) => {
-        setShowModal(true);
         console.log("Form submitted successfully:", response.data);
       })
       .catch((error) => {
+        setShowModal(true);
         console.error("Error submitting form:", error);
       })
       .finally(() => {
@@ -179,7 +181,11 @@ const KrogerIntakeForm = () => {
       });
     } else {
       setFormState(initialFormState);
+      if (fileUploadRef.current) {
+      }
     }
+
+    fileUploadRef.current.clear();
     setShowModal(false);
   };
 
@@ -254,13 +260,14 @@ const KrogerIntakeForm = () => {
           </div>
           <div className="col-12 mt-4">
             <FileUpload
+              ref={fileUploadRef}
               uploadHandler={handleFileUpload}
               name="demo[]"
               multiple
               accept="image/*"
               maxFileSize={1000000}
-              auto
               customUpload
+              auto
               emptyTemplate={
                 <p className="m-0">Drag and drop files to here to upload.</p>
               }
@@ -277,7 +284,7 @@ const KrogerIntakeForm = () => {
               Pack Image?
             </label>
           </div>
-          <div className="col-6 w-full h-3rem mt-4">
+          <div className="col-6 w-full h-4rem mt-4">
             <Button
               className="w-full h-full px-4"
               onClick={handleSubmit}
