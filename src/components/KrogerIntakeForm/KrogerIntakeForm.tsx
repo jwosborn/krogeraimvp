@@ -153,11 +153,12 @@ const KrogerIntakeForm = () => {
     };
 
     setIsLoading(true);
-    axios
-      .post(
-        "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
-        dataIn
-      )
+
+    axios({
+      method: "post",
+      url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
+      data: dataIn,
+    })
       .then((response) => {
         console.log("Form submitted successfully:", response.data);
         setShowModal(true);
