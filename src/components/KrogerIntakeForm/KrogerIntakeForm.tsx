@@ -23,6 +23,7 @@ const KrogerIntakeForm = () => {
     issue: "",
     files: [],
     isPackImage: false,
+    otherEmailsToNotify: [""],
     selectedRole: "",
   };
   const [formState, setFormState] = useState(initialFormState);
@@ -78,7 +79,7 @@ const KrogerIntakeForm = () => {
     };
 
     return (
-      <>
+      <div className="col-6">
         {items.map((item, index) => (
           <div
             key={index}
@@ -116,7 +117,7 @@ const KrogerIntakeForm = () => {
             </div>
           </div>
         ))}
-      </>
+      </div>
     );
   };
 
@@ -184,104 +185,107 @@ const KrogerIntakeForm = () => {
 
   return (
     <>
-      <div className="container flex flex-column max-w-24rem w-full">
+      <div className="container flex flex-column w-full">
         <h3 className="mb-0 text-center text-2xl uppercase">Intake Form</h3>
-        {handleDymamicFields("gtin", "GTIN")}
-        {handleDymamicFields("commodity", "Commodity")}
-        {handleDymamicFields("subCommodity", "SubCommodity")}
-        <div className="mt-4">
-          <Calendar
-            style={{ height: "3rem" }}
-            className="w-full"
-            value={formState.effectiveDate}
-            onSelect={handleDateChange}
-            dateFormat="yy-mm-dd"
-            showIcon
-            name="effectiveDate"
-            placeholder="Effective Date"
-          />
-        </div>
-        <div className="mt-4">
-          <InputText
-            className="w-full h-3rem"
-            value={formState.field}
-            onChange={handleChange}
-            name="field"
-            placeholder="Field"
-          />
-        </div>
-        <div className="mt-4">
-          <InputText
-            className="w-full h-3rem"
-            value={formState.userName}
-            onChange={handleChange}
-            name="userName"
-            placeholder="User Name"
-          />
-        </div>
-        <div className="mt-4">
-          <InputText
-            className="w-full h-3rem"
-            value={formState.email}
-            onChange={handleChange}
-            name="email"
-            placeholder="Email"
-          />
-        </div>
-        <div className="mt-4">
-          <Dropdown
-            value={formState.selectedRole}
-            onChange={(e) => handleSelectRole(e.value)}
-            options={formState.role}
-            optionLabel="name"
-            placeholder="Select a Role"
-            className="w-full h-3rem flex align-items-center"
-          />
-        </div>
-        <div className="mt-4">
-          <InputTextarea
-            className="w-full"
-            value={formState.issue}
-            onChange={handleChange}
-            name="issue"
-            rows={3}
-            autoResize
-            placeholder="Issue"
-          />
-        </div>
-        <div className="mt-4">
-          <FileUpload
-            uploadHandler={handleFileUpload}
-            name="demo[]"
-            multiple
-            accept="image/*"
-            maxFileSize={1000000}
-            auto
-            customUpload
-            emptyTemplate={
-              <p className="m-0">Drag and drop files to here to upload.</p>
-            }
-          />
-        </div>
-        <div className="flex align-items-center mt-4">
-          <Checkbox
-            inputId="isPackImage"
-            name=""
-            checked={formState.isPackImage}
-            onChange={handleCheckboxChange}
-          />
-          <label htmlFor="isPackImage" className="ml-2">
-            Pack Image?
-          </label>
-        </div>
-        <div className="w-full h-3rem mt-4">
-          <Button
-            className="w-full h-full px-4"
-            onClick={handleSubmit}
-            label={isLoading ? "Submitting..." : "Submit"}
-            icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
-            disabled={isLoading}
-          />
+        <div className="grid">
+          {handleDymamicFields("gtin", "GTIN")}
+          {handleDymamicFields("commodity", "Commodity")}
+          {handleDymamicFields("subCommodity", "SubCommodity")}
+          <div className="col-6 mt-4">
+            <Calendar
+              style={{ height: "3rem" }}
+              className="w-full"
+              value={formState.effectiveDate}
+              onSelect={handleDateChange}
+              dateFormat="yy-mm-dd"
+              showIcon
+              name="effectiveDate"
+              placeholder="Effective Date"
+            />
+          </div>
+          <div className="col-6 mt-4">
+            <InputText
+              className="w-full h-3rem"
+              value={formState.field}
+              onChange={handleChange}
+              name="field"
+              placeholder="Field"
+            />
+          </div>
+          <div className="col-6 mt-4">
+            <InputText
+              className="w-full h-3rem"
+              value={formState.userName}
+              onChange={handleChange}
+              name="userName"
+              placeholder="User Name"
+            />
+          </div>
+          <div className="col-6 mt-4">
+            <InputText
+              className="w-full h-3rem"
+              value={formState.email}
+              onChange={handleChange}
+              name="email"
+              placeholder="Email"
+            />
+          </div>
+          <div className="col-6 mt-4">
+            <Dropdown
+              value={formState.selectedRole}
+              onChange={(e) => handleSelectRole(e.value)}
+              options={formState.role}
+              optionLabel="name"
+              placeholder="Select a Role"
+              className="w-full h-3rem flex align-items-center"
+            />
+          </div>
+          {handleDymamicFields("otherEmailsToNotify", "Other Emails To Notify")}
+          <div className="col-6 mt-4">
+            <InputTextarea
+              className="w-full"
+              value={formState.issue}
+              onChange={handleChange}
+              name="issue"
+              rows={3}
+              autoResize
+              placeholder="Issue"
+            />
+          </div>
+          <div className="col-12 mt-4">
+            <FileUpload
+              uploadHandler={handleFileUpload}
+              name="demo[]"
+              multiple
+              accept="image/*"
+              maxFileSize={1000000}
+              auto
+              customUpload
+              emptyTemplate={
+                <p className="m-0">Drag and drop files to here to upload.</p>
+              }
+            />
+          </div>
+          <div className="col-12 flex align-items-center mt-4">
+            <Checkbox
+              inputId="isPackImage"
+              name=""
+              checked={formState.isPackImage}
+              onChange={handleCheckboxChange}
+            />
+            <label htmlFor="isPackImage" className="ml-2">
+              Pack Image?
+            </label>
+          </div>
+          <div className="col-6 w-full h-3rem mt-4">
+            <Button
+              className="w-full h-full px-4"
+              onClick={handleSubmit}
+              label={isLoading ? "Submitting..." : "Submit"}
+              icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
+              disabled={isLoading}
+            />
+          </div>
         </div>
       </div>
       <Dialog
