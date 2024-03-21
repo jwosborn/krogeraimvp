@@ -74,10 +74,12 @@ const KrogerIntakeForm = () => {
       }));
     };
 
-    const handleFieldChange = (index, name, value) => {
+    const handleFieldChange = (index, field, value) => {
       setFormState((prevState) => ({
         ...prevState,
-        [name]: prevState[name].map((item, i) => (i === index ? value : item)),
+        [field]: prevState[field].map((item, i) =>
+          i === index ? value : item
+        ),
       }));
     };
 
@@ -137,9 +139,10 @@ const KrogerIntakeForm = () => {
       issue,
       files,
       isPackImage,
+      otherEmailsToNotify,
     } = formState;
 
-    const dataIn = {
+    let dataIn = {
       GTIN: gtin,
       commodity,
       subCommodity,
@@ -151,7 +154,19 @@ const KrogerIntakeForm = () => {
       issue,
       files,
       isPackImage,
+      otherEmailsToNotify,
     };
+
+    const entries = Object.entries(dataIn);
+
+    for (const [key, value] of entries) {
+      if (Array.isArray(value)) {
+        dataIn = {
+          ...dataIn,
+          [key]: value.filter((item) => item !== ""),
+        };
+      }
+    }
 
     setIsLoading(true);
 
@@ -161,8 +176,8 @@ const KrogerIntakeForm = () => {
       data: dataIn,
     })
       .then((response) => {
-        console.log("Form submitted successfully:", response.data);
         setShowModal(true);
+        console.log("Form submitted successfully:", response.data);
       })
       .catch((error) => {
         console.error("Error submitting form:", error);
@@ -182,10 +197,10 @@ const KrogerIntakeForm = () => {
       });
     } else {
       setFormState(initialFormState);
+    }
 
-      if (fileUploadRef.current) {
-        fileUploadRef.current.clear();
-      }
+    if (fileUploadRef.current) {
+      fileUploadRef.current.clear();
     }
 
     setShowModal(false);
