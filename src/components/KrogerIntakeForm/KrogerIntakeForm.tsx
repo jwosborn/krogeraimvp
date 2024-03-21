@@ -26,6 +26,7 @@ const KrogerIntakeForm = () => {
     otherEmailsToNotify: [""],
     selectedRole: "",
   };
+
   const [formState, setFormState] = useState(initialFormState);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -181,11 +182,12 @@ const KrogerIntakeForm = () => {
       });
     } else {
       setFormState(initialFormState);
+
       if (fileUploadRef.current) {
+        fileUploadRef.current.clear();
       }
     }
 
-    fileUploadRef.current.clear();
     setShowModal(false);
   };
 
@@ -296,23 +298,30 @@ const KrogerIntakeForm = () => {
         </div>
       </div>
       <Dialog
-        header="Enter another issue?"
+        header="Form submitted successfully!"
         visible={showModal}
-        style={{ maxWidth: "350px", width: "100%", textAlign: "center" }}
+        style={{
+          maxWidth: "350px",
+          width: "100%",
+          textAlign: "center",
+        }}
         onHide={() => onCloseModal({ isAnotherIssue: false })}
       >
-        <div className="card flex flex-wrap gap-2 justify-content-center">
-          <Button
-            onClick={() => onCloseModal({ isAnotherIssue: true })}
-            icon="pi pi-check"
-            label="Yes"
-          ></Button>
-          <Button
-            onClick={() => onCloseModal({ isAnotherIssue: false })}
-            icon="pi pi-times"
-            label="No"
-            className="p-button-danger"
-          ></Button>
+        <div className="card flex flex-wrap flex-column gap-2 justify-content-center">
+          <p>Enter another issue?</p>
+          <div>
+            <Button
+              onClick={() => onCloseModal({ isAnotherIssue: true })}
+              icon="pi pi-check"
+              label="Yes"
+            ></Button>
+            <Button
+              onClick={() => onCloseModal({ isAnotherIssue: false })}
+              icon="pi pi-times"
+              label="No"
+              className="ml-2 p-button-danger"
+            ></Button>
+          </div>
         </div>
       </Dialog>
     </>
