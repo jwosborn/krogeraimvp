@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import axios from "axios";
 
 import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
@@ -28,7 +29,18 @@ const KrogerImageUpload = () => {
   };
 
   const handleSubmit = () => {
-    console.log(data);
+    axios({
+      method: "post",
+      url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/upload-image",
+      data,
+    })
+      .then((response) => {
+        console.log("Form submitted successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+      })
+      .finally(() => {});
   };
 
   const generateFileUploadFields = () => {
