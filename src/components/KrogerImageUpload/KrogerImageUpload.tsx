@@ -21,6 +21,12 @@ const KrogerImageUpload = () => {
     [...Array(6)].map(() => React.createRef())
   );
 
+  const [listUPS, setListUPS] = useState(
+    fileUploadRefs.current.map(() => ({
+      listUPS: [""],
+    }))
+  );
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prevState) => ({ ...prevState, [name]: value }));
@@ -43,7 +49,11 @@ const KrogerImageUpload = () => {
   };
 
   const handleSubmit = (elementId, index, field) => {
-    let dataIn = { ...data, multiple: activeCheckboxIndices.includes(index) };
+    let dataIn = {
+      ...data,
+      multiple: activeCheckboxIndices.includes(index),
+      listUPS: listUPS[index]["listUPS"],
+    };
 
     if (elementId === "fileUpload0") {
       dataIn = { ...dataIn, position: "Main Product Image" };
@@ -51,19 +61,122 @@ const KrogerImageUpload = () => {
       dataIn = { ...dataIn, position: "Detailed Product View 1-5" };
     }
 
-    axios({
-      method: "post",
-      url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/upload-image",
-      data: dataIn,
-    })
-      .then((response) => {
-        console.log("Form submitted successfully:", response.data);
-        field.current.clear();
-      })
-      .catch((error) => {
-        console.error("Error submitting form:", error);
-      })
-      .finally(() => {});
+    const entries = Object.entries(dataIn);
+
+    for (const [key, value] of entries) {
+      if (Array.isArray(value)) {
+        dataIn = {
+          ...dataIn,
+          [key]: value.filter((item) => item !== ""),
+        };
+      }
+    }
+
+    console.log(dataIn);
+    // axios({
+    //   method: "post",
+    //   url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/upload-image",
+    //   data: dataIn,
+    // })
+    //   .then((response) => {
+    //     console.log("Form submitted successfully:", response.data);
+    //     field.current.clear();
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error submitting form:", error);
+    //   })
+    //   .finally(() => {});
+  };
+
+  const handleDymamicFields = (field, title, fieldIndex) => {
+    const items = listUPS[fieldIndex][field];
+
+    const handleAddFields = (field) => {
+      setListUPS((prevState) => {
+        const newState = [...prevState];
+
+        newState[fieldIndex] = {
+          ...newState[fieldIndex],
+          [field]: [...newState[fieldIndex][field], ""],
+        };
+
+        return newState;
+      });
+    };
+
+    const handleRemoveFields = (field, index) => {
+      setListUPS((prevState) => {
+        const newState = [...prevState];
+
+        newState[fieldIndex] = {
+          ...newState[fieldIndex],
+          [field]: newState[fieldIndex][field].filter((_, i) => i !== index),
+        };
+
+        return newState;
+      });
+    };
+
+    const handleFieldChange = (field, index, value) => {
+      setListUPS((prevState) => {
+        const newState = [...prevState];
+
+        if (newState[fieldIndex]) {
+          newState[fieldIndex] = {
+            ...newState[fieldIndex],
+            [field]: newState[fieldIndex][field]?.map((item, i) =>
+              i === index ? value : item
+            ),
+          };
+        } else {
+          console.warn(`Item at index ${fieldIndex} does not exist.`);
+        }
+
+        return newState;
+      });
+    };
+
+    return (
+      <div className="w-12">
+        {items.map((item, index) => (
+          <div
+            key={index}
+            className="w-full h-3rem flex align-items-center justify-content-between relative mt-4"
+          >
+            <InputText
+              className="w-full h-3rem pr-5"
+              value={item}
+              onChange={(e) => handleFieldChange(field, index, e.target.value)}
+              placeholder={title}
+            />
+            <div className="absolute right-0 mr-2 cursor-pointer flex items-center">
+              {items.length > 1 && index > 0 && (
+                <i
+                  onClick={() => handleRemoveFields(field, index)}
+                  className="pi pi-times"
+                  style={{
+                    fontSize: "1.1rem",
+                    color: "red",
+                    fontWeight: "bold",
+                  }}
+                ></i>
+              )}
+              {index === 0 && (
+                <i
+                  onClick={() => handleAddFields(field)}
+                  className="pi pi-plus"
+                  style={{
+                    fontSize: "1.1rem",
+                    color: "green",
+                    fontWeight: "bold",
+                  }}
+                ></i>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   const generateFileUploadFields = () => {
@@ -85,6 +198,7 @@ const KrogerImageUpload = () => {
             <p className="m-0">Drag and drop files here to upload.</p>
           }
         />
+        {handleDymamicFields("listUPS", "List UPS", index)}
         <div className="flex align-items-center mt-2">
           <Checkbox
             inputId={`fileUploadCheckbox${index}`}
