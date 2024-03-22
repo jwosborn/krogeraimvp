@@ -7,10 +7,11 @@ import { Checkbox } from "primereact/checkbox";
 
 const KrogerImageUpload = () => {
   const [data, setData] = useState({
-    gtin: "",
-    commodityName: "",
-    commodityNumber: "",
+    GTIN: "",
+    // commodityName: "",
+    // commodityNumber: "",
     image: null,
+    position: "",
   });
 
   const [activeCheckboxIndex, setActiveCheckboxIndex] = useState(null);
@@ -28,19 +29,27 @@ const KrogerImageUpload = () => {
     setData((prevState) => ({ ...prevState, image: e.files }));
   };
 
-  const handleSubmit = () => {
-    axios({
-      method: "post",
-      url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/upload-image",
-      data,
-    })
-      .then((response) => {
-        console.log("Form submitted successfully:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error submitting form:", error);
-      })
-      .finally(() => {});
+  const handleSubmit = (elementId) => {
+    let dataIn = data;
+
+    if (elementId === "fileUpload0") {
+      dataIn = { ...dataIn, position: "Main Product Image" };
+    } else {
+      dataIn = { ...dataIn, position: "Detailed Product View 1-5" };
+    }
+    console.log(dataIn);
+    // axios({
+    //   method: "post",
+    //   url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/upload-image",
+    //   data: dataIn,
+    // })
+    //   .then((response) => {
+    //     console.log("Form submitted successfully:", response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error submitting form:", error);
+    //   })
+    //   .finally(() => {});
   };
 
   const generateFileUploadFields = () => {
@@ -49,7 +58,7 @@ const KrogerImageUpload = () => {
         <span className="mb-2 block">Carousel {index + 1} position</span>
         <FileUpload
           id={`fileUpload${index}`}
-          uploadHandler={handleSubmit}
+          uploadHandler={() => handleSubmit(`fileUpload${index}`)}
           onSelect={onUpload}
           name={`demo[]`}
           accept="image/*"
@@ -87,12 +96,12 @@ const KrogerImageUpload = () => {
         <div className="col-12">
           <InputText
             className="w-full h-3rem mt-4"
-            value={data.gtin}
+            value={data.GTIN}
             onChange={handleChange}
-            name="gtin"
+            name="GTIN"
             placeholder="GTIN"
           />
-          <InputText
+          {/* <InputText
             className="w-full h-3rem mt-4"
             value={data.commodityName}
             onChange={handleChange}
@@ -105,7 +114,7 @@ const KrogerImageUpload = () => {
             onChange={handleChange}
             name="commodityNumber"
             placeholder="Commodity Number"
-          />
+          /> */}
         </div>
         {generateFileUploadFields()}
       </div>
