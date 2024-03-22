@@ -12,9 +12,10 @@ const KrogerImageUpload = () => {
     // commodityNumber: "",
     image: null,
     position: "",
+    multiple: false,
   });
 
-  const [activeCheckboxIndex, setActiveCheckboxIndex] = useState(null);
+  const [activeCheckboxIndices, setActiveCheckboxIndices] = useState([]);
 
   const fileUploadRefs = useRef<any>(
     [...Array(6)].map(() => React.createRef())
@@ -25,12 +26,24 @@ const KrogerImageUpload = () => {
     setData((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  const handleCheckboxChange = (index) => {
+    setActiveCheckboxIndices((currentIndices) => {
+      const indexExists = currentIndices.includes(index);
+
+      if (indexExists) {
+        return currentIndices.filter((currentIndex) => currentIndex !== index);
+      } else {
+        return [...currentIndices, index];
+      }
+    });
+  };
+
   const onUpload = (e) => {
     setData((prevState) => ({ ...prevState, image: e.files }));
   };
 
-  const handleSubmit = (elementId) => {
-    let dataIn = data;
+  const handleSubmit = (elementId, index) => {
+    let dataIn = { ...data, multiple: activeCheckboxIndices.includes(index) };
 
     if (elementId === "fileUpload0") {
       dataIn = { ...dataIn, position: "Main Product Image" };
@@ -58,13 +71,13 @@ const KrogerImageUpload = () => {
         <span className="mb-2 block">Carousel {index + 1} position</span>
         <FileUpload
           id={`fileUpload${index}`}
-          uploadHandler={() => handleSubmit(`fileUpload${index}`)}
+          uploadHandler={() => handleSubmit(`fileUpload${index}`, index)}
           onSelect={onUpload}
           name={`demo[]`}
           accept="image/*"
           maxFileSize={1000000}
           customUpload
-          multiple={activeCheckboxIndex === index}
+          multiple
           emptyTemplate={
             <p className="m-0">Drag and drop files here to upload.</p>
           }
@@ -72,12 +85,8 @@ const KrogerImageUpload = () => {
         <div className="flex align-items-center mt-2">
           <Checkbox
             inputId={`fileUploadCheckbox${index}`}
-            checked={activeCheckboxIndex === index}
-            onChange={() => {
-              setActiveCheckboxIndex(
-                activeCheckboxIndex === index ? null : index
-              );
-            }}
+            checked={activeCheckboxIndices.includes(index)}
+            onChange={() => handleCheckboxChange(index)}
           />
           <label htmlFor={`fileUploadCheckbox${index}`} className="ml-2">
             Multiple?
