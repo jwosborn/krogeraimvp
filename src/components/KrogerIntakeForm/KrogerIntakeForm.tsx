@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
 import { Button } from "primereact/button";
@@ -30,12 +30,18 @@ const KrogerIntakeForm = () => {
   const [formState, setFormState] = useState(initialFormState);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isValidInput, setIsValidInput] = useState(true);
 
   const fileUploadRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormState((prevState) => ({ ...prevState, [name]: value }));
+
+    if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      setIsValidInput(emailRegex.test(value));
+    }
   };
 
   const handleSelectRole = (selectedRole) => {
@@ -157,6 +163,11 @@ const KrogerIntakeForm = () => {
       otherEmailsToNotify,
     };
 
+    if (email === "" || email === null) {
+      setIsValidInput(false);
+      return;
+    }
+
     const entries = Object.entries(dataIn);
 
     for (const [key, value] of entries) {
@@ -246,10 +257,13 @@ const KrogerIntakeForm = () => {
           </div>
           <div className="col-6 mt-4">
             <InputText
-              className="w-full h-3rem"
+              className={`w-full h-3rem ${
+                !isValidInput ? "border-red-500" : ""
+              }`}
               value={formState.email}
               onChange={handleChange}
               name="email"
+              type="email"
               placeholder="Email"
             />
           </div>
@@ -307,7 +321,7 @@ const KrogerIntakeForm = () => {
               onClick={handleSubmit}
               label={isLoading ? "Submitting..." : "Submit"}
               icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
-              disabled={isLoading}
+              disabled={isLoading || !isValidInput}
             />
           </div>
         </div>
