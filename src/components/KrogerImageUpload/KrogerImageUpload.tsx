@@ -42,7 +42,7 @@ const KrogerImageUpload = () => {
     setData((prevState) => ({ ...prevState, image: e.files }));
   };
 
-  const handleSubmit = (elementId, index) => {
+  const handleSubmit = (elementId, index, field) => {
     let dataIn = { ...data, multiple: activeCheckboxIndices.includes(index) };
 
     if (elementId === "fileUpload0") {
@@ -50,34 +50,37 @@ const KrogerImageUpload = () => {
     } else {
       dataIn = { ...dataIn, position: "Detailed Product View 1-5" };
     }
-    console.log(dataIn);
-    // axios({
-    //   method: "post",
-    //   url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/upload-image",
-    //   data: dataIn,
-    // })
-    //   .then((response) => {
-    //     console.log("Form submitted successfully:", response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error submitting form:", error);
-    //   })
-    //   .finally(() => {});
+
+    axios({
+      method: "post",
+      url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/upload-image",
+      data: dataIn,
+    })
+      .then((response) => {
+        console.log("Form submitted successfully:", response.data);
+        field.current.clear();
+      })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+      })
+      .finally(() => {});
   };
 
   const generateFileUploadFields = () => {
-    return fileUploadRefs.current.map((_, index) => (
+    return fileUploadRefs.current.map((ref, index) => (
       <div key={index} className="col-6 mt-4">
         <span className="mb-2 block">Carousel {index + 1} position</span>
         <FileUpload
+          ref={ref}
           id={`fileUpload${index}`}
-          uploadHandler={() => handleSubmit(`fileUpload${index}`, index)}
+          uploadHandler={() => handleSubmit(`fileUpload${index}`, index, ref)}
           onSelect={onUpload}
           name={`demo[]`}
           accept="image/*"
           maxFileSize={1000000}
           customUpload
           multiple
+          uploadOptions={{ label: "Send" }}
           emptyTemplate={
             <p className="m-0">Drag and drop files here to upload.</p>
           }
