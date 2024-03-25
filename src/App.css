@@ -1,9 +1,4 @@
-.p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(
-    .p-datatable-tbody
-  )
-  .p-datatable-tbody
-  > tr
-  > td {
+.p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody>tr>td {
   font-size: 11px;
   padding: 0.25rem 1rem;
 }
@@ -11,5 +6,13 @@
 
 /* Overriding inline styles with !important */
 .centered-spinner .p-progress-spinner {
-  display: flex !important; /* Override the inline-block display from primeReact component*/
+  display: flex !important;
+  /* Override the inline-block display from primeReact component*/
+}
+
+.container {
+  max-width: 1440px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
