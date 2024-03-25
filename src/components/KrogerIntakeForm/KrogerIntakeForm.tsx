@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 
 import { Button } from "primereact/button";
@@ -10,10 +10,11 @@ import { FileUpload } from "primereact/fileupload";
 import { Dropdown } from "primereact/dropdown";
 import { Dialog } from "primereact/dialog";
 import { Chips } from "primereact/chips";
+import { RadioButton } from "primereact/radiobutton";
 
 const KrogerIntakeForm = () => {
   const initialFormState = {
-    gtin: [""],
+    GTIN: [""],
     commodity: [""],
     subCommodity: [""],
     effectiveDate: null,
@@ -32,6 +33,7 @@ const KrogerIntakeForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isValidInput, setIsValidInput] = useState(true);
+  const [selectedRadioBtn, setSelectedRadioBtn] = useState("GTIN");
 
   const fileUploadRef = useRef(null);
 
@@ -60,6 +62,10 @@ const KrogerIntakeForm = () => {
     setFormState((prevState) => ({ ...prevState, isPackImage: e.checked }));
   };
 
+  const handleRadioButtonChange = (e) => {
+    setSelectedRadioBtn(e.target.value);
+  };
+
   const handleFileUpload = (e) => {
     setFormState((prevState) => ({ ...prevState, files: e.files }));
   };
@@ -83,15 +89,18 @@ const KrogerIntakeForm = () => {
             key={index}
             className="w-full h-3rem flex align-items-center justify-content-between relative mt-4"
           >
-            <span className="block w-full p-float-label h-3rem">
+            <span className="block w-full p-float-label h-3rem surface-ground">
               <Chips
                 className="w-full h-full"
                 value={item}
                 onChange={(e) =>
                   handleFieldChange(index, field, e.target.value)
                 }
+                disabled={
+                  field !== "otherEmailsToNotify" && field !== selectedRadioBtn
+                }
               />
-              <label htmlFor="username">{title}</label>
+              <label htmlFor={field}>{title}</label>
             </span>
           </div>
         ))}
@@ -101,9 +110,6 @@ const KrogerIntakeForm = () => {
 
   const handleSubmit = () => {
     const {
-      gtin,
-      commodity,
-      subCommodity,
       effectiveDate,
       field,
       userName,
@@ -116,9 +122,7 @@ const KrogerIntakeForm = () => {
     } = formState;
 
     let dataIn = {
-      GTIN: gtin,
-      commodity,
-      subCommodity,
+      [selectedRadioBtn]: formState[selectedRadioBtn],
       effectiveDate: effectiveDate?.toISOString() || "",
       field,
       userName,
@@ -189,7 +193,7 @@ const KrogerIntakeForm = () => {
       <div className="container flex flex-column w-full">
         <h3 className="mb-0 text-center text-2xl uppercase">Intake Form</h3>
         <div className="grid">
-          {handleDymamicFields("gtin", "GTIN")}
+          {handleDymamicFields("GTIN", "GTIN")}
           {handleDymamicFields("commodity", "Commodity")}
           {handleDymamicFields("subCommodity", "SubCommodity")}
           <div className="col-6 mt-4">
@@ -271,16 +275,47 @@ const KrogerIntakeForm = () => {
               }
             />
           </div>
-          <div className="col-12 flex align-items-center mt-4">
-            <Checkbox
-              inputId="isPackImage"
-              name=""
-              checked={formState.isPackImage}
-              onChange={handleCheckboxChange}
-            />
-            <label htmlFor="isPackImage" className="ml-2">
-              Pack Image?
-            </label>
+          <div className="col-12 flex align-items-center justify-content-between mt-4">
+            <div className="flex align-items-center">
+              <Checkbox
+                inputId="isPackImage"
+                name=""
+                checked={formState.isPackImage}
+                onChange={handleCheckboxChange}
+              />
+              <label htmlFor="isPackImage" className="ml-2">
+                Pack Image?
+              </label>
+            </div>
+            <div className="">
+              <div className="field-radiobutton">
+                <RadioButton
+                  value="GTIN"
+                  name="GTIN"
+                  onChange={handleRadioButtonChange}
+                  checked={selectedRadioBtn === "GTIN"}
+                />
+                <label htmlFor="GTIN">GTIN</label>
+              </div>
+              <div className="field-radiobutton mt-2">
+                <RadioButton
+                  value="commodity"
+                  name="Commodity"
+                  onChange={handleRadioButtonChange}
+                  checked={selectedRadioBtn === "commodity"}
+                />
+                <label htmlFor="Commodity">Commodity</label>
+              </div>
+              <div className="field-radiobutton mt-2">
+                <RadioButton
+                  value="subCommodity"
+                  name="SubCommodity"
+                  onChange={handleRadioButtonChange}
+                  checked={selectedRadioBtn === "subCommodity"}
+                />
+                <label htmlFor="SubCommodity">SubCommodity</label>
+              </div>
+            </div>
           </div>
           <div className="col-6 w-full h-4rem mt-4">
             <Button
