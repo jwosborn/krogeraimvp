@@ -5,9 +5,12 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
 import { Chips } from "primereact/chips";
+import { Dialog } from "primereact/dialog";
 
 const KrogerImageUpload = () => {
   const [GTIN, setGTIN] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [fileData, setFileData] = useState([
     {
@@ -17,7 +20,6 @@ const KrogerImageUpload = () => {
     },
   ]);
 
-  const [isLoading, setIsLoading] = useState(false);
   const fileUploadRefs = useRef<any>(
     [...Array(6)].map(() => React.createRef())
   );
@@ -90,6 +92,8 @@ const KrogerImageUpload = () => {
         responses.map((response) => response.data)
       );
 
+      setShowModal(true);
+
       if (fileUploadRefs.current) {
         fileUploadRefs.current.forEach((refEl) => {
           refEl.current.clear();
@@ -153,6 +157,27 @@ const KrogerImageUpload = () => {
           />
         </div>
       </div>
+
+      <Dialog
+        header="Form submitted successfully!"
+        visible={showModal}
+        style={{
+          maxWidth: "350px",
+          width: "100%",
+          textAlign: "center",
+        }}
+        onHide={() => setShowModal(false)}
+      >
+        <div className="card flex flex-wrap flex-column gap-2 justify-content-center">
+          <div>
+            <Button
+              onClick={() => setShowModal(false)}
+              icon="pi pi-check"
+              label="Ok"
+            ></Button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
