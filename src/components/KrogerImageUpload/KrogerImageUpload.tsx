@@ -12,13 +12,12 @@ const KrogerImageUpload = () => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [fileData, setFileData] = useState([
-    {
-      files: [],
-      position: "",
-      UPCs: [],
-    },
-  ]);
+  const [fileData, setFileData] = useState([]);
+
+  const isSubmitDisabled =
+    fileData
+      .filter((item) => item?.files)
+      .every((item) => item?.files?.length === 0) || isLoading;
 
   const fileUploadRefs = useRef<any>(
     [...Array(6)].map(() => React.createRef())
@@ -141,6 +140,13 @@ const KrogerImageUpload = () => {
               maxFileSize={1000000}
               customUpload
               auto
+              onRemove={() =>
+                setFileData((prevData) =>
+                  prevData.map((item, idx) =>
+                    idx === index ? { ...item, files: [] } : item
+                  )
+                )
+              }
               emptyTemplate={
                 <p className="m-0">Drag and drop files here to upload.</p>
               }
@@ -153,7 +159,7 @@ const KrogerImageUpload = () => {
             onClick={handleSubmit}
             label={isLoading ? "Submitting..." : "Submit"}
             icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
-            disabled={isLoading}
+            disabled={isSubmitDisabled}
           />
         </div>
       </div>
