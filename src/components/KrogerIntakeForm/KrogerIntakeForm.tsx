@@ -209,34 +209,40 @@ const KrogerIntakeForm = () => {
             />
           </div>
           <div className="col-6 mt-4">
-            <InputText
-              className="w-full h-3rem"
-              value={formState.field}
-              onChange={handleChange}
-              name="field"
-              placeholder="Field"
-            />
+            <span className="block w-full p-float-label h-3rem surface-ground">
+              <InputText
+                className="w-full h-3rem"
+                value={formState.field}
+                onChange={handleChange}
+                name="field"
+              />
+              <label htmlFor="field">Field</label>
+            </span>
           </div>
           <div className="col-6 mt-4">
-            <InputText
-              className="w-full h-3rem"
-              value={formState.userName}
-              onChange={handleChange}
-              name="userName"
-              placeholder="User Name"
-            />
+            <span className="block w-full p-float-label h-3rem surface-ground">
+              <InputText
+                className="w-full h-3rem"
+                value={formState.userName}
+                onChange={handleChange}
+                name="userName"
+              />
+              <label htmlFor="userName">User Name</label>
+            </span>
           </div>
           <div className="col-6 mt-4">
-            <InputText
-              className={`w-full h-3rem ${
-                !isValidInput ? "border-red-500" : ""
-              }`}
-              value={formState.email}
-              onChange={handleChange}
-              name="email"
-              type="email"
-              placeholder="Email"
-            />
+            <span className="block w-full p-float-label h-3rem surface-ground">
+              <InputText
+                className={`w-full h-3rem ${
+                  !isValidInput ? "border-red-500" : ""
+                }`}
+                value={formState.email}
+                onChange={handleChange}
+                name="email"
+                type="email"
+              />
+              <label htmlFor="email">Email</label>
+            </span>
           </div>
           <div className="col-6 mt-4">
             <Dropdown
@@ -250,15 +256,17 @@ const KrogerIntakeForm = () => {
           </div>
           {handleDymamicFields("otherEmailsToNotify", "Other Emails To Notify")}
           <div className="col-6 mt-4">
-            <InputTextarea
-              className="w-full"
-              value={formState.issue}
-              onChange={handleChange}
-              name="issue"
-              rows={3}
-              autoResize
-              placeholder="Issue"
-            />
+            <span className="block w-full p-float-label h-3rem surface-ground">
+              <InputTextarea
+                className="w-full"
+                value={formState.issue}
+                onChange={handleChange}
+                name="issue"
+                rows={3}
+                autoResize
+              />
+              <label htmlFor="issue">Issue</label>
+            </span>
           </div>
           <div className="col-12 mt-4">
             <FileUpload
