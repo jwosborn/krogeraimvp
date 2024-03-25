@@ -9,6 +9,7 @@ import { Checkbox } from "primereact/checkbox";
 import { FileUpload } from "primereact/fileupload";
 import { Dropdown } from "primereact/dropdown";
 import { Dialog } from "primereact/dialog";
+import { Chips } from "primereact/chips";
 
 const KrogerIntakeForm = () => {
   const initialFormState = {
@@ -66,20 +67,6 @@ const KrogerIntakeForm = () => {
   const handleDymamicFields = (field, title) => {
     const items = formState?.[field];
 
-    const handleAddFields = (field) => {
-      setFormState((prevState) => ({
-        ...prevState,
-        [field]: [...prevState[field], ""],
-      }));
-    };
-
-    const handleRemoveFields = (field, index) => {
-      setFormState((prevState) => ({
-        ...prevState,
-        [field]: prevState[field].filter((_, item) => item !== index),
-      }));
-    };
-
     const handleFieldChange = (index, field, value) => {
       setFormState((prevState) => ({
         ...prevState,
@@ -96,36 +83,16 @@ const KrogerIntakeForm = () => {
             key={index}
             className="w-full h-3rem flex align-items-center justify-content-between relative mt-4"
           >
-            <InputText
-              className="w-full h-3rem pr-5"
-              value={item}
-              onChange={(e) => handleFieldChange(index, field, e.target.value)}
-              placeholder={title}
-            />
-            <div className="absolute right-0 mr-2 cursor-pointer flex items-center">
-              {items.length > 1 && index > 0 && (
-                <i
-                  onClick={() => handleRemoveFields(field, index)}
-                  className="pi pi-times"
-                  style={{
-                    fontSize: "1.1rem",
-                    color: "red",
-                    fontWeight: "bold",
-                  }}
-                ></i>
-              )}
-              {index === 0 && (
-                <i
-                  onClick={() => handleAddFields(field)}
-                  className="pi pi-plus"
-                  style={{
-                    fontSize: "1.1rem",
-                    color: "green",
-                    fontWeight: "bold",
-                  }}
-                ></i>
-              )}
-            </div>
+            <span className="block w-full p-float-label h-3rem">
+              <Chips
+                className="w-full h-full"
+                value={item}
+                onChange={(e) =>
+                  handleFieldChange(index, field, e.target.value)
+                }
+              />
+              <label htmlFor="username">{title}</label>
+            </span>
           </div>
         ))}
       </div>
