@@ -63,5 +63,6 @@
     "jest-mock-axios": "^4.7.3",
     "jest-transform-stub": "^2.0.0",
     "ts-jest": "^29.1.1"
-  }
+  },
+  "proxy": "https://kroger-description-api-0b391e779fb3.herokuapp.com"
 }
