@@ -124,6 +124,7 @@ const KrogerImageUpload = () => {
         </div>
         {fileUploadRefs.current.map((ref, index) => (
           <div key={index} className="col-6 mt-4">
+            <span className="mb-2 block">Carousel {index + 1} Position</span>
             <FileUpload
               ref={ref}
               onSelect={(e) => handleFileUpload(index, e?.files)}
