@@ -8,7 +8,7 @@ import Header from "./components/Header/Header";
 const App = () => {
     return (
         <BrowserRouter>
-            {window.location.pathname !== '/' && <Header />}
+            {!["/", "/krogeraimvp"].includes(window.location.pathname) && <Header />}
             <Routes>
                 <Route path='/' element={<DescriptionGenerator />} />
                 <Route path='/krogeraimvp' element={<DescriptionGenerator />} />
