@@ -10,7 +10,7 @@ import { FileUpload } from "primereact/fileupload";
 import { Dropdown } from "primereact/dropdown";
 import { Dialog } from "primereact/dialog";
 import { Chips } from "primereact/chips";
-import { RadioButton } from "primereact/radiobutton";
+import { SelectButton } from 'primereact/selectbutton';
 
 const KrogerIntakeForm = () => {
   const initialFormState = {
@@ -221,34 +221,20 @@ const KrogerIntakeForm = () => {
   return (
     <>
       <div className="container flex flex-column w-full">
-        <h3 className="mb-0 text-center text-2xl uppercase">Intake Form</h3>
         <div className="grid">
-          {handleDymamicFields("GTIN", "GTIN")}
-          {handleDymamicFields("commodity", "Commodity")}
-          {handleDymamicFields("subCommodity", "SubCommodity")}
-          <div className="col-6 mt-4">
-            <Calendar
-              style={{ height: "3rem" }}
-              className="w-full"
-              value={formState.effectiveDate}
-              onSelect={handleDateChange}
-              dateFormat="yy-mm-dd"
-              showIcon
-              name="effectiveDate"
-              placeholder="Effective Date"
-            />
-          </div>
-          <div className="col-6 mt-4">
-            <Dropdown
-              value={formState.selectedField}
-              onChange={handleSelect}
-              options={formState.field}
-              placeholder="Select a Field"
-              optionLabel="type"
-              className="w-full h-3rem flex align-items-center"
-              name="selectedField"
-            />
-          </div>
+            <div className="flex flex-column col-12 col-offset-2 mt-4">
+              <div className="col-offset-2">
+                <SelectButton
+                  value={selectedRadioBtn}
+                  onChange={handleRadioButtonChange}
+                  options={[{ label: "GTIN", value: "GTIN" }, { label: "Commodity", value: "commodity" }, { label: "Sub Commodity", value: "subCommodity" }]}
+                />
+            </div>
+                <div className="">
+                  {handleDymamicFields(selectedRadioBtn, selectedRadioBtn.toUpperCase())}
+                  <p>Press enter after typing each value to confirm. This input accepts multiple values.</p>
+                </div>
+            </div>
           <div className="col-6 mt-4">
             <span className="block w-full p-float-label h-3rem surface-ground">
               <InputText
@@ -264,7 +250,7 @@ const KrogerIntakeForm = () => {
             <span className="block w-full p-float-label h-3rem surface-ground">
               <InputText
                 className={`w-full h-3rem ${
-                  !isValidInput ? "border-red-500" : ""
+                  !isValidInput ? "border-2 border-red-500" : ""
                 }`}
                 value={formState.email}
                 onChange={handleChange}
@@ -285,8 +271,46 @@ const KrogerIntakeForm = () => {
               name="selectedRole"
             />
           </div>
-          {handleDymamicFields("otherEmailsToNotify", "Other Emails To Notify")}
           <div className="col-6 mt-4">
+            <Dropdown
+              value={formState.selectedField}
+              onChange={handleSelect}
+              options={formState.field}
+              placeholder="Select a Field"
+              optionLabel="type"
+              className="w-full h-3rem flex align-items-center"
+              name="selectedField"
+            />
+          {formState.selectedField.type.startsWith('Carousel') && 
+            (
+                <div className="flex mt-2">
+                  <Checkbox
+                    inputId="isPackImage"
+                    name=""
+                    checked={formState.isPackImage}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label htmlFor="isPackImage" className="ml-2">
+                    Pack Image?
+                  </label>
+                </div>
+            )
+          }
+          </div>
+          <div className="col-6 mt-4">
+            <Calendar
+              style={{ height: "3rem" }}
+              className="w-full"
+              value={formState.effectiveDate}
+              onSelect={handleDateChange}
+              dateFormat="yy-mm-dd"
+              showIcon
+              name="effectiveDate"
+              placeholder="Effective Date"
+            />
+          </div>
+          {handleDymamicFields("otherEmailsToNotify", "Other Emails To Notify")}
+          <div className="col-12 mt-4">
             <span className="block w-full p-float-label h-3rem surface-ground">
               <InputTextarea
                 className="w-full"
@@ -314,51 +338,10 @@ const KrogerIntakeForm = () => {
               }
             />
           </div>
-          <div className="col-12 flex align-items-center justify-content-between mt-4">
-            <div className="flex align-items-center">
-              <Checkbox
-                inputId="isPackImage"
-                name=""
-                checked={formState.isPackImage}
-                onChange={handleCheckboxChange}
-              />
-              <label htmlFor="isPackImage" className="ml-2">
-                Pack Image?
-              </label>
-            </div>
-            <div className="">
-              <div className="field-radiobutton">
-                <RadioButton
-                  value="GTIN"
-                  name="GTIN"
-                  onChange={handleRadioButtonChange}
-                  checked={selectedRadioBtn === "GTIN"}
-                />
-                <label htmlFor="GTIN">GTIN</label>
-              </div>
-              <div className="field-radiobutton mt-2">
-                <RadioButton
-                  value="commodity"
-                  name="Commodity"
-                  onChange={handleRadioButtonChange}
-                  checked={selectedRadioBtn === "commodity"}
-                />
-                <label htmlFor="Commodity">Commodity</label>
-              </div>
-              <div className="field-radiobutton mt-2">
-                <RadioButton
-                  value="subCommodity"
-                  name="SubCommodity"
-                  onChange={handleRadioButtonChange}
-                  checked={selectedRadioBtn === "subCommodity"}
-                />
-                <label htmlFor="SubCommodity">SubCommodity</label>
-              </div>
-            </div>
-          </div>
           <div className="col-6 w-full h-4rem mt-4">
             <Button
-              className="w-full h-full px-4"
+              severity="success"
+              className="h-full px-4"
               onClick={handleSubmit}
               label={isLoading ? "Submitting..." : "Submit"}
               icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}

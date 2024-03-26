@@ -109,9 +109,6 @@ const KrogerImageUpload = () => {
 
   return (
     <div className="container flex flex-column w-full">
-      <h3 className="mb-0 text-center text-2xl uppercase">
-        Kroger Image Upload
-      </h3>
       <div className="grid">
         <div className="col-12">
           <InputText
@@ -156,7 +153,8 @@ const KrogerImageUpload = () => {
         ))}
         <div className="col-6 w-full h-4rem">
           <Button
-            className="w-full h-full px-4"
+            className="h-full px-4"
+            severity="success"
             onClick={handleSubmit}
             label={isLoading ? "Submitting..." : "Submit"}
             icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
