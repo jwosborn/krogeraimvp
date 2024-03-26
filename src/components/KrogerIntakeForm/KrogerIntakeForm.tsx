@@ -18,7 +18,24 @@ const KrogerIntakeForm = () => {
     commodity: [""],
     subCommodity: [""],
     effectiveDate: null,
-    field: "",
+    field: [
+      { type: "Product Name" },
+      { type: "Customer Facing Size" },
+      { type: "Marketing Copy" },
+      { type: "Feature - Benefit Bullet 1" },
+      { type: "Feature - Benefit Bullet 2" },
+      { type: "Feature - Benefit Bullet 3" },
+      { type: "Feature - Benefit Bullet 4" },
+      { type: "Feature - Benefit Bullet 5" },
+      { type: "Feature - Benefit Bullet 6" },
+      { type: "Feature - Benefit Bullet 7" },
+      { type: "Carousel 1" },
+      { type: "Carousel 2" },
+      { type: "Carousel 3" },
+      { type: "Carousel 4" },
+      { type: "Carousel 5" },
+      { type: "Carousel 6" },
+    ],
     userName: "",
     email: "",
     role: [{ name: "Client" }, { name: "Employee" }],
@@ -26,7 +43,8 @@ const KrogerIntakeForm = () => {
     files: [],
     isPackImage: false,
     otherEmailsToNotify: [""],
-    selectedRole: "",
+    selectedRole: { name: "" },
+    selectedField: { type: "" },
   };
 
   const [formState, setFormState] = useState(initialFormState);
@@ -34,6 +52,8 @@ const KrogerIntakeForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isValidInput, setIsValidInput] = useState(true);
   const [selectedRadioBtn, setSelectedRadioBtn] = useState("GTIN");
+  const [lastRadioBtnPosition, setLastRadioBtnPosition] =
+    useState(selectedRadioBtn);
 
   const fileUploadRef = useRef(null);
 
@@ -47,11 +67,10 @@ const KrogerIntakeForm = () => {
     }
   };
 
-  const handleSelectRole = (selectedRole) => {
-    setFormState((prevState) => ({
-      ...prevState,
-      selectedRole: selectedRole,
-    }));
+  const handleSelect = (e) => {
+    const { name, value } = e?.target;
+
+    setFormState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleDateChange = (e) => {
@@ -64,6 +83,12 @@ const KrogerIntakeForm = () => {
 
   const handleRadioButtonChange = (e) => {
     setSelectedRadioBtn(e.target.value);
+
+    setFormState((prevState) => {
+      return { ...prevState, [lastRadioBtnPosition]: [""] };
+    });
+
+    setLastRadioBtnPosition(e.target.value);
   };
 
   const handleFileUpload = (e) => {
@@ -111,23 +136,28 @@ const KrogerIntakeForm = () => {
   const handleSubmit = () => {
     const {
       effectiveDate,
-      field,
       userName,
       email,
       selectedRole,
+      selectedField,
       issue,
       files,
       isPackImage,
       otherEmailsToNotify,
+      GTIN,
+      commodity,
+      subCommodity,
     } = formState;
 
     let dataIn = {
-      [selectedRadioBtn]: formState[selectedRadioBtn],
+      GTIN,
+      commodity,
+      subCommodity,
       effectiveDate: effectiveDate?.toISOString() || "",
-      field,
+      field: selectedField.type,
       userName,
       email,
-      role: selectedRole,
+      role: selectedRole.name,
       issue,
       files,
       isPackImage,
@@ -140,7 +170,6 @@ const KrogerIntakeForm = () => {
     }
 
     const entries = Object.entries(dataIn);
-
     for (const [key, value] of entries) {
       if (Array.isArray(value)) {
         dataIn = {
@@ -185,6 +214,7 @@ const KrogerIntakeForm = () => {
       fileUploadRef.current.clear();
     }
 
+    setSelectedRadioBtn("GTIN");
     setShowModal(false);
   };
 
@@ -209,15 +239,15 @@ const KrogerIntakeForm = () => {
             />
           </div>
           <div className="col-6 mt-4">
-            <span className="block w-full p-float-label h-3rem surface-ground">
-              <InputText
-                className="w-full h-3rem"
-                value={formState.field}
-                onChange={handleChange}
-                name="field"
-              />
-              <label htmlFor="field">Field</label>
-            </span>
+            <Dropdown
+              value={formState.selectedField}
+              onChange={handleSelect}
+              options={formState.field}
+              placeholder="Select a Field"
+              optionLabel="type"
+              className="w-full h-3rem flex align-items-center"
+              name="selectedField"
+            />
           </div>
           <div className="col-6 mt-4">
             <span className="block w-full p-float-label h-3rem surface-ground">
@@ -247,11 +277,12 @@ const KrogerIntakeForm = () => {
           <div className="col-6 mt-4">
             <Dropdown
               value={formState.selectedRole}
-              onChange={(e) => handleSelectRole(e.value)}
+              onChange={handleSelect}
               options={formState.role}
               optionLabel="name"
               placeholder="Select a Role"
               className="w-full h-3rem flex align-items-center"
+              name="selectedRole"
             />
           </div>
           {handleDymamicFields("otherEmailsToNotify", "Other Emails To Notify")}
