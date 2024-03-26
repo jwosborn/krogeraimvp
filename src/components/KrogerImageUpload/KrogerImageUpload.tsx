@@ -124,14 +124,6 @@ const KrogerImageUpload = () => {
         </div>
         {fileUploadRefs.current.map((ref, index) => (
           <div key={index} className="col-6 mt-4">
-            <span className="block w-full p-float-label h-3rem mb-2">
-              <Chips
-                className="w-full h-full"
-                value={fileData[index]?.UPCs || []}
-                onChange={(e) => handleFieldChange(index, e.target.value)}
-              />
-              <label htmlFor="UPCs">UPCs</label>
-            </span>
             <FileUpload
               ref={ref}
               onSelect={(e) => handleFileUpload(index, e?.files)}
@@ -151,9 +143,17 @@ const KrogerImageUpload = () => {
                 <p className="m-0">Drag and drop files here to upload.</p>
               }
             />
+            <span className="block w-full p-float-label h-3rem my-4">
+              <Chips
+                className="w-full h-full"
+                value={fileData[index]?.UPCs || []}
+                onChange={(e) => handleFieldChange(index, e.target.value)}
+              />
+              <label htmlFor="UPCs">UPCs</label>
+            </span>
           </div>
         ))}
-        <div className="col-6 w-full h-4rem mt-4">
+        <div className="col-6 w-full h-4rem">
           <Button
             className="w-full h-full px-4"
             onClick={handleSubmit}
