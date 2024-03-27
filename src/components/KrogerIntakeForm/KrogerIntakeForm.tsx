@@ -221,16 +221,22 @@ const KrogerIntakeForm = () => {
   return (
     <>
       <div className="container flex flex-column w-full">
+        <div className="flex flex-row justify-content-center"> 
+          <h2>Intake Form</h2>
+        </div>
+        <div className="flex flex-row justify-content-center"> 
+          <p>This form is for change requests to the Kroger website in the following fields: Product Name, Customer Facing Size, Marketing Copy, Feature Bullets, and Carousel Images.</p>
+        </div>
         <div className="grid">
             <div className="flex flex-column col-12 col-offset-2 mt-4">
-              <div className="col-offset-2">
+              <div className="col-offset-3">
                 <SelectButton
                   value={selectedRadioBtn}
                   onChange={handleRadioButtonChange}
                   options={[{ label: "GTIN", value: "GTIN" }, { label: "Commodity", value: "commodity" }, { label: "Sub Commodity", value: "subCommodity" }]}
                 />
             </div>
-                <div className="">
+                <div className="col-offset-1">
                   {handleDymamicFields(selectedRadioBtn, selectedRadioBtn.toUpperCase())}
                   <p>Press enter after typing each value to confirm. This input accepts multiple values.</p>
                 </div>
@@ -306,11 +312,12 @@ const KrogerIntakeForm = () => {
               dateFormat="yy-mm-dd"
               showIcon
               name="effectiveDate"
-              placeholder="Effective Date"
+              placeholder="Date this item can be updated. Select today for ASAP."
             />
           </div>
           {handleDymamicFields("otherEmailsToNotify", "Other Emails To Notify")}
           <div className="col-12 mt-4">
+            <p>Please write a brief description of the change being requested. Attach files below if needed.</p>
             <span className="block w-full p-float-label h-3rem surface-ground">
               <InputTextarea
                 className="w-full"
@@ -339,9 +346,10 @@ const KrogerIntakeForm = () => {
             />
           </div>
           <div className="col-6 w-full h-4rem mt-4">
+          <p>Upon submitting, an email confirmation will be sent to the email(s) listed above as well as the appropriate party responsible for the change. An additional email confirmation will be sent when the change(s) are applied.</p>
             <Button
               severity="success"
-              className="h-full px-4"
+              className="h-full px-4 mb-5"
               onClick={handleSubmit}
               label={isLoading ? "Submitting..." : "Submit"}
               icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}

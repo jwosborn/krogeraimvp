@@ -33,7 +33,7 @@ const KrogerImageUpload = () => {
       ...newFileData[index],
       files,
       position:
-        index === 0 ? "Main Product Image" : "Detailed Product View 1-5",
+        index === 0 ? "Main Product Image" : `Detailed Product View ${index}`,
     };
     setFileData(newFileData);
   };
@@ -109,6 +109,12 @@ const KrogerImageUpload = () => {
 
   return (
     <div className="container flex flex-column w-full">
+        <div className="flex flex-row justify-content-center"> 
+          <h2>Image Upload Tool</h2>
+        </div>
+        <div className="flex flex-row justify-content-center"> 
+          <p>This tool is to be used for the upload of image files to the carousel on the Kroger website. Please indicate the main GTIN and additional UPC(s) that the image applies to when submitting.</p>
+        </div>
       <div className="grid">
         <div className="col-12">
           <InputText
@@ -153,7 +159,7 @@ const KrogerImageUpload = () => {
         ))}
         <div className="col-6 w-full h-4rem">
           <Button
-            className="h-full px-4"
+            className="h-full px-4 mb-4"
             severity="success"
             onClick={handleSubmit}
             label={isLoading ? "Submitting..." : "Submit"}
