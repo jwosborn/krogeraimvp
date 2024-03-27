@@ -10,6 +10,7 @@ import { ExportButtons } from '../ExportButtons/ExportButtons';
 import { Loader } from '../Loader/Loader';
 import { RunAllButton } from '../RunAllButton/RunAllButton';
 import { DropdownSelect } from '../DropdownSelect/DropdownSelect'
+import { SyndigoSubmitButton } from '../SyndigoSubmitButton/SyndigoSubmitButton';
 
 const URL = "https://kroger-description-api-0b391e779fb3.herokuapp.com/"
 const wordLists = {
@@ -109,6 +110,14 @@ function DescriptionGenerator() {
                     wordLists={wordLists}
                     dt={dt}
                 />
+
+                {products.length > 0 &&
+                    <SyndigoSubmitButton                     
+                        products={products} 
+                        URL={URL}  
+                        buttonText='Submit All'
+                    />
+                }
 
                 <Loader loading={loading} setLoading={setLoading} />
 
