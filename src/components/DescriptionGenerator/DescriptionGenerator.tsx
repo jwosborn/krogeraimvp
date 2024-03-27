@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import "../../App.css";
@@ -31,6 +32,7 @@ function DescriptionGenerator() {
     const [user, setUser] = useState('');
     const [isLogin, setIsLogin] = useState(false);
     const dt = useRef(null);
+    const location = useLocation()
 
     return (
         <div className="container min-w-screen surface-ground">
