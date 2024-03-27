@@ -5,19 +5,22 @@ import KrogerIntakeForm from "./components/KrogerIntakeForm/KrogerIntakeForm";
 import KrogerImageUpload from "./components/KrogerImageUpload/KrogerImageUpload";
 import Header from "./components/Header/Header";
 
-const PUBLIC_URL = process.env.REACT_APP_PUBLIC_URL
-            console.log(PUBLIC_URL)
 
 const App = () => {
+
+const PUBLIC_URL = process.env.REACT_APP_PUBLIC_URL
+
     return (
-        <BrowserRouter basename={`/${PUBLIC_URL}`}>
-            <Routes>
-                <Route path='/' element={<DescriptionGenerator />} />
-                <Route path='/krogeraimvp' element={<DescriptionGenerator />} />
-                <Route path='/kroger-intake-form' element={<><Header/><KrogerIntakeForm /></>} />
-                <Route path='/kroger-image-upload' element={<><Header /><KrogerImageUpload /></>} />
-            </Routes>
-        </BrowserRouter>
+        <>
+            <BrowserRouter basename={PUBLIC_URL}>
+                <Routes>
+                    <Route path='/' element={<DescriptionGenerator />} />
+                    <Route path='/krogeraimvp' element={<DescriptionGenerator />} />
+                    <Route path='/kroger-intake-form' element={<><Header /><KrogerIntakeForm /></>} />
+                    <Route path='/kroger-image-upload' element={<><Header /><KrogerImageUpload /></>} />
+                </Routes>
+            </BrowserRouter>
+        </>
     )
 }
 

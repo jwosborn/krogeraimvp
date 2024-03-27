@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import "../../App.css";
@@ -30,9 +31,12 @@ function DescriptionGenerator() {
     const [user, setUser] = useState('');
     const [isLogin, setIsLogin] = useState(false);
     const dt = useRef(null);
+    const location = useLocation()
 
     return (
         <div className="container min-w-screen surface-ground">
+            <p>path: {location.pathname}</p>
+            <p>env: {process.env.REACT_APP_PUBLIC_URL}</p>
             <div className="container w-11 min-h-screen mx-auto ">
                 <div className="header flex flex-row justify-content-evenly w-full">
                     <img className="max-h-10rem" src={logo} alt="Thinhaus Logo" />
