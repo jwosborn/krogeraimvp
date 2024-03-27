@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes} from "react-router-dom";
 import DescriptionGenerator from "./components/DescriptionGenerator/DescriptionGenerator";
 import KrogerIntakeForm from "./components/KrogerIntakeForm/KrogerIntakeForm";
 import KrogerImageUpload from "./components/KrogerImageUpload/KrogerImageUpload";
@@ -8,11 +8,10 @@ import Header from "./components/Header/Header";
 
 const App = () => {
 
-const PUBLIC_URL = process.env.REACT_APP_PUBLIC_URL
 
     return (
         <>
-            <BrowserRouter basename={PUBLIC_URL}>
+            <BrowserRouter basename='/krogeraimvp'>
                 <Routes>
                     <Route path='/' element={<DescriptionGenerator />} />
                     <Route path='/krogeraimvp' element={<DescriptionGenerator />} />
