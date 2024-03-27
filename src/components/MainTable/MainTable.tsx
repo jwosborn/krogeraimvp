@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import { generateDescriptions } from "../RunAllButton/RunAllButtonFuncs";
 import { Dialog } from "primereact/dialog";
 import "./MainTable.css"
+import { SyndigoSubmitButton } from "../SyndigoSubmitButton/SyndigoSubmitButton";
 
 type MainTableProps = {
     products: object[],
@@ -33,6 +34,14 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
             icon="pi pi-refresh"
             onClick={() => generateDescriptions(products, setLoading, setProducts, URL, setGenerated, setError, row.rowIndex)}
             data-testid={`generateButton${row.rowIndex}`}
+        />
+    )
+
+    const submitButton = (product, row) => (
+        <SyndigoSubmitButton
+            products={product}
+            URL={URL}
+            buttonText="Submit"
         />
     )
 
@@ -163,6 +172,7 @@ const MainTable = ({ products, setProducts, setLoading, setGenerated, setError, 
             <Column field="Index" header="#" body={rowNumber}/>
             { columns(products) }
             {Boolean(products.length) && <Column header="Run" body={generateButton} />}
+            {Boolean(products.length) && <Column header="Submit" body={submitButton} />}
         </DataTable>
 
         <Dialog
