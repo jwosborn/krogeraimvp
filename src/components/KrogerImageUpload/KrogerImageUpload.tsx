@@ -108,7 +108,7 @@ const KrogerImageUpload = () => {
   };
 
   return (
-    <div className="container flex flex-column w-full">
+    <div className="container flex flex-column w-full font-main">
         <div className="flex flex-row justify-content-center"> 
           <h2>Image Upload Tool</h2>
         </div>
