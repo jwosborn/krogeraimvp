@@ -4,11 +4,10 @@ import DescriptionGenerator from "./components/DescriptionGenerator/DescriptionG
 import KrogerIntakeForm from "./components/KrogerIntakeForm/KrogerIntakeForm";
 import KrogerImageUpload from "./components/KrogerImageUpload/KrogerImageUpload";
 import Header from "./components/Header/Header";
+import './App.css'
 
 
 const App = () => {
-
-
     return (
         <>
             <BrowserRouter basename='/krogeraimvp'>
