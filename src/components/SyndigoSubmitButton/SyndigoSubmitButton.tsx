@@ -57,15 +57,17 @@ export const SyndigoSubmitButton = ({ products, URL, buttonText }: SyndigoSubmit
 
     const handleClick = (products: any[], URL) => {
         setShowDialog(true);
+
+        // Ensure products is always an array
+        const productsArray = Array.isArray(products) ? products : [products];
     
         let formatProduct = {
-            products: products.map(product => {
+            products: productsArray.map(product => {
                 const bullets = parseBullets(product.bullets);
                 return {
                     "Product Name": product?.Product_Title,
                     "GTIN": product?.UPC,
                     "Marketing Copy": product?.description,
-                    "Customer Facing Size": product?.Size,
                     ...bullets,
                 }
             })
