@@ -55,7 +55,7 @@ export const SyndigoSubmitButton = ({ products, URL, buttonText }: SyndigoSubmit
         )));
     }
 
-    const handleClick = (products: any[], URL) => {
+    const handleClick = async (products: any[], URL) => {
         setShowDialog(true);
 
         // Ensure products is always an array
@@ -73,7 +73,8 @@ export const SyndigoSubmitButton = ({ products, URL, buttonText }: SyndigoSubmit
             })
         }
     
-        axios.post(URL + 'update-products', formatProduct)
+        const response = await axios.post(URL + 'update-products', formatProduct);
+        setShowDialog(false);
     }
 
 
