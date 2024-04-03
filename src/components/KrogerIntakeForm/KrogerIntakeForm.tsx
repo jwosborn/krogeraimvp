@@ -202,8 +202,7 @@ const KrogerIntakeForm = () => {
 
     axios({
       method: "post",
-      // url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
-      url: "http://localhost:3001/kroger-intake-form",
+      url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
       data: dataIn,
     })
       .then((response) => {
