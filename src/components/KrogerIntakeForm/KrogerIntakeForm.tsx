@@ -153,7 +153,7 @@ const KrogerIntakeForm = () => {
       GTIN,
       commodity,
       subCommodity,
-      effectiveDate: effectiveDate?.toISOString() || "",
+      effectiveDate: effectiveDate?.toISOString().split('T')[0] || "",
       field: selectedField.type,
       userName,
       email,
@@ -337,7 +337,7 @@ const KrogerIntakeForm = () => {
               name="demo[]"
               multiple
               accept="image/*"
-              maxFileSize={1000000}
+              maxFileSize={10000000}
               customUpload
               auto
               emptyTemplate={
