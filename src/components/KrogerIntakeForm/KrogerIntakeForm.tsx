@@ -91,8 +91,27 @@ const KrogerIntakeForm = () => {
     setLastRadioBtnPosition(e.target.value);
   };
 
-  const handleFileUpload = (e) => {
-    setFormState((prevState) => ({ ...prevState, files: e.files }));
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const handleFileUpload = async (e) => {
+    const files = Array.from(e.files); // Assuming e.target.files is the FileList
+  
+    // Convert all files to base64
+    const promises = files.map(file => fileToBase64(file));
+    const base64Files = await Promise.all(promises);
+  
+    // Update form state with base64 strings
+    setFormState(prevState => ({
+      ...prevState,
+      files: base64Files.map(base64 => ({ base64 }))
+    }));
   };
 
   const handleDymamicFields = (field, title) => {
@@ -183,7 +202,8 @@ const KrogerIntakeForm = () => {
 
     axios({
       method: "post",
-      url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
+      // url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
+      url: "http://localhost:3001/kroger-intake-form",
       data: dataIn,
     })
       .then((response) => {
@@ -341,7 +361,7 @@ const KrogerIntakeForm = () => {
               customUpload
               auto
               emptyTemplate={
-                <p className="m-0">Drag and drop files to here to upload.</p>
+                <p className="m-0">Drag and drop files here to upload.</p>
               }
             />
           </div>
