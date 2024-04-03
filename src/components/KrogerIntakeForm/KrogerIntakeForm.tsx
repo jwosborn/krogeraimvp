@@ -2,14 +2,17 @@ import React, { useState, useRef } from "react";
 import axios from "axios";
 
 import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
-import { InputTextarea } from "primereact/inputtextarea";
 import { Checkbox } from "primereact/checkbox";
-import { FileUpload } from "primereact/fileupload";
-import { Dropdown } from "primereact/dropdown";
-import { Dialog } from "primereact/dialog";
 import { Chips } from "primereact/chips";
+import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
+import { FileUpload } from "primereact/fileupload";
+import { MultiSelect } from 'primereact/multiselect';
+import { InputSwitch } from "primereact/inputswitch";
+import { InputText } from "primereact/inputtext";
+import { InputTextarea } from "primereact/inputtextarea";
+import { Tooltip } from "primereact/tooltip";
 
 const KrogerIntakeForm = () => {
     const initialFormState = {
@@ -20,14 +23,8 @@ const KrogerIntakeForm = () => {
         field: [
             { type: "Product Name" },
             { type: "Customer Facing Size" },
-            { type: "Marketing Copy" },
-            { type: "Feature - Benefit Bullet 1" },
-            { type: "Feature - Benefit Bullet 2" },
-            { type: "Feature - Benefit Bullet 3" },
-            { type: "Feature - Benefit Bullet 4" },
-            { type: "Feature - Benefit Bullet 5" },
-            { type: "Feature - Benefit Bullet 6" },
-            { type: "Feature - Benefit Bullet 7" },
+            { type: "Marketing Copy/Product Description" },
+            { type: "Feature - Benefit Bullets" },
             { type: "Carousel 1" },
             { type: "Carousel 2" },
             { type: "Carousel 3" },
@@ -45,17 +42,19 @@ const KrogerIntakeForm = () => {
             { name: "Other" },
 
         ],
+        isHighPriority: false,
         issue: "",
         files: [],
-        isPackImage: false,
+        isEnhancedImage: false,
         otherEmailsToNotify: [""],
         selectedRole: { name: "" },
-        selectedField: { type: "" },
+        selectedFields: [],
     };
 
     const [formState, setFormState] = useState(initialFormState);
     const [showModal, setShowModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isConfirming, setIsConfirming] = useState(false);
     const [isValidInput, setIsValidInput] = useState(true);
     const [selectedRadioBtn, setSelectedRadioBtn] = useState("GTIN");
     const [lastRadioBtnPosition, setLastRadioBtnPosition] =
@@ -71,6 +70,9 @@ const KrogerIntakeForm = () => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             setIsValidInput(emailRegex.test(value));
         }
+        if (name === "isHighPriority") {
+            setFormState((prevState) => ({ ...prevState, isHighPriority: e.value }));
+        }
     };
 
     const handleSelect = (e) => {
@@ -84,7 +86,7 @@ const KrogerIntakeForm = () => {
     };
 
     const handleCheckboxChange = (e) => {
-        setFormState((prevState) => ({ ...prevState, isPackImage: e.checked }));
+        setFormState((prevState) => ({ ...prevState, isEnhancedImage: e.checked }));
     };
 
     const handleRadioButtonChange = (value) => {
@@ -127,7 +129,6 @@ const KrogerIntakeForm = () => {
         const items = formState?.[field];
 
         const handleFieldChange = (index, field, value) => {
-            console.log(splitMultipleValues(value))
             setFormState((prevState) => ({
                 ...prevState,
                 [field]: prevState[field].map((item, i) =>
@@ -146,7 +147,7 @@ const KrogerIntakeForm = () => {
                         <span className="block w-full p-float-label h-3rem surface-ground">
                             {field !== 'otherEmailsToNotify' ?
                                 <InputText
-                                    className="w-full h-full"
+                                    className="w-full h-full border-round-sm"
                                     value={item}
                                     onChange={(e) =>
                                         handleFieldChange(index, field, e.target.value)
@@ -157,7 +158,7 @@ const KrogerIntakeForm = () => {
                                 />
                                 :
                                 <Chips
-                                    className="w-full h-full"
+                                    className="w-full h-full border-round"
                                     value={item}
                                     onChange={(e) =>
                                         handleFieldChange(index, field, e.target.value)
@@ -181,10 +182,10 @@ const KrogerIntakeForm = () => {
             userName,
             email,
             selectedRole,
-            selectedField,
+            selectedFields,
             issue,
             files,
-            isPackImage,
+            isEnhancedImage,
             otherEmailsToNotify,
             GTIN,
             commodity,
@@ -197,17 +198,18 @@ const KrogerIntakeForm = () => {
             commodity: splitMultipleValues(commodity[0]),
             subCommodity: splitMultipleValues(subCommodity[0]),
             effectiveDate: effectiveDate?.toISOString() || "",
-            field: selectedField.type,
+            fields: selectedFields.map(field => field.type),
             userName,
             email,
             role: selectedRole.name,
             issue,
             files,
-            isPackImage,
+            isEnhancedImage,
             otherEmailsToNotify,
         };
 
         if (email === "" || email === null) {
+            setIsConfirming(false);
             setIsValidInput(false);
             return;
         }
@@ -222,6 +224,7 @@ const KrogerIntakeForm = () => {
             }
         }
 
+        setIsConfirming(false);
         setIsLoading(true);
 
         axios({
@@ -263,12 +266,16 @@ const KrogerIntakeForm = () => {
 
     return (
         <>
-            <div className="container flex flex-column w-full font-main">
+            <div className="container flex flex-column w-11 font-main mx-auto border-1 border-gray-100 p-3 border-round-sm">
                 <div className="flex flex-row justify-content-center">
-                    <h2>Intake Form</h2>
+                    <h2>PDP Change Request Intake Form</h2>
                 </div>
-                <div className="flex flex-row justify-content-center">
-                    <p>This form is for change requests to the Kroger website in the following fields: Product Name, Customer Facing Size, Marketing Copy, Feature Bullets, and Carousel Images.</p>
+                <div className="flex flex-column border-1 border-gray-100 bg-yellow-100 border-round-sm">
+                    <ul>
+                        <li>This form is for change requests to Our Brands SKUs only. Any changes to other SKUs will be rejected. Only PDP fields may be requested for change.</li>
+                        <li>Changes Requested should be on site in less than 10 business days.</li>
+                        <li>Changes from Brand, Digital, Regulatory, and Legal will be auto-approved, while others will go to a reviewing party.</li>
+                    </ul>
                 </div>
                 <div className="grid">
                     <div className="flex flex-column col-12 col-offset-2 mt-4">
@@ -280,7 +287,6 @@ const KrogerIntakeForm = () => {
                                         label={field.label}
                                         value={field.value}
                                         onClick={() => handleRadioButtonChange(field.value)}
-                                        // severity={selectedRadioBtn === field.value ? 'info' : 'danger'}
                                         className={`${selectedRadioBtn === field.value ? 'bg-blue-900' : 'bg-gray-200'} p-2 w-2`}
                                         size="large"
                                     />
@@ -289,24 +295,32 @@ const KrogerIntakeForm = () => {
                         </div>
                         <div className="col-offset-1">
                             {handleDymamicFields(selectedRadioBtn, selectedRadioBtn.toUpperCase())}
-                            <p>Multiple values can be placed in this input (separated by a space or a ,) e.g 1, 2, 3 or 1 2 3.</p>
                         </div>
+                        <p>Multiple values can be placed in this input (separated by a space or a ,) e.g 1, 2, 3 or 1 2 3. GTINs may be entered with or without leading zeros.</p>
+                    </div>
+                    <div className="col-12 mt-4 ">
+                        <Tooltip target=".pi-info-circle"/>
+                        <label className="font-main text-2xl mr-4" htmlFor="isHighPriority">
+                            High Priority Request?
+                            <i className="ml-3 pi pi-info-circle" data-pr-position="top" data-pr-tooltip="Boosts request to top of the queue, may cause delays with other requests." />
+                        </label>
+                        <InputSwitch name="isHighPriority" checked={formState.isHighPriority} onChange={handleChange} />
                     </div>
                     <div className="col-6 mt-4">
                         <span className="block w-full p-float-label h-3rem surface-ground">
                             <InputText
-                                className="w-full h-3rem"
+                                className="w-full h-3rem border-round-sm"
                                 value={formState.userName}
                                 onChange={handleChange}
                                 name="userName"
                             />
-                            <label htmlFor="userName">User Name</label>
+                            <label htmlFor="userName">Name</label>
                         </span>
                     </div>
                     <div className="col-6 mt-4">
                         <span className="block w-full p-float-label h-3rem surface-ground">
                             <InputText
-                                className={`w-full h-3rem ${isValidInput ? "" : "border-2 border-red-500"
+                                className={`w-full h-3rem border-round-sm ${isValidInput ? "" : "border-2 border-red-500"
                                     }`}
                                 value={formState.email}
                                 onChange={handleChange}
@@ -323,31 +337,32 @@ const KrogerIntakeForm = () => {
                             options={formState.role}
                             optionLabel="name"
                             placeholder="Select Your Role"
-                            className="w-full h-3rem flex align-items-center"
+                            className="w-full h-3rem flex align-items-center border-round-sm"
                             name="selectedRole"
                         />
                     </div>
                     <div className="col-6 mt-4">
-                        <Dropdown
-                            value={formState.selectedField}
+                        <MultiSelect
+                            display="chip"
+                            value={formState.selectedFields}
                             onChange={handleSelect}
                             options={formState.field}
                             placeholder="Select a Field"
                             optionLabel="type"
-                            className="w-full h-3rem flex align-items-center"
-                            name="selectedField"
+                            className="w-full h-3rem flex align-items-center border-round-sm"
+                            name="selectedFields"
                         />
-                        {formState.selectedField.type.startsWith('Carousel') &&
+                        {formState.selectedFields.some(field => field.type.startsWith('Carousel')) &&
                             (
                                 <div className="flex mt-2">
                                     <Checkbox
-                                        inputId="isPackImage"
+                                        inputId="isEnhancedImage"
                                         name=""
-                                        checked={formState.isPackImage}
+                                        checked={formState.isEnhancedImage}
                                         onChange={handleCheckboxChange}
                                     />
-                                    <label htmlFor="isPackImage" className="ml-2">
-                                        Pack Image?
+                                    <label htmlFor="isEnhancedImage" className="ml-2">
+                                        Check this box if this is an enhanced image. Do not check if it is a standard pack shot.
                                     </label>
                                 </div>
                             )
@@ -356,38 +371,36 @@ const KrogerIntakeForm = () => {
                     <div className="col-6 mt-4">
                         <Calendar
                             style={{ height: "3rem" }}
-                            className="w-full"
+                            className="w-full border-round-sm"
                             value={formState.effectiveDate}
                             onSelect={handleDateChange}
                             dateFormat="yy-mm-dd"
                             showIcon
                             name="effectiveDate"
-                            placeholder="Date this item can be updated. Select today for ASAP."
+                            placeholder="Target date for change on site. Select today for ASAP."
                         />
                     </div>
-                    {handleDymamicFields("otherEmailsToNotify", "Other Emails To Notify")}
+                    {handleDymamicFields("otherEmailsToNotify", "Other Emails To Recieve Confirmation Emails")}
                     <div className="col-12 mt-4">
-                        <p>Please write a brief description of the change being requested.</p>
-                        <span className="block w-full p-float-label h-3rem surface-ground">
+                        <p className="mb-3">Please write a brief description of the change being requested.</p>
+                        <span className="block w-full h-3rem surface-ground">
                             <InputTextarea
-                                className="w-full"
-                                value={formState.issue}
-                                onChange={handleChange}
+                                className="w-full border-round-sm"
                                 name="issue"
+                                onChange={handleChange}
+                                placeholder="Description of the change being requested."
                                 rows={3}
-                                autoResize
+                                value={formState.issue}
                             />
-                            <label htmlFor="issue">Issue</label>
                         </span>
                     </div>
                     <div className="col-12 mt-4">
-                        <p>Upload files for additional clarification (optional)</p>
+                        <p>Upload files for additional clarification or submit an Excel of UPCs you'd like this change to be applied to. (optional) </p>
                         <FileUpload
                             ref={fileUploadRef}
                             uploadHandler={handleFileUpload}
                             name="demo[]"
                             multiple
-                            accept="image/*"
                             maxFileSize={1000000}
                             customUpload
                             auto
@@ -400,8 +413,8 @@ const KrogerIntakeForm = () => {
                         <p>Upon submitting, an email confirmation will be sent to the email(s) listed above as well as the appropriate party responsible for the change. An additional email confirmation will be sent when the change(s) are applied. Since this is only a demo, no emails will be sent.</p>
                         <Button
                             severity="success"
-                            className="h-full px-4 mb-5"
-                            onClick={handleSubmit}
+                            className="h-full px-4 my-5"
+                            onClick={() => setIsConfirming(true)}
                             label={isLoading ? "Submitting..." : "Submit"}
                             icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
                             disabled={isLoading || !isValidInput}
@@ -409,6 +422,32 @@ const KrogerIntakeForm = () => {
                     </div>
                 </div>
             </div>
+            <Dialog
+                header="Are You Sure?"
+                visible={isConfirming}
+                style={{
+                    maxWidth: "350px",
+                    width: "100%",
+                    textAlign: "center",
+                }}
+                onHide={() => setIsConfirming(false)}
+            >
+                <div className="card flex flex-wrap flex-column gap-2 justify-content-center">
+                    <div>
+                        <Button
+                            onClick={() => handleSubmit()}
+                            icon="pi pi-check"
+                            label="Yes"
+                        ></Button>
+                        <Button
+                            onClick={() => setIsConfirming(false)}
+                            icon="pi pi-times"
+                            label="No"
+                            className="ml-2 p-button-danger"
+                        ></Button>
+                    </div>
+                </div>
+            </Dialog>
             <Dialog
                 header="Form submitted successfully!"
                 visible={showModal}
