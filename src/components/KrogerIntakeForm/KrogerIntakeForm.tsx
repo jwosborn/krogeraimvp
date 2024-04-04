@@ -355,7 +355,6 @@ const KrogerIntakeForm = () => {
               uploadHandler={handleFileUpload}
               name="demo[]"
               multiple
-              accept="image/*"
               maxFileSize={10000000}
               customUpload
               auto
