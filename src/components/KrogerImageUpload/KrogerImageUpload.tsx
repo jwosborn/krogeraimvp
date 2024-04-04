@@ -133,7 +133,7 @@ const KrogerImageUpload = () => {
               onSelect={(e) => handleFileUpload(index, e?.files)}
               name={`fileUpload${index}`}
               accept="image/*"
-              maxFileSize={1000000}
+              maxFileSize={10000000}
               customUpload
               auto
               onRemove={() =>
