@@ -173,7 +173,7 @@ const KrogerIntakeForm = () => {
       commodity,
       subCommodity,
       effectiveDate: effectiveDate?.toISOString().split('T')[0] || "",
-      field: selectedField.type,
+      fields: [selectedField.type],
       userName,
       email,
       role: selectedRole.name,
