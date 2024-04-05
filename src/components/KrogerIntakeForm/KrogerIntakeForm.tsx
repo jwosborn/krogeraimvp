@@ -14,6 +14,8 @@ import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Tooltip } from "primereact/tooltip";
 
+const logo = require('../../assets/kroger-logo.png');
+
 const KrogerIntakeForm = () => {
     const initialFormState = {
         GTIN: [""],
@@ -35,12 +37,12 @@ const KrogerIntakeForm = () => {
         userName: "",
         email: "",
         role: [
-            { name: "Brand Manager" },
-            { name: "CFT" },
-            { name: "DCM" },
-            { name: "ADCM" },
+            { name: "Our Brands Brand Manager" },
+            { name: "Our Brands CSM/Acceleration Team" },
+            { name: "Digital DCM/ADCM" },
+            { name: "CTF Regulatory" },
+            { name: "Legal" },
             { name: "Other" },
-
         ],
         isHighPriority: false,
         issue: "",
@@ -95,6 +97,7 @@ const KrogerIntakeForm = () => {
         setFormState((prevState) => {
             return { ...prevState, [lastRadioBtnPosition]: [""] };
         });
+    }
 
   function fileToBase64(file) {
     return new Promise((resolve, reject) => {
@@ -118,10 +121,6 @@ const KrogerIntakeForm = () => {
       files: base64Files.map(base64 => ({ base64 }))
     }));
   };
-
-    const handleFileUpload = (e) => {
-        setFormState((prevState) => ({ ...prevState, files: e.files }));
-    };
 
     const splitMultipleValues = string => string.split(/(?:, | )/g)
 
@@ -168,7 +167,7 @@ const KrogerIntakeForm = () => {
                                     }
                                 />
                             }
-                            <label htmlFor={field}>{title}</label>
+                            <label htmlFor={field}>{title}{field !== "otherEmailsToNotify" ? <span className="text-red-500">*</span> : ''}</label>
                         </span>
                     </div>
                 ))}
@@ -264,8 +263,13 @@ const KrogerIntakeForm = () => {
         setShowModal(false);
     };
 
+    const required = (<span className="text-red-500">*</span>)
+
     return (
         <>
+      <div className="font-main">
+        <img className="max-h-10rem" src={logo} alt="Kroger Logo" />
+      </div>
             <div className="container flex flex-column w-11 font-main mx-auto border-1 border-gray-100 p-3 border-round-sm">
                 <div className="flex flex-row justify-content-center">
                     <h2>PDP Change Request Intake Form</h2>
@@ -278,6 +282,7 @@ const KrogerIntakeForm = () => {
                     </ul>
                 </div>
                 <div className="grid">
+                        <p>{required}{' '} Indicates a required field.</p>
                     <div className="flex flex-column col-12 col-offset-2 mt-4">
                         <div className="col-offset-1">
                             {
@@ -314,7 +319,7 @@ const KrogerIntakeForm = () => {
                                 onChange={handleChange}
                                 name="userName"
                             />
-                            <label htmlFor="userName">Name</label>
+                            <label htmlFor="userName">Name{required}</label>
                         </span>
                     </div>
                     <div className="col-6 mt-4">
@@ -327,7 +332,7 @@ const KrogerIntakeForm = () => {
                                 name="email"
                                 type="email"
                             />
-                            <label htmlFor="email">Email</label>
+                            <label htmlFor="email">Email{required}</label>
                         </span>
                     </div>
                     <div className="col-6 mt-4">
@@ -336,10 +341,19 @@ const KrogerIntakeForm = () => {
                             onChange={handleSelect}
                             options={formState.role}
                             optionLabel="name"
-                            placeholder="Select Your Role"
+                            placeholder="Select Your Role (required)"
                             className="w-full h-3rem flex align-items-center border-round-sm"
                             name="selectedRole"
                         />
+                        {/* {formState.selectedRole.name === 'Other' && 
+                            <div className="mt-2">
+                                <label className="mr-2">Please Specify:</label>
+                                <InputText
+                                    value={formState.selectedRole.name === 'Other' ? formState.selectedRole.name : ''}
+                                    onChange={e => handleSelect({target: { name: 'selectedRole', value: { name: e.target.value } }})}
+                                />
+                            </div>
+                        } */}
                     </div>
                     <div className="col-6 mt-4">
                         <MultiSelect
@@ -347,7 +361,7 @@ const KrogerIntakeForm = () => {
                             value={formState.selectedFields}
                             onChange={handleSelect}
                             options={formState.field}
-                            placeholder="Select a Field"
+                            placeholder="Select Field(s) (required)"
                             optionLabel="type"
                             className="w-full h-3rem flex align-items-center border-round-sm"
                             name="selectedFields"
@@ -377,18 +391,18 @@ const KrogerIntakeForm = () => {
                             dateFormat="yy-mm-dd"
                             showIcon
                             name="effectiveDate"
-                            placeholder="Target date for change on site. Select today for ASAP."
+                            placeholder="Target date for change on site. Select today for ASAP. (required)"
                         />
                     </div>
                     {handleDymamicFields("otherEmailsToNotify", "Other Emails To Recieve Confirmation Emails")}
                     <div className="col-12 mt-4">
-                        <p className="mb-3">Please write a brief description of the change being requested.</p>
+                        <p className="mb-3">Please write a brief description of the change.{required}</p>
                         <span className="block w-full h-3rem surface-ground">
                             <InputTextarea
                                 className="w-full border-round-sm"
                                 name="issue"
                                 onChange={handleChange}
-                                placeholder="Description of the change being requested."
+                                placeholder="Description of the change."
                                 rows={3}
                                 value={formState.issue}
                             />
@@ -410,7 +424,7 @@ const KrogerIntakeForm = () => {
                         />
                     </div>
                     <div className="col-6 w-full h-4rem mt-4">
-                        <p>Upon submitting, an email confirmation will be sent to the email(s) listed above as well as the appropriate party responsible for the change. An additional email confirmation will be sent when the change(s) are applied. Since this is only a demo, no emails will be sent.</p>
+                        <p>Upon submitting, an email confirmation will be sent to the email(s) listed above as well as the appropriate party responsible for the change. An additional email confirmation will be sent when the change(s) are applied.</p>
                         <Button
                             severity="success"
                             className="h-full px-4 my-5"
@@ -478,260 +492,5 @@ const KrogerIntakeForm = () => {
         </>
     );
   };
-
-  const handleSubmit = () => {
-    const {
-      effectiveDate,
-      userName,
-      email,
-      selectedRole,
-      selectedField,
-      issue,
-      files,
-      isPackImage,
-      otherEmailsToNotify,
-      GTIN,
-      commodity,
-      subCommodity,
-    } = formState;
-
-    let dataIn = {
-      GTIN,
-      commodity,
-      subCommodity,
-      effectiveDate: effectiveDate?.toISOString().split('T')[0] || "",
-      fields: [selectedField.type],
-      userName,
-      email,
-      role: selectedRole.name,
-      issue,
-      files,
-      isPackImage,
-      otherEmailsToNotify,
-    };
-
-    if (email === "" || email === null) {
-      setIsValidInput(false);
-      return;
-    }
-
-    const entries = Object.entries(dataIn);
-    for (const [key, value] of entries) {
-      if (Array.isArray(value)) {
-        dataIn = {
-          ...dataIn,
-          [key]: value.filter((item) => item !== ""),
-        };
-      }
-    }
-
-    setIsLoading(true);
-
-    axios({
-      method: "post",
-      url: "https://kroger-description-api-0b391e779fb3.herokuapp.com/kroger-intake-form",
-      data: dataIn,
-    })
-      .then((response) => {
-        setShowModal(true);
-        console.log("Form submitted successfully:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error submitting form:", error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const onCloseModal = ({ isAnotherIssue }) => {
-    if (isAnotherIssue) {
-      setFormState({
-        ...initialFormState,
-        userName: formState.userName,
-        email: formState.email,
-        selectedRole: formState.selectedRole,
-      });
-    } else {
-      setFormState(initialFormState);
-    }
-
-    if (fileUploadRef.current) {
-      fileUploadRef.current.clear();
-    }
-
-    setSelectedRadioBtn("GTIN");
-    setShowModal(false);
-  };
-
-  return (
-    <>
-      <div className="container flex flex-column w-full">
-        <div className="flex flex-row justify-content-center"> 
-          <h2>Intake Form</h2>
-        </div>
-        <div className="flex flex-row justify-content-center"> 
-          <p>This form is for change requests to the Kroger website in the following fields: Product Name, Customer Facing Size, Marketing Copy, Feature Bullets, and Carousel Images.</p>
-        </div>
-        <div className="grid">
-            <div className="flex flex-column col-12 col-offset-2 mt-4">
-              <div className="col-offset-3">
-                <SelectButton
-                  value={selectedRadioBtn}
-                  onChange={handleRadioButtonChange}
-                  options={[{ label: "GTIN", value: "GTIN" }, { label: "Commodity", value: "commodity" }, { label: "Sub Commodity", value: "subCommodity" }]}
-                />
-            </div>
-                <div className="col-offset-1">
-                  {handleDymamicFields(selectedRadioBtn, selectedRadioBtn.toUpperCase())}
-                  <p>Press enter after typing each value to confirm. This input accepts multiple values.</p>
-                </div>
-            </div>
-          <div className="col-6 mt-4">
-            <span className="block w-full p-float-label h-3rem surface-ground">
-              <InputText
-                className="w-full h-3rem"
-                value={formState.userName}
-                onChange={handleChange}
-                name="userName"
-              />
-              <label htmlFor="userName">User Name</label>
-            </span>
-          </div>
-          <div className="col-6 mt-4">
-            <span className="block w-full p-float-label h-3rem surface-ground">
-              <InputText
-                className={`w-full h-3rem ${
-                  !isValidInput ? "border-2 border-red-500" : ""
-                }`}
-                value={formState.email}
-                onChange={handleChange}
-                name="email"
-                type="email"
-              />
-              <label htmlFor="email">Email</label>
-            </span>
-          </div>
-          <div className="col-6 mt-4">
-            <Dropdown
-              value={formState.selectedRole}
-              onChange={handleSelect}
-              options={formState.role}
-              optionLabel="name"
-              placeholder="Select a Role"
-              className="w-full h-3rem flex align-items-center"
-              name="selectedRole"
-            />
-          </div>
-          <div className="col-6 mt-4">
-            <Dropdown
-              value={formState.selectedField}
-              onChange={handleSelect}
-              options={formState.field}
-              placeholder="Select a Field"
-              optionLabel="type"
-              className="w-full h-3rem flex align-items-center"
-              name="selectedField"
-            />
-          {formState.selectedField.type.startsWith('Carousel') && 
-            (
-                <div className="flex mt-2">
-                  <Checkbox
-                    inputId="isPackImage"
-                    name=""
-                    checked={formState.isPackImage}
-                    onChange={handleCheckboxChange}
-                  />
-                  <label htmlFor="isPackImage" className="ml-2">
-                    Pack Image?
-                  </label>
-                </div>
-            )
-          }
-          </div>
-          <div className="col-6 mt-4">
-            <Calendar
-              style={{ height: "3rem" }}
-              className="w-full"
-              value={formState.effectiveDate}
-              onSelect={handleDateChange}
-              dateFormat="yy-mm-dd"
-              showIcon
-              name="effectiveDate"
-              placeholder="Date this item can be updated. Select today for ASAP."
-            />
-          </div>
-          {handleDymamicFields("otherEmailsToNotify", "Other Emails To Notify")}
-          <div className="col-12 mt-4">
-            <p>Please write a brief description of the change being requested. Attach files below if needed.</p>
-            <span className="block w-full p-float-label h-3rem surface-ground">
-              <InputTextarea
-                className="w-full"
-                value={formState.issue}
-                onChange={handleChange}
-                name="issue"
-                rows={3}
-                autoResize
-              />
-              <label htmlFor="issue">Issue</label>
-            </span>
-          </div>
-          <div className="col-12 mt-4">
-            <FileUpload
-              ref={fileUploadRef}
-              uploadHandler={handleFileUpload}
-              name="demo[]"
-              multiple
-              maxFileSize={10000000}
-              customUpload
-              auto
-              emptyTemplate={
-                <p className="m-0">Drag and drop files here to upload.</p>
-              }
-            />
-          </div>
-          <div className="col-6 w-full h-4rem mt-4">
-          <p>Upon submitting, an email confirmation will be sent to the email(s) listed above as well as the appropriate party responsible for the change. An additional email confirmation will be sent when the change(s) are applied.</p>
-            <Button
-              severity="success"
-              className="h-full px-4 mb-5"
-              onClick={handleSubmit}
-              label={isLoading ? "Submitting..." : "Submit"}
-              icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}
-              disabled={isLoading || !isValidInput}
-            />
-          </div>
-        </div>
-      </div>
-      <Dialog
-        header="Form submitted successfully!"
-        visible={showModal}
-        style={{
-          maxWidth: "350px",
-          width: "100%",
-          textAlign: "center",
-        }}
-        onHide={() => onCloseModal({ isAnotherIssue: false })}
-      >
-        <div className="card flex flex-wrap flex-column gap-2 justify-content-center">
-          <p>Enter another issue?</p>
-          <div>
-            <Button
-              onClick={() => onCloseModal({ isAnotherIssue: true })}
-              icon="pi pi-check"
-              label="Yes"
-            ></Button>
-            <Button
-              onClick={() => onCloseModal({ isAnotherIssue: false })}
-              icon="pi pi-times"
-              label="No"
-              className="ml-2 p-button-danger"
-            ></Button>
-          </div>
-        </div>
-      </Dialog>
-    </>
-  );
-};
 
 export default KrogerIntakeForm;

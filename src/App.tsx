@@ -14,7 +14,7 @@ const App = () => {
                 <Routes>
                     <Route path='/' element={<DescriptionGenerator />} />
                     <Route path='/krogeraimvp' element={<DescriptionGenerator />} />
-                    <Route path='/kroger-intake-form' element={<><Header /><KrogerIntakeForm /></>} />
+                    <Route path='/kroger-intake-form' element={<KrogerIntakeForm />} />
                     <Route path='/kroger-image-upload' element={<><Header /><KrogerImageUpload /></>} />
                 </Routes>
             </BrowserRouter>

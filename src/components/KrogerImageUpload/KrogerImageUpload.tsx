@@ -112,11 +112,16 @@ const KrogerImageUpload = () => {
         <div className="flex flex-row justify-content-center"> 
           <h2>Image Upload Tool</h2>
         </div>
-        <div className="flex flex-row justify-content-center"> 
-          <p>This tool is to be used for the upload of image files to the carousel on the Kroger website. Please indicate the main GTIN and additional UPC(s) that the image applies to when submitting.</p>
+        <div className="flex flex-column w-full mb-3 bg-yellow-100"> 
+        <ul>
+          <li className="mb-2">This tool is to be used to upload image files to the carousel on the Kroger website. Please indicate the main GTIN and additional UPC(s) that the image applies to when submitting.</li>
+          <li className="mb-2"><span className="text-red-500">*</span>{' '} Indicates a required field.</li>
+          <li>When adding additional UPC's, press Enter after each UPC to confirm, much like adding email addresses to an email you are composing.</li>
+        </ul>
         </div>
       <div className="grid">
         <div className="col-12">
+          <label htmlFor="GTIN">GTIN<span className="text-red-500">*</span></label>
           <InputText
             className="w-full h-3rem mt-4"
             value={GTIN}
