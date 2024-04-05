@@ -4,18 +4,17 @@ import DescriptionGenerator from "./components/DescriptionGenerator/DescriptionG
 import KrogerIntakeForm from "./components/KrogerIntakeForm/KrogerIntakeForm";
 import KrogerImageUpload from "./components/KrogerImageUpload/KrogerImageUpload";
 import Header from "./components/Header/Header";
+import './App.css'
 
 
 const App = () => {
-
-
     return (
         <>
             <BrowserRouter basename='/krogeraimvp'>
                 <Routes>
                     <Route path='/' element={<DescriptionGenerator />} />
                     <Route path='/krogeraimvp' element={<DescriptionGenerator />} />
-                    <Route path='/kroger-intake-form' element={<><Header /><KrogerIntakeForm /></>} />
+                    <Route path='/kroger-intake-form' element={<KrogerIntakeForm />} />
                     <Route path='/kroger-image-upload' element={<><Header /><KrogerImageUpload /></>} />
                 </Routes>
             </BrowserRouter>

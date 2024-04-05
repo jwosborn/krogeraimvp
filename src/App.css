@@ -1,3 +1,4 @@
+
 .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody>tr>td {
   font-size: 11px;
   padding: 0.25rem 1rem;
