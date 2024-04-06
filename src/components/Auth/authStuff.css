@@ -1,0 +1,32 @@
+.Authcontainer {
+    display: flex;
+    justify-content: center; /* Aligns items on the horizontal axis */
+    align-items: center; /* Aligns items on the vertical axis */
+    height: 100vh; /* Takes full viewport height */
+    flex-direction: column; /* Stacks items vertically */
+  }
+  
+  .Authbutton {
+    background-color: #29abe2; /* Blue background */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .Authbutton:hover {
+    background-color: #2395c5; /* Darker shade of blue */
+  }
+  
+  /* Add this class to the button that is active or clicked */
+  .Authbutton-active {
+    background-color: #555; /* Dark background */
+    color: white;
+  }
+  

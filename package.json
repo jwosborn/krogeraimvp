@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-react": "^2.2.4",
     "@babel/preset-react": "^7.22.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -25,7 +26,7 @@
   "homepage": "http://jwosborn.github.io/krogeraimvp",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && cp build/index.html build/404.html", 
+    "build": "react-scripts build && cp build/index.html build/404.html",
     "predeploy": "npm run build ",
     "deploy": "gh-pages -d build",
     "test": "jest",
