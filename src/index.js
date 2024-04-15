@@ -8,6 +8,7 @@ import "./utils/theme.css";
 import App from './App';
 import reportWebVitals from './utils/reportWebVitals';
 import 'primeicons/primeicons.css';
+import { AuthProvider } from './context/AuthProvider';
 import { Auth0ProviderWithNavigate } from './components/Auth/Auth0ProviderWithNavigate.tsx';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -15,9 +16,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Auth0ProviderWithNavigate>
-          <App />
-      </Auth0ProviderWithNavigate>
+      <AuthProvider>
+        <Auth0ProviderWithNavigate>
+            <App />
+        </Auth0ProviderWithNavigate>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
