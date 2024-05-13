@@ -117,7 +117,7 @@ const KrogerImageUpload = () => {
         the images apply to. Under each image you can include other GTIN(s) if that image goes across
         multiple items. If so, then for those items you do not have to upload the same image again.
         You can enter the GTINs with or without the leading zeros. You can list multiple GTINs by copy and pasting from a spreadsheet,
-        separating them by spaces (# # #), or commas (#, #, #).i
+        separating them by spaces (# # #), or commas (#, #, #).
         </div>
       <div className="grid">
         <div className="col-12">

@@ -271,7 +271,7 @@ const KrogerIntakeForm = () => {
             </div>
             <div className="container flex flex-column w-11 font-kroger mx-auto border-1 border-gray-100 p-3 border-round-sm">
                 <div className="flex flex-row justify-content-center">
-                    <h2>PDP Change Request Intake Form</h2>
+                    <h2>Our Brands Change Request Intake Form</h2>
                 </div>
                 <Tooltip target=".size-label" position="bottom" >
                     <img className="h-25rem" src={fieldInfo} alt="info on PDP fields" />
@@ -397,7 +397,7 @@ const KrogerIntakeForm = () => {
                     </div>
                     {handleDymamicFields("otherEmailsToNotify", "Other Emails To Recieve Confirmation Emails")}
                     <div className="col-12 mt-3">
-                        <p className="mb-3">Write a brief description of the change you are requesting for the PDP field(s) you selected. Include sufficient detail to reduce back-and-forth clarification.{required}</p>
+                        <p className="mb-3">Write a brief description of the change you are requesting for the field(s) you selected. Include sufficient detail to reduce back-and-forth clarification.{required}</p>
                         <span className="block w-full h-3rem surface-ground">
                             <InputTextarea
                                 className="w-full border-round-sm"
@@ -435,17 +435,17 @@ const KrogerIntakeForm = () => {
                             }
                         />
                     </div>
-                    <div className="col-12 mt-4 ">
+                    <div className="col-12 mt-4 mb-4">
                         <Tooltip target=".pi-info-circle" />
                         <label className="font-kroger text-2xl mr-4" htmlFor="isHighPriority">
                             High Priority Request?
                             <i
                                 className="ml-3 pi pi-info-circle"
                                 data-pr-position="top"
-                                data-pr-tooltip="High priority requests pose a legal or sales risk to the business if they are not addressed immediately. These will be sent to the top of the queue and may cause delays with other requests." />
+                                data-pr-tooltip="Does your request qualify as high priority? High priority requests pose a legal or sales risk to the business if they are not addressed immediately. These will be sent to the top of the queue and may cause delays with other requests." />
                         </label>
                         <InputSwitch name="isHighPriority" checked={formState.isHighPriority} onChange={handleChange} />
-                        <p>Does your request qualify as high priority?</p>
+                        
                     </div>
                     <div className="col-6 h-4rem">
                         <Button
