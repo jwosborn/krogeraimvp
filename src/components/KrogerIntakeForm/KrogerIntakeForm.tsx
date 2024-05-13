@@ -415,7 +415,7 @@ const KrogerIntakeForm = () => {
                             className="w-full border-round-sm"
                             name="reason"
                             onChange={handleChange}
-                            placeholder="Why"
+                            placeholder="Description of reason"
                             rows={3}
                             value={formState.issue}
                         />
