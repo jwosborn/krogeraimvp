@@ -1567,8 +1567,8 @@
 .p-multiselect-panel .p-multiselect-header {
   padding: 0.25rem 0.5rem;
   border-bottom: 0 none;
-  color: #343a3f;
-  background: #f2f4f8;
+  color: #fff;
+  background: #21409a;
   margin: 0;
   border-top-right-radius: 1px;
   border-top-left-radius: 1px;

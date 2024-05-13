@@ -15,6 +15,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Tooltip } from "primereact/tooltip";
 
 const logo = require('../../assets/kroger-logo.png');
+const fieldInfo = require('../../assets/intake-form-field-info.png');
 
 const KrogerIntakeForm = () => {
     const initialFormState = {
@@ -23,16 +24,12 @@ const KrogerIntakeForm = () => {
         subCommodity: [""],
         effectiveDate: null,
         field: [
-            { type: "Product Name" },
+            { type: "Product Title" },
             { type: "Customer Facing Size" },
-            { type: "Marketing Copy/Product Description" },
-            { type: "Feature - Benefit Bullets" },
-            { type: "Carousel 1" },
-            { type: "Carousel 2" },
-            { type: "Carousel 3" },
-            { type: "Carousel 4" },
-            { type: "Carousel 5" },
-            { type: "Carousel 6" },
+            { type: "Product Description (paragraph and feature bullet points)" },
+            { type: "Package Shot Image" },
+            { type: "Enhanced Image: MHRI" },
+            { type: "Enhanced Image: Carousels" }
         ],
         userName: "",
         email: "",
@@ -42,8 +39,10 @@ const KrogerIntakeForm = () => {
             { name: "Digital DCM/ADCM" },
             { name: "CTF Regulatory" },
             { name: "Legal" },
+            { name: "Supplier" },
             { name: "Other" },
         ],
+        specifiedRole: '',
         isHighPriority: false,
         issue: "",
         files: [],
@@ -167,7 +166,7 @@ const KrogerIntakeForm = () => {
                                     }
                                 />
                             }
-                            <label htmlFor={field}>{title}{field !== "otherEmailsToNotify" ? <span className="text-red-500">*</span> : ''}</label>
+                            <label htmlFor={field}>{title}(s){field !== "otherEmailsToNotify" ? <span className="text-red-500">*</span> : ''}</label>
                         </span>
                     </div>
                 ))}
@@ -267,33 +266,37 @@ const KrogerIntakeForm = () => {
 
     return (
         <>
-      <div className="font-main">
-        <img className="max-h-10rem" src={logo} alt="Kroger Logo" />
-      </div>
-            <div className="container flex flex-column w-11 font-main mx-auto border-1 border-gray-100 p-3 border-round-sm">
+            <div className="font-kroger">
+                <img className="max-h-10rem" src={logo} alt="Kroger Logo" />
+            </div>
+            <div className="container flex flex-column w-11 font-kroger mx-auto border-1 border-gray-100 p-3 border-round-sm">
                 <div className="flex flex-row justify-content-center">
                     <h2>PDP Change Request Intake Form</h2>
                 </div>
-                <div className="flex flex-column border-1 border-gray-100 bg-yellow-100 border-round-sm">
-                    <ul>
-                        <li>This form is for change requests to Our Brands SKUs only. Any changes to other SKUs will be rejected. Only PDP fields may be requested for change.</li>
-                        <li>Changes Requested should be on site in less than 10 business days.</li>
-                        <li>Changes from Brand, Digital, Regulatory, and Legal will be auto-approved, while others will go to a reviewing party.</li>
-                    </ul>
+                <Tooltip target=".size-label" position="bottom" >
+                    <img className="h-25rem" src={fieldInfo} alt="info on PDP fields" />
+                </Tooltip>
+                <div className="flex flex-column border-1 border-gray-100 bg-yellow-100 border-round-sm p-4">
+                    <p>
+                        Please fill out the following form to request changes to Our Brands Product Detail Page
+                        (PDP) fields such as product title, description, customer-facing size{' '}<span className="size-label w-max"><i className="pi pi-info-circle"/></span>, and images.
+                        Changes will be reflected on site on the provided date or within 10 business days of
+                        submission. Confirmation emails will be sent to you and specified relevant parties to confirm
+                        receipt of your request and when the changes are implemented.
+                    </p>
                 </div>
                 <div className="grid">
-                        <p>{required}{' '} Indicates a required field.</p>
+                    <p>{required}{' '} Indicates a required field.</p>
                     <div className="flex flex-column col-12 col-offset-2 mt-4">
                         <div className="col-offset-1">
                             {
-                                [{ label: "GTIN", value: "GTIN" }, { label: "Commodity", value: "commodity" }, { label: "Sub Commodity", value: "subCommodity" }].map(field => (
+                                [{ label: "GTIN", value: "GTIN" }, { label: "Sub Commodity", value: "subCommodity" }, { label: "Commodity", value: "commodity" }].map(field => (
                                     <Button
                                         key={field.value}
                                         label={field.label}
                                         value={field.value}
                                         onClick={() => handleRadioButtonChange(field.value)}
                                         className={`${selectedRadioBtn === field.value ? 'bg-blue-900' : 'bg-gray-200'} p-2 w-2`}
-                                        size="large"
                                     />
                                 ))
                             }
@@ -301,15 +304,11 @@ const KrogerIntakeForm = () => {
                         <div className="col-offset-1">
                             {handleDymamicFields(selectedRadioBtn, selectedRadioBtn.toUpperCase())}
                         </div>
-                        <p>Multiple values can be placed in this input (separated by a space or a ,) e.g 1, 2, 3 or 1 2 3. GTINs may be entered with or without leading zeros.</p>
-                    </div>
-                    <div className="col-12 mt-4 ">
-                        <Tooltip target=".pi-info-circle"/>
-                        <label className="font-main text-2xl mr-4" htmlFor="isHighPriority">
-                            High Priority Request?
-                            <i className="ml-3 pi pi-info-circle" data-pr-position="top" data-pr-tooltip="Boosts request to top of the queue, may cause delays with other requests." />
-                        </label>
-                        <InputSwitch name="isHighPriority" checked={formState.isHighPriority} onChange={handleChange} />
+                        <div className="w-8">
+                            You can enter GTINs with or without the leading zeros. You can request changes to
+                            multiple GTINs, sub-commodities, or commodities at a time by copy and pasting
+                            from a spreadsheet, separating them by spaces (# # #), or commas (#,#,#).
+                        </div>
                     </div>
                     <div className="col-6 mt-4">
                         <span className="block w-full p-float-label h-3rem surface-ground">
@@ -345,15 +344,17 @@ const KrogerIntakeForm = () => {
                             className="w-full h-3rem flex align-items-center border-round-sm"
                             name="selectedRole"
                         />
-                        {/* {formState.selectedRole.name === 'Other' && 
+                        {formState.selectedRole.name === 'Other' &&
                             <div className="mt-2">
                                 <label className="mr-2">Please Specify:</label>
                                 <InputText
-                                    value={formState.selectedRole.name === 'Other' ? formState.selectedRole.name : ''}
-                                    onChange={e => handleSelect({target: { name: 'selectedRole', value: { name: e.target.value } }})}
+                                    className="border-round-sm"
+                                    value={formState.specifiedRole}
+                                    name="specifiedRole"
+                                    onChange={handleChange}
                                 />
                             </div>
-                        } */}
+                        }
                     </div>
                     <div className="col-6 mt-4">
                         <MultiSelect
@@ -361,7 +362,7 @@ const KrogerIntakeForm = () => {
                             value={formState.selectedFields}
                             onChange={handleSelect}
                             options={formState.field}
-                            placeholder="Select Field(s) (required)"
+                            placeholder="Select Field(s)*"
                             optionLabel="type"
                             className="w-full h-3rem flex align-items-center border-round-sm"
                             name="selectedFields"
@@ -395,8 +396,8 @@ const KrogerIntakeForm = () => {
                         />
                     </div>
                     {handleDymamicFields("otherEmailsToNotify", "Other Emails To Recieve Confirmation Emails")}
-                    <div className="col-12 mt-4">
-                        <p className="mb-3">Please write a brief description of the change.{required}</p>
+                    <div className="col-12 mt-3">
+                        <p className="mb-3">Write a brief description of the change you are requesting for the PDP field(s) you selected. Include sufficient detail to reduce back-and-forth clarification.{required}</p>
                         <span className="block w-full h-3rem surface-ground">
                             <InputTextarea
                                 className="w-full border-round-sm"
@@ -408,8 +409,19 @@ const KrogerIntakeForm = () => {
                             />
                         </span>
                     </div>
-                    <div className="col-12 mt-4">
-                        <p>Upload files for additional clarification or submit an Excel of UPCs you'd like this change to be applied to. (optional) </p>
+                    <div className="col-12 mt-3">
+                        <p className="mb-3">Write a brief description of WHY you are requesting this change. This helps us understand the need state and identify any larger issues that need to be solved.</p>
+                        <InputTextarea
+                            className="w-full border-round-sm"
+                            name="reason"
+                            onChange={handleChange}
+                            placeholder="Why"
+                            rows={3}
+                            value={formState.issue}
+                        />
+                    </div>
+                    <div className="col-12">
+                        <p>Optional: Upload screenshots or files to provide additional clarity on your request (i.e. circle the problem, mockup of your proposed solution).</p>
                         <FileUpload
                             ref={fileUploadRef}
                             uploadHandler={handleFileUpload}
@@ -423,11 +435,22 @@ const KrogerIntakeForm = () => {
                             }
                         />
                     </div>
-                    <div className="col-6 w-full h-4rem mt-4">
-                        <p>Upon submitting, an email confirmation will be sent to the email(s) listed above as well as the appropriate party responsible for the change. An additional email confirmation will be sent when the change(s) are applied.</p>
+                    <div className="col-12 mt-4 ">
+                        <Tooltip target=".pi-info-circle" />
+                        <label className="font-kroger text-2xl mr-4" htmlFor="isHighPriority">
+                            High Priority Request?
+                            <i
+                                className="ml-3 pi pi-info-circle"
+                                data-pr-position="top"
+                                data-pr-tooltip="High priority requests pose a legal or sales risk to the business if they are not addressed immediately. These will be sent to the top of the queue and may cause delays with other requests." />
+                        </label>
+                        <InputSwitch name="isHighPriority" checked={formState.isHighPriority} onChange={handleChange} />
+                        <p>Does your request qualify as high priority?</p>
+                    </div>
+                    <div className="col-6 h-4rem">
                         <Button
                             severity="success"
-                            className="h-full px-4 my-5"
+                            className="h-full px-4"
                             onClick={() => setIsConfirming(true)}
                             label={isLoading ? "Submitting..." : "Submit"}
                             icon={isLoading ? "pi pi-spin pi-spinner" : "pi"}

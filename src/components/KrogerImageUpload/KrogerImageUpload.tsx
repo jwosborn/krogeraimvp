@@ -108,16 +108,16 @@ const KrogerImageUpload = () => {
   };
 
   return (
-    <div className="container flex flex-column w-full font-main">
+    <div className="container flex flex-column w-full font-kroger">
         <div className="flex flex-row justify-content-center"> 
           <h2>Image Upload Tool</h2>
         </div>
-        <div className="flex flex-column w-full mb-3 bg-yellow-100"> 
-        <ul>
-          <li className="mb-2">This tool is to be used to upload image files to the carousel on the Kroger website. Please indicate the main GTIN and additional UPC(s) that the image applies to when submitting.</li>
-          <li className="mb-2"><span className="text-red-500">*</span>{' '} Indicates a required field.</li>
-          <li>When adding additional UPC's, press Enter after each UPC to confirm, much like adding email addresses to an email you are composing.</li>
-        </ul>
+        <div className="flex p-4 flex-column w-full mb-3 bg-yellow-100"> 
+        The intent of this form is to put Our Brands images in the correct slots in Syndigo and push them to site. Please list the main GTIN
+        the images apply to. Under each image you can include other GTIN(s) if that image goes across
+        multiple items. If so, then for those items you do not have to upload the same image again.
+        You can enter the GTINs with or without the leading zeros. You can list multiple GTINs by copy and pasting from a spreadsheet,
+        separating them by spaces (# # #), or commas (#, #, #).i
         </div>
       <div className="grid">
         <div className="col-12">
@@ -132,7 +132,7 @@ const KrogerImageUpload = () => {
         </div>
         {fileUploadRefs.current.map((ref, index) => (
           <div key={index} className="col-6 mt-4">
-            <span className="mb-2 block">Carousel {index + 1} Position</span>
+            <span className="mb-2 block">Carousel Image {index + 1}{index === 0 && '/MHRI'}</span>
             <FileUpload
               ref={ref}
               onSelect={(e) => handleFileUpload(index, e?.files)}
@@ -158,7 +158,7 @@ const KrogerImageUpload = () => {
                 value={fileData[index]?.UPCs || []}
                 onChange={(e) => handleFieldChange(index, e.target.value)}
               />
-              <label htmlFor="UPCs">UPCs</label>
+              <label htmlFor="UPCs">GTIN(s)</label>
             </span>
           </div>
         ))}

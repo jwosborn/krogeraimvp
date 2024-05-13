@@ -17,3 +17,13 @@
   margin-left: auto;
   margin-right: auto;
 }
+@font-face {
+  font-family: 'Gotham Rounded Book';
+  src: url('../public/GothamRounded-Book.otf') format('truetype');
+  /* Add other font properties if needed */
+}
+
+
+.font-kroger {
+  font-family: "Gotham Rounded Book";
+}
