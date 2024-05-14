@@ -78,8 +78,14 @@ const KrogerIntakeForm = () => {
 
     const handleSelect = (e) => {
         const { name, value } = e?.target;
-
         setFormState((prevState) => ({ ...prevState, [name]: value }));
+
+        // clear out specifiedRole if selectedRole option is chosen
+        if (name === 'selectedRole') {
+            if (formState.selectedRole.name === 'Other') {
+                setFormState((prevState) => ({ ...prevState, specifiedRole: '' }));
+            }
+        }
     };
 
     const handleDateChange = (e) => {
@@ -155,16 +161,19 @@ const KrogerIntakeForm = () => {
                                     }
                                 />
                                 :
-                                <Chips
-                                    className="w-full h-full border-round"
-                                    value={item}
-                                    onChange={(e) =>
-                                        handleFieldChange(index, field, e.target.value)
-                                    }
-                                    disabled={
-                                        field !== "otherEmailsToNotify" && field !== selectedRadioBtn
-                                    }
-                                />
+                                <>
+                                    <Chips
+                                        className="w-full h-full border-round"
+                                        value={item}
+                                        onChange={(e) =>
+                                            handleFieldChange(index, field, e.target.value)
+                                        }
+                                        disabled={
+                                            field !== "otherEmailsToNotify" && field !== selectedRadioBtn
+                                        }
+                                    />
+                                    <p className="text-xs">Press Enter after each email to confirm.</p>
+                                </>
                             }
                             <label htmlFor={field}>{title}(s){field !== "otherEmailsToNotify" ? <span className="text-red-500">*</span> : ''}</label>
                         </span>
@@ -181,6 +190,7 @@ const KrogerIntakeForm = () => {
             email,
             selectedRole,
             selectedFields,
+            specifiedRole,
             issue,
             files,
             isEnhancedImage,
@@ -196,10 +206,12 @@ const KrogerIntakeForm = () => {
             commodity: splitMultipleValues(commodity[0]),
             subCommodity: splitMultipleValues(subCommodity[0]),
             effectiveDate: effectiveDate?.toISOString() || "",
+            dateRequested: new Date().toISOString().split('T')[0],
             fields: selectedFields.map(field => field.type),
             userName,
             email,
             role: selectedRole.name,
+            specifiedRole,
             issue,
             files,
             isEnhancedImage,
@@ -340,7 +352,7 @@ const KrogerIntakeForm = () => {
                             onChange={handleSelect}
                             options={formState.role}
                             optionLabel="name"
-                            placeholder="Select Your Role (required)"
+                            placeholder="Select Your Role*"
                             className="w-full h-3rem flex align-items-center border-round-sm"
                             name="selectedRole"
                         />
@@ -415,7 +427,7 @@ const KrogerIntakeForm = () => {
                             className="w-full border-round-sm"
                             name="reason"
                             onChange={handleChange}
-                            placeholder="Description of reason"
+                            placeholder="Description of reason."
                             rows={3}
                             value={formState.issue}
                         />
