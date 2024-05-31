@@ -14,12 +14,11 @@ import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Tooltip } from "primereact/tooltip";
 
-const logo = require('../../assets/kroger-logo.png');
 const fieldInfo = require('../../assets/intake-form-field-info.png');
 
 const KrogerIntakeForm = () => {
     const initialFormState = {
-        GTIN: [""],
+        UPC: [""],
         commodity: [""],
         subCommodity: [""],
         effectiveDate: null,
@@ -57,7 +56,7 @@ const KrogerIntakeForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isConfirming, setIsConfirming] = useState(false);
     const [isValidInput, setIsValidInput] = useState(true);
-    const [selectedRadioBtn, setSelectedRadioBtn] = useState("GTIN");
+    const [selectedRadioBtn, setSelectedRadioBtn] = useState("UPC");
     const [lastRadioBtnPosition, setLastRadioBtnPosition] =
         useState(selectedRadioBtn);
 
@@ -195,14 +194,15 @@ const KrogerIntakeForm = () => {
             files,
             isEnhancedImage,
             otherEmailsToNotify,
-            GTIN,
+            UPC,
             commodity,
             subCommodity,
         } = formState;
 
 
         let dataIn = {
-            GTIN: splitMultipleValues(GTIN[0]),
+            // the Sendgrid route still expects GTIN key though client requests UPC
+            GTIN: splitMultipleValues(UPC[0]),
             commodity: splitMultipleValues(commodity[0]),
             subCommodity: splitMultipleValues(subCommodity[0]),
             effectiveDate: effectiveDate?.toISOString() || "",
@@ -270,28 +270,25 @@ const KrogerIntakeForm = () => {
             fileUploadRef.current.clear();
         }
 
-        setSelectedRadioBtn("GTIN");
+        setSelectedRadioBtn("UPC");
         setShowModal(false);
     };
 
     const required = (<span className="text-red-500">*</span>)
 
     return (
-        <>
-            <div className="font-kroger">
-                <img className="max-h-10rem" src={logo} alt="Kroger Logo" />
-            </div>
-            <div className="container flex flex-column w-11 font-kroger mx-auto border-1 border-gray-100 p-3 border-round-sm">
+        <div style={{backgroundColor: '#084999', color: 'white'}} className="p-3" >
+            <div className="container flex flex-column w-11 font-kroger mx-auto p-3">
                 <div className="flex flex-row justify-content-center">
-                    <h2>Our Brands Change Request Intake Form</h2>
+                    <h2><strong>Our Brands Change Request Intake Form</strong></h2>
                 </div>
                 <Tooltip target=".size-label" position="bottom" >
                     <img className="h-25rem" src={fieldInfo} alt="info on PDP fields" />
                 </Tooltip>
-                <div className="flex flex-column border-1 border-gray-100 bg-yellow-100 border-round-sm p-4">
+                <div style={{color: '#084999'}} className="flex flex-column border-1 border-gray-100 bg-yellow-100 border-round-sm p-4">
                     <p>
                         Please fill out the following form to request changes to Our Brands Product Detail Page
-                        (PDP) fields such as product title, description, customer-facing size{' '}<span className="size-label w-max"><i className="pi pi-info-circle"/></span>, and images.
+                        (PDP) fields such as product title, description, customer-facing size, and images{' '}<span className="size-label w-max"><i className="pi pi-info-circle"/></span>.
                         Changes will be reflected on site on the provided date or within 10 business days of
                         submission. Confirmation emails will be sent to you and specified relevant parties to confirm
                         receipt of your request and when the changes are implemented.
@@ -302,13 +299,13 @@ const KrogerIntakeForm = () => {
                     <div className="flex flex-column col-12 col-offset-2 mt-4">
                         <div className="col-offset-1">
                             {
-                                [{ label: "GTIN", value: "GTIN" }, { label: "Sub Commodity", value: "subCommodity" }, { label: "Commodity", value: "commodity" }].map(field => (
+                                [{ label: "UPC", value: "UPC" }, { label: "Sub Commodity", value: "subCommodity" }, { label: "Commodity", value: "commodity" }].map(field => (
                                     <Button
                                         key={field.value}
                                         label={field.label}
                                         value={field.value}
                                         onClick={() => handleRadioButtonChange(field.value)}
-                                        className={`${selectedRadioBtn === field.value ? 'bg-blue-900' : 'bg-gray-200'} p-2 w-2`}
+                                        className={`${!(selectedRadioBtn === field.value) ? 'bg-blue-900' : 'bg-gray-200'} p-2 w-2`}
                                     />
                                 ))
                             }
@@ -317,8 +314,8 @@ const KrogerIntakeForm = () => {
                             {handleDymamicFields(selectedRadioBtn, selectedRadioBtn.toUpperCase())}
                         </div>
                         <div className="w-8">
-                            You can enter GTINs with or without the leading zeros. You can request changes to
-                            multiple GTINs, sub-commodities, or commodities at a time by copy and pasting
+                            You can enter UPCs with or without the leading zeros. You can request changes to
+                            multiple UPCs, sub-commodities, or commodities at a time by copy and pasting
                             from a spreadsheet, separating them by spaces (# # #), or commas (#,#,#).
                         </div>
                     </div>
@@ -404,7 +401,7 @@ const KrogerIntakeForm = () => {
                             dateFormat="yy-mm-dd"
                             showIcon
                             name="effectiveDate"
-                            placeholder="Target date for change on site. Select today for ASAP. (required)"
+                            placeholder="Target Date For Change On Site. Select Today For ASAP*"
                         />
                     </div>
                     {handleDymamicFields("otherEmailsToNotify", "Other Emails To Recieve Confirmation Emails")}
@@ -415,7 +412,7 @@ const KrogerIntakeForm = () => {
                                 className="w-full border-round-sm"
                                 name="issue"
                                 onChange={handleChange}
-                                placeholder="Description of the change."
+                                placeholder="Description Of Change.*"
                                 rows={3}
                                 value={formState.issue}
                             />
@@ -427,7 +424,7 @@ const KrogerIntakeForm = () => {
                             className="w-full border-round-sm"
                             name="reason"
                             onChange={handleChange}
-                            placeholder="Description of reason."
+                            placeholder="Description Of Reason."
                             rows={3}
                             value={formState.issue}
                         />
@@ -454,7 +451,7 @@ const KrogerIntakeForm = () => {
                             <i
                                 className="ml-3 pi pi-info-circle"
                                 data-pr-position="top"
-                                data-pr-tooltip="Does your request qualify as high priority? High priority requests pose a legal or sales risk to the business if they are not addressed immediately. These will be sent to the top of the queue and may cause delays with other requests." />
+                                data-pr-tooltip="High priority requests pose a legal or sales risk to the business if they are not addressed immediately. These will be sent to the top of the queue and may cause delays with other requests." />
                         </label>
                         <InputSwitch name="isHighPriority" checked={formState.isHighPriority} onChange={handleChange} />
                         
@@ -524,7 +521,7 @@ const KrogerIntakeForm = () => {
                     </div>
                 </div>
             </Dialog>
-        </>
+        </div>
     );
   };
 

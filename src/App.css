@@ -27,3 +27,7 @@
 .font-kroger {
   font-family: "Gotham Rounded Book";
 }
+
+.p-float-label input:focus ~ label {
+  color: white;
+}

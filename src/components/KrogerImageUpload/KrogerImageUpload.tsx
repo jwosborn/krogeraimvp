@@ -6,6 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
 import { Chips } from "primereact/chips";
 import { Dialog } from "primereact/dialog";
+import { Tooltip } from "primereact/tooltip";
 
 const KrogerImageUpload = () => {
   const [GTIN, setGTIN] = useState("");
@@ -108,26 +109,34 @@ const KrogerImageUpload = () => {
   };
 
   return (
-    <div className="container flex flex-column w-full font-kroger">
+    <div style={{background: '#084999', color: 'white'}} className="flex flex-column w-full font-kroger px-4">
         <div className="flex flex-row justify-content-center"> 
           <h2>Image Upload Tool</h2>
         </div>
-        <div className="flex p-4 flex-column w-full mb-3 bg-yellow-100"> 
+        <div style={{color: '#084999'}} className="flex p-4 flex-column w-full mb-3 bg-yellow-100"> 
         The intent of this form is to put Our Brands images in the correct slots in Syndigo and push them to site. Please list the main GTIN
-        the images apply to. Under each image you can include other GTIN(s) if that image goes across
+        the images apply to. Under each image you can include other UPC(s) if that image goes across
         multiple items. If so, then for those items you do not have to upload the same image again.
-        You can enter the GTINs with or without the leading zeros. You can list multiple GTINs by copy and pasting from a spreadsheet,
-        separating them by spaces (# # #), or commas (#, #, #).
+        
         </div>
       <div className="grid">
         <div className="col-12">
-          <label htmlFor="GTIN">GTIN<span className="text-red-500">*</span></label>
+          <label htmlFor="UPC">
+            UPC
+            <span className="text-red-500">*</span>
+            {' '}
+            <Tooltip target=".pi-info-circle" />
+            <i
+              className="pi pi-info-circle"
+              data-pr-tooltip="You can enter the UPCs with or without the leading zeros. You can list multiple UPCs by copy and pasting from
+               a spreadsheet, separating them by spaces (# # #), or commas (#, #, #)." />
+          </label>
           <InputText
             className="w-full h-3rem mt-4"
             value={GTIN}
             onChange={handleGTINChange}
-            name="GTIN"
-            placeholder="GTIN"
+            name="UPC"
+            placeholder="UPC"
           />
         </div>
         {fileUploadRefs.current.map((ref, index) => (
@@ -158,7 +167,7 @@ const KrogerImageUpload = () => {
                 value={fileData[index]?.UPCs || []}
                 onChange={(e) => handleFieldChange(index, e.target.value)}
               />
-              <label htmlFor="UPCs">GTIN(s)</label>
+              <label htmlFor="UPCs">UPC(s)</label>
             </span>
           </div>
         ))}
